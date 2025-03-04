@@ -1,0 +1,20 @@
+<view class="product-detail">
+  <!-- 商品主图 -->
+  <image 
+    src="/images/{{product.image}}" 
+    mode="aspectFill" 
+    style="width: 100%; height: 300rpx;"
+  />
+
+  <!-- 尺寸选择 -->
+  <view class="size-selector">
+    <image 
+      src="/images/dabaicai.jpg" 
+      style="width: 80rpx; height: 80rpx; margin-right: 20rpx;"
+    />
+    <image 
+      src="/images/qingzhauntea.jpg" 
+      style="width: 80rpx; height: 80rpx;"
+    />
+  </view>
+</view>

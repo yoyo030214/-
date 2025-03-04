@@ -1,0 +1,15 @@
+<view class="container">
+  <!-- 大白菜图片 -->
+  <image 
+    src="/images/dabaicai.jpg" 
+    mode="aspectFill" 
+    style="width: 150rpx; height: 150rpx; margin: 20rpx auto;"
+  />
+
+  <!-- 清茶图片 -->
+  <image 
+    src="/images/qingzhauntea.jpg" 
+    mode="aspectFill" 
+    style="width: 150rpx; height: 150rpx; margin: 20rpx auto;"
+  />
+</view>

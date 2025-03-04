@@ -1,0 +1,12 @@
+/* 正确颜色规范 */
+.primary-color: #1aad19; /* 主色调：农绿 */
+.secondary-color: #ffffff; /* 辅助色：纯白*/
+
+.container {
+  display: flex;          /* ✔️ 修复属性名 */
+  flex-direction: column;   /* 建议添加纵向布局 */
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  box-sizing: border-box;
+}

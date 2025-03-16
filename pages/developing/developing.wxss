@@ -1,0 +1,24 @@
+.developing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+
+.developing-icon {
+  font-size: 120rpx;
+  margin-bottom: 40rpx;
+}
+
+.developing-text {
+  font-size: 36rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.developing-desc {
+  font-size: 28rpx;
+  color: #999;
+} 

@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="header">
+    <text class="title">{{policy.title}}</text>
+    <view class="meta">
+      <text class="date">{{policy.date}}</text>
+      <text class="region">{{policy.region}}</text>
+    </view>
+  </view>
+
+  <view class="policy-image" wx:if="{{policy.imageUrl}}">
+    <image src="{{policy.imageUrl}}" mode="aspectFill" />
+  </view>
+
+  <view class="content">
+    <text class="summary">{{policy.summary}}</text>
+    
+    <view class="actions">
+      <button class="collect-btn {{policy.collected ? 'collected' : ''}}" 
+        bindtap="toggleCollect">
+        {{policy.collected ? '已收藏' : '收藏政策'}}
+      </button>
+      <button class="share-btn" open-type="share">分享政策</button>
+    </view>
+  </view>
+</view>

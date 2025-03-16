@@ -13,8 +13,26 @@
       style="width: 80rpx; height: 80rpx; margin-right: 20rpx;"
     />
     <image 
-      src="/images/qingzhauntea.jpg" 
+      src="/images/qingzhuantea.jpg" 
       style="width: 80rpx; height: 80rpx;"
     />
   </view>
+
+  <!-- 轮播图 -->
+  <swiper class="product-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="3000" duration="500">
+    <swiper-item>
+      <image 
+        class="product-image" 
+        src="/images/products/cabbage.webp"
+        mode="aspectFill"
+      />
+    </swiper-item>
+    <swiper-item>
+      <image 
+        class="product-image" 
+        src="/images/qingzhuantea.webp"
+        mode="aspectFill"
+      />
+    </swiper-item>
+  </swiper>
 </view>

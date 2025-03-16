@@ -1,0 +1,78 @@
+<view class="container">
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <view class="policy-detail" wx:else>
+    <!-- 政策标题 -->
+    <view class="policy-header">
+      <view class="title">{{policy.title}}</view>
+      <view class="meta">
+        <view class="meta-item">
+          <text class="label">发布日期：</text>
+          <text class="value">{{policy.date}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="label">来源：</text>
+          <text class="value">{{policy.source}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="label">文号：</text>
+          <text class="value">{{policy.policyNo}}</text>
+        </view>
+      </view>
+      <view class="tags">
+        <text class="tag level">{{policy.level}}</text>
+        <text class="tag type">{{policy.type}}</text>
+        <text class="tag status">{{policy.status}}</text>
+      </view>
+    </view>
+
+    <!-- 政策内容 -->
+    <view class="policy-content">
+      <view class="section">
+        <view class="section-title">政策摘要</view>
+        <view class="summary">{{policy.summary}}</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">政策内容</view>
+        <view class="content">{{policy.content}}</view>
+      </view>
+
+      <!-- 附件 -->
+      <view class="section" wx:if="{{policy.attachments && policy.attachments.length > 0}}">
+        <view class="section-title">相关附件</view>
+        <view class="attachments">
+          <view class="attachment-item" 
+                wx:for="{{policy.attachments}}" 
+                wx:key="name"
+                bindtap="downloadAttachment"
+                data-url="{{item.url}}">
+            <image src="/images/icons/file.webp" mode="aspectFit" class="file-icon"/>
+            <text class="file-name">{{item.name}}</text>
+            <image src="/images/icons/download.webp" mode="aspectFit" class="download-icon"/>
+          </view>
+        </view>
+      </view>
+
+      <!-- 相关政策 -->
+      <view class="section" wx:if="{{policy.relatedPolicies && policy.relatedPolicies.length > 0}}">
+        <view class="section-title">相关政策</view>
+        <view class="related-policies">
+          <view class="related-item" 
+                wx:for="{{policy.relatedPolicies}}" 
+                wx:key="id"
+                bindtap="goToPolicy"
+                data-id="{{item.id}}">
+            <text class="related-title">{{item.title}}</text>
+            <text class="related-date">{{item.date}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <image class="detail-image" src="{{policy.imageUrl}}" mode="widthFix"></image>
+  </view>
+</view> 

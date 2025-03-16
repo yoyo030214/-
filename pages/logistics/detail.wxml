@@ -1,0 +1,40 @@
+<view class="container">
+  <!-- 物流信息 -->
+  <view class="logistics-info" wx:if="{{logisticsInfo}}">
+    <view class="info-header">
+      <view class="company">
+        <image src="/images/{{logisticsInfo.company}}.png" mode="aspectFit"></image>
+        <text>{{logisticsInfo.companyName}}</text>
+      </view>
+      <view class="number">
+        <text>运单号：{{logisticsInfo.number}}</text>
+        <text class="copy" bindtap="onCopyNumber">复制</text>
+      </view>
+    </view>
+
+    <view class="info-content">
+      <view class="timeline">
+        <view 
+          class="timeline-item {{index === 0 ? 'active' : ''}}" 
+          wx:for="{{logisticsInfo.traces}}" 
+          wx:key="index"
+        >
+          <view class="time">{{item.time}}</view>
+          <view class="content">{{item.content}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && !logisticsInfo}}">
+    <image src="/images/empty-logistics.png" mode="aspectFit"></image>
+    <text>暂无物流信息</text>
+  </view>
+
+  <!-- 刷新按钮 -->
+  <view class="refresh-btn" bindtap="onRefresh">
+    <image src="/images/refresh.png" mode="aspectFit"></image>
+    <text>刷新物流信息</text>
+  </view>
+</view> 

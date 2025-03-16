@@ -1,15 +1,57 @@
 <view class="container">
-  <!-- 大白菜图片 -->
-  <image 
-    src="/images/dabaicai.jpg" 
-    mode="aspectFill" 
-    style="width: 150rpx; height: 150rpx; margin: 20rpx auto;"
-  />
+  <!-- 轮播图 -->
+  <swiper class="banner" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <image src="{{item.image}}" mode="aspectFill" class="banner-image"/>
+      <view class="banner-title">{{item.title}}</view>
+    </swiper-item>
+  </swiper>
 
-  <!-- 清茶图片 -->
-  <image 
-    src="/images/qingzhauntea.jpg" 
-    mode="aspectFill" 
-    style="width: 150rpx; height: 150rpx; margin: 20rpx auto;"
-  />
+  <!-- 分类导航 -->
+  <view class="categories">
+    <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="filterByCategory" data-category="{{item.name}}">
+      <image src="{{item.icon}}" mode="aspectFit" class="category-icon"/>
+      <text class="category-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 天气信息 -->
+  <view class="weather-section" wx:if="{{weather}}">
+    <view class="weather-title">今日天气</view>
+    <view class="weather-info">
+      <text>{{weather.temperature}}°C</text>
+      <text>{{weather.weather}}</text>
+    </view>
+  </view>
+
+  <!-- 精选商品 -->
+  <view class="section">
+    <view class="section-title">精选商品</view>
+    <view class="product-list">
+      <view class="product-item" wx:for="{{featuredProducts}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
+        <image src="{{item.image}}" mode="aspectFill" class="product-image"/>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-price">¥{{item.price}}/{{item.unit}}</text>
+          <text class="product-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 农业新闻 -->
+  <view class="section">
+    <view class="section-title">农业新闻</view>
+    <view class="news-list">
+      <view class="news-item" wx:for="{{agriculturalNews}}" wx:key="id" bindtap="goToNewsDetail" data-id="{{item.id}}">
+        <view class="news-title">{{item.title}}</view>
+        <view class="news-meta">
+          <text class="news-date">{{item.date}}</text>
+          <text class="news-summary">{{item.summary}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>
+
+<button bindtap="addToCart">加入购物车</button>

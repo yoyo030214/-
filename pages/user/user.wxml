@@ -1,0 +1,91 @@
+<!-- 用户页面 -->
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="card-header">
+      <view class="user-id-box">
+        <text class="user-id-label">助农ID</text>
+        <text class="user-id">#{{userInfo.userId}}</text>
+      </view>
+      <view class="vip-badge">
+        <image class="badge-icon" src="/images/icons/leaf.png" />
+        <text>Lv.{{userLevelInfo.level}} 助农达人</text>
+      </view>
+    </view>
+
+    <view class="progress-section">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{userLevelInfo.nextLevelPercent}}%"></view>
+      </view>
+      <view class="progress-text">
+        <text>再助农{{15}}次升级</text>
+        <text>已获得{{userLevelInfo.description}}</text>
+      </view>
+    </view>
+
+    <view class="data-grid">
+      <block wx:for="{{dataCards}}" wx:key="index">
+        <view class="data-cell">
+          <text class="cell-value">{{item.value}}</text>
+          <text class="cell-label">{{item.title}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 简化后的数据展示 -->
+  <view class="simple-stats">
+    <block wx:for="{{dataCards}}" wx:key="index">
+      <view class="stat-item">
+        <text class="stat-value">{{item.value}}</text>
+        <text class="stat-label">{{item.title}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 统一后的功能入口 -->
+  <view class="order-style-list">
+    <block wx:for="{{quickActions}}" wx:key="index">
+      <view class="order-item" 
+            bindtap="navigateTo" 
+            data-url="{{item.url}}"
+            data-type="{{item.type}}">
+        <view class="item-left">
+          <image class="item-icon" src="{{item.icon}}" />
+          <text class="item-title">{{item.text}}</text>
+        </view>
+        <view class="item-right">
+          <text wx:if="{{item.count}}" class="item-count">{{item.count}}</text>
+          <text class="iconfont icon-arrow-right"></text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 农业详情卡片 -->
+  <view class="farm-card">
+    <image class="card-bg" src="/static/images/farm-bg.jpg" mode="aspectFill" />
+    <view class="card-content">
+      <view class="card-header">
+        <text class="title">助农成果</text>
+        <view class="badge">
+          <text>累计帮扶</text>
+          <text class="count">{{helpFarmers}}</text>
+        </view>
+      </view>
+      <view class="card-body">
+        <text class="highlight">{{savedCrops}}kg</text>
+        <text class="desc">农产品免于滞销</text>
+      </view>
+      <view class="card-footer">
+        <text class="tip">已覆盖{{coveredVillages}}个自然村</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 客服入口按钮 -->
+  <view class="customer-service-entry" bindtap="navigateToCustomerService">
+    <image class="icon" src="/static/images/cs-icon.png" />
+    <text>在线客服</text>
+  </view>
+</view> 

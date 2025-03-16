@@ -1,0 +1,153 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <icon type="search" size="14" color="#999"/>
+      <input placeholder="搜索农业政策" confirm-type="search"/>
+    </view>
+  </view>
+
+  <!-- 数据看板 -->
+  <view class="dashboard">
+    <block wx:for="{{dashboardItems}}" wx:key="index">
+      <view class="dashboard-item {{item.type}}">
+        <text class="number">{{item.value}}</text>
+        <text class="label">{{item.label}}</text>
+        <view class="trend {{item.trend}}"></view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 智能分类导航 -->
+  <view class="smart-nav">
+    <scroll-view scroll-x class="nav-scroll">
+      <block wx:for="{{categories}}" wx:key="id">
+        <view 
+          class="nav-item {{activeCategory === item.id ? 'active' : ''}}"
+          bindtap="switchCategory"
+          data-id="{{item.id}}"
+          data-type="{{item.type}}"
+        >
+          {{item.name}}
+          <view wx:if="{{item.type === 'more'}}" class="more-indicator">···</view>
+        </view>
+      </block>
+    </scroll-view>
+    <view class="nav-shadow"></view>
+  </view>
+
+  <!-- 政策矩阵 -->
+  <view class="policy-matrix">
+    <view class="debug-info" hidden>
+      政策总数: {{policies.length}} 
+      筛选后: {{filteredPolicies.length}}
+      当前分类: {{activeCategory}}
+    </view>
+    <view class="section-header">
+      <text class="section-title">当前政策（{{filteredPolicies.length}}）</text>
+      <view class="more-wrapper" bindtap="viewAllPolicies">
+        <text class="more-text">更多</text>
+        <text class="arrow">></text>
+      </view>
+    </view>
+    <block wx:for="{{filteredPolicies}}" wx:key="id">
+      <view class="policy-card" bindtap="showPolicyDetail" data-id="{{item.id}}">
+        <!-- 封面图 -->
+        <image 
+          class="policy-image" 
+          src="{{item.image || '/images/policy/default-policy.webp'}}"
+          mode="aspectFill"
+          bindload="handleImageLoad"
+          binderror="handleImageError"
+          data-index="{{index}}"
+        />
+        
+        <!-- 内容区 -->
+        <view class="card-content">
+          <!-- 标题和类型 -->
+          <view class="card-header">
+            <text class="policy-type {{item.type}}">{{item.type}}</text>
+            <text class="policy-date">{{item.date}}</text>
+          </view>
+          
+          <!-- 主标题 -->
+          <text class="policy-title">{{item.title}}</text>
+          
+          <!-- 摘要 -->
+          <text class="policy-summary">{{item.summary}}</text>
+          
+          <!-- 操作区 -->
+          <view class="card-footer">
+            <view class="meta-item">
+              <image src="/images/icons/location.webp" class="meta-icon" mode="aspectFit"/>
+              <text>{{item.region}}</text>
+            </view>
+            <button 
+              class="collect-btn {{item.collected ? 'collected' : ''}}"
+              catchtap="toggleCollect"
+              data-id="{{item.id}}"
+            >
+              {{item.collected ? '已收藏' : '收藏'}}
+            </button>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 助农活动 -->
+  <view class="promotion-section" wx:if="{{showPromotions}}">
+    <view class="section-header">
+      <view class="title-wrapper">
+        <text class="section-title">助农活动</text>
+        <text class="section-desc">参与公益，助力乡村振兴</text>
+      </view>
+      <view class="more" bindtap="viewAllPromotions">
+        <text>更多</text>
+        <text class="arrow">></text>
+      </view>
+    </view>
+    <view class="promotion-list">
+      <view class="promotion-item" wx:for="{{promotions}}" wx:key="id" bindtap="viewPromotion" data-id="{{item.id}}">
+        <image 
+          class="policy-image" 
+          src="{{item.image || '/images/policy/default-policy.webp'}}"
+          mode="aspectFill"
+          lazy-load="true"
+          bindload="onImageLoad"
+          binderror="setDefaultImage"
+          data-type="promotion"
+          data-field="promotions[{{index}}].image"
+        />
+        <view class="promotion-info">
+          <view class="promo-content">
+            <text class="promotion-title">{{item.title}}</text>
+            <text class="promotion-desc">{{item.description}}</text>
+          </view>
+          <view class="promotion-meta">
+            <view class="meta-item">
+              <image src="/images/icons/location.webp" class="meta-icon" mode="aspectFit"/>
+              <text>{{item.location}}</text>
+            </view>
+            <view class="meta-item">
+              <image src="/images/icons/time.webp" class="meta-icon" mode="aspectFit"/>
+              <text>{{item.time}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="bottom-tips" wx:if="{{noMore}}">
+    <view class="divider"></view>
+    <text>已经到底啦</text>
+    <view class="divider"></view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-wrapper">
+    <view class="loading-spinner"></view>
+    <text>政策加载中...</text>
+  </view>
+</view> 

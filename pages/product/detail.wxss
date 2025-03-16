@@ -1,0 +1,248 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 商品图片 */
+.product-images {
+  height: 500rpx;
+  width: 100%;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 商品信息 */
+.product-info {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.price-section {
+  margin-bottom: 20rpx;
+}
+
+.price {
+  font-size: 40rpx;
+  color: #e64340;
+  font-weight: bold;
+}
+
+.unit {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 4rpx;
+}
+
+.market-price {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 20rpx;
+}
+
+.name {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.sales {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 规格选择 */
+.specs-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+  font-weight: bold;
+}
+
+.specs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.spec-item {
+  padding: 20rpx 30rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.spec-item.active {
+  border-color: #4CAF50;
+  color: #4CAF50;
+  background: #f0f9eb;
+}
+
+.spec-name {
+  margin-right: 20rpx;
+}
+
+.spec-price {
+  color: #e64340;
+  margin-right: 20rpx;
+}
+
+.spec-weight {
+  color: #999;
+}
+
+/* 商品详情 */
+.details-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 28rpx;
+}
+
+.label {
+  color: #999;
+}
+
+.value {
+  color: #333;
+}
+
+/* 质量认证 */
+.certificates-section {
+  background: #fff;
+  padding: 30rpx;
+}
+
+.certificates-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30rpx;
+}
+
+.certificate-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.certificate-image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 10rpx;
+}
+
+.certificate-name {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  margin-right: 30rpx;
+}
+
+.quantity-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #ddd;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  color: #666;
+}
+
+.quantity {
+  width: 80rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #333;
+  margin: 0 20rpx;
+}
+
+.action-buttons {
+  flex: 1;
+  display: flex;
+  gap: 20rpx;
+}
+
+.add-cart-btn, .buy-now-btn {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+.add-cart-btn {
+  background: #f0f9eb;
+  color: #4CAF50;
+}
+
+.buy-now-btn {
+  background: #4CAF50;
+  color: #fff;
+} 

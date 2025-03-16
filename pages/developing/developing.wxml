@@ -1,0 +1,5 @@
+<view class="developing-container">
+  <view class="developing-icon">🚧</view>
+  <view class="developing-text">{{pageTitle}}</view>
+  <view class="developing-desc">敬请期待</view>
+</view> 

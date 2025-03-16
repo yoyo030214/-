@@ -1,18 +1,226 @@
 <view class="container">
-  <view class="header">
-    <text class="title">楚农优品</text>
-    <text class="subtitle">新鲜农产品直达</text>
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text class="iconfont icon-search"></text>
+      <input placeholder="搜索当季特色农产品" bindtap="onSearchTap"/>
+    </view>
   </view>
 
-  <scroll-view class="product-list" scroll-y>
-    <block wx:for="{{products}}" wx:key="id">
-      <view class="product-card">
-        <image src="{{item.image}}" mode="aspectFill" style="width: 100%; height: 200rpx;"></image>
-        <text class="product-name">{{item.name}}</text>
-        <text class="product-price">¥{{item.price}}</text>
-        <button bindtap="goToProduct" data-id="{{item.id}}">查看详情</button>
+  <!-- 轮播图 -->
+  <swiper class="banners" indicator-dots="true" autoplay="true" interval="3000">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <image 
+        src="{{item.image}}" 
+        mode="aspectFill"
+        lazy-load="true"
+        binderror="handleImageLoadError"
+        data-src="{{item.image}}"
+      ></image>
+    </swiper-item>
+  </swiper>
+
+  <!-- 天气信息 -->
+  <view class="weather-section">
+    <view class="weather-info">
+      <view class="weather-location">
+        <image class="location-icon" src="/images/icons/location.svg" mode="aspectFit" lazy-load="true"></image>
+        <text class="city">{{weather.city || '定位中...'}}</text>
       </view>
-    </block>
-  </scroll-view>
+      <view class="weather-detail">
+        <image class="weather-icon" src="/images/weather/{{weather.icon || 'unknown'}}.svg" mode="aspectFit" lazy-load="true"></image>
+        <text class="temp">{{weather.temp || '--'}}°</text>
+        <text class="desc">{{weather.weatherDesc || '暂无数据'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能区 -->
+  <view class="feature-section">
+    <view class="feature-item" bindtap="navigateToFeature" data-feature="local">
+      <image src="/images/features/local.svg" mode="aspectFit" lazy-load="true"></image>
+      <text>本地特产</text>
+      <view class="feature-desc">精选本地优质农产品</view>
+    </view>
+    <view class="feature-item" bindtap="navigateToFeature" data-feature="seasonal">
+      <image src="/images/features/seasonal.svg" mode="aspectFit" lazy-load="true"></image>
+      <text>当季时令</text>
+      <view class="feature-desc">新鲜应季，健康美味</view>
+    </view>
+    <view class="feature-item" bindtap="navigateToFeature" data-feature="farmer">
+      <image src="/images/features/farmer.svg" mode="aspectFit" lazy-load="true"></image>
+      <text>农户直供</text>
+      <view class="feature-desc">源头直采，品质保证</view>
+    </view>
+    <view class="feature-item" bindtap="navigateToFeature" data-feature="more">
+      <image src="/images/features/more.svg" mode="aspectFit" lazy-load="true"></image>
+      <text>更多功能</text>
+      <view class="feature-desc">发现更多精彩</view>
+    </view>
+  </view>
+
+  <!-- 本地特产推荐 -->
+  <view class="local-products">
+    <view class="section-title">
+      <text>本地特产推荐</text>
+      <text class="more" bindtap="navigateToCategory" data-type="local">更多 ></text>
+    </view>
+    <scroll-view class="product-scroll" scroll-x>
+      <view class="product-item" wx:for="{{localProducts}}" wx:key="id" bindtap="viewLocalProduct" data-id="{{item.id}}">
+        <smart-image 
+          src="{{item.image}}" 
+          defaultSrc="/images/default_product.webp"
+          mode="aspectFill" 
+          height="280rpx"
+          radius="10rpx 10rpx 0 0"
+          bind:error="handleImageLoadError"
+          data-src="{{item.image}}"
+        ></smart-image>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-meta">
+            <text class="origin">{{item.origin}}</text>
+            <text class="farmer">{{item.farmerName}}</text>
+          </view>
+          <view class="price-section">
+            <text class="price">¥{{item.price}}</text>
+            <text class="unit">/{{item.unit}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 当季时令推荐 -->
+  <view class="seasonal-products">
+    <view class="section-title">
+      <text>当季时令推荐</text>
+      <text class="more" bindtap="navigateToCategory" data-type="seasonal">更多 ></text>
+    </view>
+    <view class="product-grid">
+      <view class="product-item" wx:for="{{seasonalProducts}}" wx:key="id" bindtap="viewSeasonalProduct" data-id="{{item.id}}">
+        <image 
+          src="{{item.image}}" 
+          mode="aspectFill" 
+          lazy-load="true"
+          binderror="handleImageLoadError"
+          data-src="{{item.image}}"
+        ></image>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-meta">
+            <text class="origin">{{item.origin}}</text>
+            <text class="farmer">{{item.farmerName}}</text>
+          </view>
+          <view class="price-section">
+            <text class="price">¥{{item.price}}</text>
+            <text class="unit">/{{item.unit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 农户直供推荐 -->
+  <view class="farmer-products">
+    <view class="section-title">
+      <text>农户直供推荐</text>
+      <text class="more" bindtap="navigateToCategory" data-type="farmer">更多 ></text>
+    </view>
+    <view class="farmer-list">
+      <view class="farmer-item" wx:for="{{farmerProducts}}" wx:key="id" bindtap="viewFarmerProduct" data-id="{{item.id}}">
+        <image 
+          src="{{item.farmerAvatar}}" 
+          mode="aspectFill"
+          lazy-load="true"
+          binderror="handleImageLoadError"
+          data-src="{{item.farmerAvatar}}"
+          bindtap="previewFarmerImage"
+          data-url="{{item.farmerAvatar}}"
+          catchtap
+        ></image>
+        <view class="farmer-info">
+          <text class="farmer-name">{{item.farmerName}}</text>
+          <text class="farmer-location">{{item.location}}</text>
+          <view class="farmer-tags" wx:if="{{item.tags && item.tags.length}}">
+            <text class="farmer-tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+          </view>
+          <text class="farmer-desc">{{item.desc}}</text>
+        </view>
+        <view class="farmer-products-count" wx:if="{{item.products && item.products.length}}">
+          {{item.products.length}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 农户故事 -->
+  <view class="farmer-stories">
+    <view class="section-title">
+      <text>农户故事</text>
+      <text class="more" bindtap="navigateToMore" data-type="stories">更多 ></text>
+    </view>
+    <view class="story-list">
+      <view class="story-item" wx:for="{{farmerStories}}" wx:key="id" wx:if="{{index < 2}}" bindtap="viewStory" data-id="{{item.id}}">
+        <image src="{{item.image || '/images/temp/panda.png'}}" mode="aspectFill"></image>
+        <view class="story-info">
+          <text class="farmer-name">{{item.farmerName}}</text>
+          <text class="story-title">{{item.title}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 城市选择器组件 -->
+  <city-picker 
+    show="{{showCityPicker}}"
+    bind:citySelect="handleCitySelect"
+    bind:close="hideCityPicker">
+  </city-picker>
 </view>
-<image src="/images/qingzhuantea.jpg" />
+
+<!-- 底部更多功能菜单 -->
+<view class="float-menu" bindtap="showMoreFeatures">
+  <text class="iconfont icon-more"></text>
+</view>
+
+<!-- 更多功能弹出层 -->
+<view class="more-features {{showMore ? 'show' : ''}}" catchtouchmove="preventTouchMove">
+  <view class="mask" bindtap="hideMoreFeatures"></view>
+  <view class="features-content">
+    <view class="features-header">
+      <text>更多功能</text>
+      <text class="close" bindtap="hideMoreFeatures">×</text>
+    </view>
+    <view class="features-grid">
+      <view class="feature-item" bindtap="navigateToCategory">
+        <text class="iconfont icon-category"></text>
+        <text>蔬果生鲜</text>
+      </view>
+      <view class="feature-item" bindtap="navigateToCart">
+        <text class="iconfont icon-cart"></text>
+        <text>购物车</text>
+      </view>
+      <view class="feature-item" bindtap="navigateToOrders">
+        <text class="iconfont icon-order"></text>
+        <text>订单</text>
+      </view>
+      <view class="feature-item" bindtap="navigateToFavorites">
+        <text class="iconfont icon-favorite"></text>
+        <text>收藏</text>
+      </view>
+      <view class="feature-item" bindtap="navigateToAddress">
+        <text class="iconfont icon-location"></text>
+        <text>地址</text>
+      </view>
+      <view class="feature-item" bindtap="navigateToProductMap">
+        <text class="iconfont icon-map"></text>
+        <text>特色农产品地图</text>
+      </view>
+      <view class="feature-item" bindtap="navigateToService">
+        <text class="iconfont icon-service"></text>
+        <text>客服</text>
+      </view>
+    </view>
+  </view>
+</view>

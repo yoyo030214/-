@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="dev-tips">
+    <image class="dev-icon" src="/images/under-construction.png" />
+    <text class="dev-text">功能开发中，敬请期待</text>
+    <text class="dev-subtext">预计上线时间：2023年12月</text>
+  </view>
+</view> 

@@ -1,0 +1,387 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #a8edea 0%, #fed6e3 100%);
+  padding: 30rpx;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* 顶部区域 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40rpx;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.location-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 4rpx;
+}
+
+.city-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.update-time {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* 刷新按钮 */
+.refresh {
+  width: 60rpx;
+  height: 60rpx;
+  padding: 10rpx;
+}
+
+.refresh image {
+  width: 100%;
+  height: 100%;
+  animation: rotate 2s linear infinite paused;
+  border-radius: 50%;
+}
+
+.refresh.loading image {
+  animation-play-state: running;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 当前天气 */
+.current-weather {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+
+.temp-wrap {
+  display: inline-flex;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.temp {
+  font-size: 120rpx;
+  font-weight: 200;
+  line-height: 1;
+}
+
+.degree {
+  font-size: 60rpx;
+  margin-top: 10rpx;
+}
+
+.weather-desc {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.weather-icon {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+}
+
+/* 天气详情 */
+.weather-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 30rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 20rpx;
+  backdrop-filter: blur(10px);
+  margin-bottom: 40rpx;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.detail-item image {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+}
+
+.detail-item .label {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.detail-item .value {
+  font-size: 28rpx;
+  color: #333;
+  margin-left: auto;
+}
+
+/* 预报部分 */
+.forecast-section {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 40rpx;
+  backdrop-filter: blur(10px);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+/* 24小时预报 */
+.hourly-forecast {
+  white-space: nowrap;
+}
+
+.forecast-list {
+  display: inline-flex;
+  padding: 10rpx 0;
+}
+
+.forecast-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 30rpx;
+}
+
+.time {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 10rpx;
+}
+
+.forecast-icon {
+  width: 70rpx;
+  height: 70rpx;
+  margin: 10rpx 0;
+  border-radius: 50%;
+}
+
+.forecast-temp {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 7天预报 */
+.daily-forecast {
+  display: flex;
+  flex-direction: column;
+}
+
+.daily-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.daily-item:last-child {
+  border-bottom: none;
+}
+
+.date {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.daily-item .forecast-icon {
+  margin: 0 20rpx;
+}
+
+.temp-range {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.max {
+  font-size: 28rpx;
+  color: #ff6b6b;
+}
+
+.divider {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.min {
+  font-size: 28rpx;
+  color: #4dabf7;
+}
+
+/* 生活指数 */
+.indices-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+}
+
+.index-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16rpx;
+}
+
+.index-item image {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 10rpx;
+  border-radius: 50%;
+}
+
+.index-name {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 6rpx;
+}
+
+.index-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 农业气象 */
+.agro-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.agro-item {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.agro-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.agro-header image {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+}
+
+.agro-header text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.agro-value {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.agro-desc {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.5;
+}
+
+/* 加载遮罩 */
+.loading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 错误提示 */
+.error-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.error-mask image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 40rpx;
+  border-radius: 50%;
+}
+
+.error-title {
+  font-size: 36rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+  font-weight: 500;
+}
+
+.error-desc {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.retry-btn {
+  background: #4CAF50;
+  color: #fff;
+  padding: 20rpx 60rpx;
+  border-radius: 100rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.retry-btn:active {
+  opacity: 0.8;
+} 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 外圈圆形 -->
+    <circle cx="12" cy="12" r="9" stroke="black" stroke-width="2" fill="none"/>
+    <!-- 内圈圆形 -->
+    <circle cx="12" cy="12" r="8" fill="white"/>
+    <!-- 左侧麦穗 -->
+    <path d="M4 12C4 12 6 8 8 8C8 8 7 10 7 12" stroke="black" stroke-width="1.5"/>
+    <path d="M5 11C5 11 7 7 9 7C9 7 8 9 8 11" stroke="black" stroke-width="1.5"/>
+    <!-- 文字 "特" -->
+    <text x="12" y="14" text-anchor="middle" fill="black" font-size="8" font-family="Arial">特</text>
+</svg> 

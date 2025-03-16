@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="header">
+    <text class="title">{{news.title}}</text>
+    <view class="meta">
+      <text>{{news.source}}</text>
+      <text>{{news.date}}</text>
+    </view>
+  </view>
+
+  <view class="content">
+    <text>{{news.content}}</text>
+  </view>
+
+  <view class="actions">
+    <button class="collect-btn {{news.collected ? 'collected' : ''}}" 
+      bindtap="toggleCollect">
+      {{news.collected ? '已收藏' : '收藏资讯'}}
+    </button>
+    <button open-type="share">分享</button>
+  </view>
+</view> 

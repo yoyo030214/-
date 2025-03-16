@@ -1,0 +1,6 @@
+<view class="placeholder {{type}} {{shape}}" style="width: {{width}}; height: {{height}}; background: {{bgColor}}">
+  <text wx:if="{{showText}}" class="placeholder-text" style="color: {{textColor}}">{{text}}</text>
+  <view class="placeholder-icon" wx:if="{{showIcon}}">
+    <icon type="{{iconType}}" size="{{iconSize}}" color="{{iconColor}}"/>
+  </view>
+</view> 

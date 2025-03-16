@@ -1,0 +1,215 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 政策头部 */
+.policy-header {
+  background: #fff;
+  padding: 40rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  color: #333;
+  font-weight: bold;
+  line-height: 1.4;
+  margin-bottom: 30rpx;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.meta-item {
+  display: flex;
+  font-size: 28rpx;
+}
+
+.label {
+  color: #999;
+  width: 140rpx;
+}
+
+.value {
+  color: #333;
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  gap: 20rpx;
+}
+
+.tag {
+  font-size: 24rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.tag.level {
+  background: #f0f9eb;
+  color: #4CAF50;
+}
+
+.tag.type {
+  background: #f4f4f5;
+  color: #909399;
+}
+
+.tag.status {
+  background: #fef0f0;
+  color: #f56c6c;
+}
+
+/* 政策内容 */
+.policy-content {
+  background: #fff;
+  padding: 30rpx;
+}
+
+.section {
+  margin-bottom: 40rpx;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  padding-left: 20rpx;
+  border-left: 8rpx solid #4CAF50;
+}
+
+.summary {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.content {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* 附件列表 */
+.attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #f8f8f8;
+  border-radius: 8rpx;
+}
+
+.file-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 20rpx;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.download-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+/* 相关政策 */
+.related-policies {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.related-item {
+  padding: 20rpx;
+  background: #f8f8f8;
+  border-radius: 8rpx;
+}
+
+.related-title {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.related-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 政策详情样式 */
+.policy-detail {
+  padding: 20rpx;
+}
+
+.detail-image {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.detail-content {
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 10rpx;
+}
+
+.detail-title {
+  font-size: 36rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.detail-date {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 20rpx;
+  display: block;
+} 

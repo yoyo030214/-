@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 房屋主体 -->
+    <path d="M4 12V20H20V12L12 6L4 12Z" stroke="black" stroke-width="2" fill="none"/>
+    <!-- 门 -->
+    <rect x="10" y="14" width="4" height="6" stroke="black" stroke-width="2" fill="none"/>
+    <!-- 屋顶弧形 -->
+    <path d="M6 12C6 12 8 10 12 10C16 10 18 12 18 12" stroke="black" stroke-width="2" fill="none"/>
+</svg> 

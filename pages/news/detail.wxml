@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+  
+  <view class="news-detail" wx:else>
+    <view class="title">{{newsDetail.title}}</view>
+    <view class="meta">
+      <text class="date">{{newsDetail.date}}</text>
+    </view>
+    <view class="content">{{newsDetail.content}}</view>
+  </view>
+</view> 

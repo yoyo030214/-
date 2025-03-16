@@ -1,1 +1,193 @@
 /* pages/index/home.wxss */
+.container {
+  padding-bottom: 20rpx;
+}
+
+/* 搜索栏样式 */
+.search-bar {
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.search-bar input {
+  background: #f5f5f5;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
+}
+
+/* 轮播图样式 */
+.banner {
+  height: 350rpx;
+  width: 100%;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-title {
+  position: absolute;
+  bottom: 20rpx;
+  left: 20rpx;
+  color: #fff;
+  font-size: 32rpx;
+  text-shadow: 2rpx 2rpx 4rpx rgba(0,0,0,0.5);
+}
+
+/* 分类导航样式 */
+.categories {
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx 20rpx;
+  background: #fff;
+  margin-bottom: 20rpx;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.category-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 10rpx;
+}
+
+.category-name {
+  font-size: 24rpx;
+  color: #333;
+}
+
+/* 天气信息样式 */
+.weather-section {
+  background: #fff;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+}
+
+.weather-title {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.weather-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 32rpx;
+  color: #4CAF50;
+}
+
+/* 通用section样式 */
+.section {
+  background: #fff;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+/* 商品列表样式 */
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.product-item {
+  width: 48%;
+  margin-bottom: 20rpx;
+  background: #f8f8f8;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 300rpx;
+}
+
+.product-info {
+  padding: 10rpx;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 6rpx;
+  display: block;
+}
+
+.product-price {
+  font-size: 32rpx;
+  color: #e64340;
+  font-weight: bold;
+  margin-bottom: 6rpx;
+  display: block;
+}
+
+.product-desc {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+}
+
+.add-cart-btn {
+  background: #4CAF50;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
+  border: none;
+  margin-top: 10rpx;
+}
+
+/* 新闻列表样式 */
+.news-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.news-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+.news-title {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.news-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.news-summary {
+  font-size: 24rpx;
+  color: #666;
+  flex: 1;
+  margin-left: 20rpx;
+}

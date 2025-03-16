@@ -1,0 +1,53 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <icon type="search" size="14" color="#999"/>
+      <input placeholder="搜索农户故事" confirm-type="search" bindconfirm="onSearch"/>
+    </view>
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view scroll-x class="category-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="category-list">
+      <view class="category-item {{currentCategory === 'all' ? 'active' : ''}}" 
+            bindtap="switchCategory" 
+            data-category="all">全部</view>
+      <view class="category-item {{currentCategory === 'planting' ? 'active' : ''}}" 
+            bindtap="switchCategory" 
+            data-category="planting">种植经验</view>
+      <view class="category-item {{currentCategory === 'breeding' ? 'active' : ''}}" 
+            bindtap="switchCategory" 
+            data-category="breeding">养殖技术</view>
+      <view class="category-item {{currentCategory === 'processing' ? 'active' : ''}}" 
+            bindtap="switchCategory" 
+            data-category="processing">农产加工</view>
+    </view>
+  </scroll-view>
+
+  <!-- 故事列表 -->
+  <view class="story-grid">
+    <view class="story-item" wx:for="{{stories}}" wx:key="id" bindtap="viewStory" data-id="{{item.id}}">
+      <image src="{{item.image}}" mode="aspectFill"></image>
+      <view class="story-info">
+        <text class="farmer-name">{{item.farmerName}}</text>
+        <text class="story-title">{{item.title}}</text>
+        <view class="story-meta">
+          <text class="views">{{item.views}}次浏览</text>
+          <text class="date">{{item.date}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="loading-more" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 没有更多数据 -->
+  <view class="no-more" wx:if="{{noMore}}">
+    <text>没有更多内容了</text>
+  </view>
+</view> 

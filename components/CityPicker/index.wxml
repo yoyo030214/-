@@ -1,0 +1,54 @@
+<view class="city-picker" wx:if="{{show}}">
+  <view class="mask" bindtap="onClose"></view>
+  <view class="content">
+    <view class="header">
+      <view class="title">选择城市</view>
+      <view class="close" bindtap="onClose">×</view>
+    </view>
+    
+    <view class="search-box">
+      <input 
+        type="text" 
+        placeholder="搜索城市" 
+        bindinput="onSearch"
+        value="{{searchValue}}"
+      />
+    </view>
+
+    <scroll-view scroll-y class="city-list">
+      <block wx:if="{{searchValue && searchResults.length}}">
+        <view class="search-results">
+          <view class="section-title">搜索结果</view>
+          <view class="city-grid">
+            <view 
+              class="city-item" 
+              wx:for="{{searchResults}}" 
+              wx:key="*this"
+              data-city="{{item}}"
+              bindtap="onCityTap"
+            >{{item}}</view>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view 
+          class="city-group" 
+          wx:for="{{cityGroups}}" 
+          wx:key="title"
+          wx:for-item="group"
+        >
+          <view class="section-title">{{group.title}}</view>
+          <view class="city-grid">
+            <view 
+              class="city-item" 
+              wx:for="{{group.cities}}" 
+              wx:key="*this"
+              data-city="{{item}}"
+              bindtap="onCityTap"
+            >{{item}}</view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+</view> 

@@ -1,0 +1,100 @@
+<!--pages/favorites/favorites.wxml-->
+<view class="container favorites-container">
+  <view class="favorites-header">
+    <text class="header-title">我的收藏</text>
+    <text class="header-subtitle">您收藏的农产品都在这里</text>
+  </view>
+
+  <!-- 收藏列表 -->
+  <scroll-view 
+    scroll-y 
+    class="favorites-list"
+    enable-pull-refresh
+    bindscrolltolower="onReachBottom"
+  >
+    <view class="favorite-item" wx:for="{{favoritesList}}" wx:key="id" data-id="{{item.id}}" bindtouchstart="touchStart" bindtouchend="touchEnd">
+      <view class="checkbox-wrapper" catchtap="onSelectItem" data-id="{{item.id}}">
+        <view class="checkbox {{selectedItems.includes(item.id) ? 'checked' : ''}}">
+          <icon wx:if="{{selectedItems.includes(item.id)}}" type="success" size="16" color="#1aad19"/>
+        </view>
+      </view>
+      <view class="product-info" bindtap="onViewProduct" data-id="{{item.productId}}">
+        <image class="product-image" src="{{item.image || '/images/default_product.webp'}}" mode="aspectFill" lazy-load></image>
+        <view class="product-detail">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-spec">{{item.spec}}</view>
+          <view class="product-price">
+            <text class="price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+          <view class="product-tags">
+            <view class="product-origin" wx:if="{{item.origin}}">
+              <text class="origin-text">产地: {{item.origin}}</text>
+            </view>
+            <view class="product-tag" wx:if="{{item.isOrganic}}">有机</view>
+            <view class="product-tag" wx:if="{{item.isFresh}}">新鲜</view>
+          </view>
+        </view>
+      </view>
+      <view class="product-actions">
+        <button class="btn-cancel" bindtap="onCancelFavorite" data-id="{{item.id}}">
+          <text class="btn-icon">×</text> 取消收藏
+        </button>
+        <button class="btn-cart" bindtap="onAddToCart" data-id="{{item.productId}}" data-item="{{item}}" data-index="{{index}}">
+          <text class="btn-icon">+</text> 加入购物车
+        </button>
+      </view>
+      <!-- 左滑删除区域 -->
+      <view class="delete-area {{item.showDelete ? 'show' : ''}}" catchtap="onCancelFavorite" data-id="{{item.id}}">
+        <text>删除</text>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="loading-more" wx:if="{{loading}}">
+      <view class="loading-icon"></view>
+      <text>加载中...</text>
+    </view>
+
+    <!-- 没有更多 -->
+    <view class="no-more" wx:if="{{!hasMore && favoritesList.length > 0}}">
+      <text>没有更多收藏了</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && favoritesList.length === 0}}">
+      <image src="/images/default_product.webp" mode="aspectFit"></image>
+      <text>暂无收藏商品</text>
+      <view class="empty-tips">您还没有收藏任何农产品</view>
+      <button class="btn-shopping" bindtap="onGoShopping">去逛逛</button>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作区 -->
+  <view class="footer" wx:if="{{favoritesList.length > 0}}">
+    <view class="footer-left">
+      <view class="checkbox-wrapper" catchtap="onSelectAll">
+        <view class="checkbox {{selectAll ? 'checked' : ''}}">
+          <icon wx:if="{{selectAll}}" type="success" size="16" color="#1aad19"/>
+        </view>
+        <text>全选</text>
+      </view>
+    </view>
+    <view class="footer-right">
+      <button class="btn-clear" bindtap="onClearFavorites">清空收藏</button>
+      <button class="btn-batch-add" bindtap="onBatchAddToCart" disabled="{{selectedItems.length === 0}}">
+        批量加入购物车 <text wx:if="{{selectedItems.length > 0}}">({{selectedItems.length}})</text>
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 使用购物车动画组件 -->
+<cart-animation
+  show="{{showCartAnimation}}"
+  startX="{{cartAnimationStart.x}}"
+  startY="{{cartAnimationStart.y}}"
+  endX="{{cartAnimationEnd.x}}"
+  endY="{{cartAnimationEnd.y}}"
+  bind:animationend="onCartAnimationEnd"
+></cart-animation>

@@ -1,0 +1,129 @@
+<!--天气预报页面-->
+<view class="container">
+  <!-- 主要天气内容 -->
+  <view class="weather-content">
+    <!-- 顶部区域 -->
+    <view class="header">
+      <view class="location" bindtap="showCityPicker">
+        <image class="location-icon" src="/images/icons/location.svg" mode="aspectFit"></image>
+        <view class="city-name">{{city}}</view>
+        <view class="update-time">{{updateTime}} 更新</view>
+      </view>
+      <view class="refresh {{loading ? 'loading' : ''}}" bindtap="refreshWeather">
+        <image src="/images/icons/refresh.svg" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <!-- 当前天气 -->
+    <view class="current-weather">
+      <view class="temp-wrap">
+        <text class="temp">{{temperature}}</text>
+        <text class="degree">°</text>
+      </view>
+      <view class="weather-desc">{{weatherDesc}}</view>
+      <image class="weather-icon" src="/images/weather/{{weatherIcon}}.svg" mode="aspectFit"></image>
+    </view>
+
+    <!-- 天气详情 -->
+    <view class="weather-details">
+      <view class="detail-item">
+        <image src="/images/icons/humidity.svg" mode="aspectFit"></image>
+        <text class="label">湿度</text>
+        <text class="value">{{humidity}}%</text>
+      </view>
+      <view class="detail-item">
+        <image src="/images/icons/wind.svg" mode="aspectFit"></image>
+        <text class="label">风速</text>
+        <text class="value">{{windLevel}}级</text>
+      </view>
+      <view class="detail-item">
+        <image src="/images/icons/pressure.svg" mode="aspectFit"></image>
+        <text class="label">气压</text>
+        <text class="value">{{pressure}}hPa</text>
+      </view>
+      <view class="detail-item">
+        <image src="/images/icons/visibility.svg" mode="aspectFit"></image>
+        <text class="label">能见度</text>
+        <text class="value">{{visibility}}km</text>
+      </view>
+    </view>
+
+    <!-- 24小时预报 -->
+    <view class="forecast-section">
+      <view class="section-title">24小时预报</view>
+      <scroll-view class="hourly-forecast" scroll-x="true">
+        <view class="forecast-list">
+          <view class="forecast-item" wx:for="{{weatherData.hourly}}" wx:key="time">
+            <text class="time">{{item.time}}</text>
+            <image class="forecast-icon" src="/images/temp/panda.webp" mode="aspectFit"></image>
+            <text class="forecast-temp">{{item.temp}}°</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 7天预报 -->
+    <view class="forecast-section">
+      <view class="section-title">7天预报</view>
+      <view class="daily-forecast">
+        <view class="daily-item" wx:for="{{weatherData.daily}}" wx:key="date">
+          <text class="date">{{item.date}}</text>
+          <image class="forecast-icon" src="/images/temp/panda.webp" mode="aspectFit"></image>
+          <view class="temp-range">
+            <text class="max">{{item.maxTemp}}°</text>
+            <text class="divider">/</text>
+            <text class="min">{{item.minTemp}}°</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 生活指数 -->
+    <view class="forecast-section">
+      <view class="section-title">生活指数</view>
+      <view class="indices-grid">
+        <view class="index-item" wx:for="{{weatherData.indices}}" wx:key="name">
+          <image src="/images/temp/panda.webp" mode="aspectFit"></image>
+          <text class="index-name">{{item.name}}</text>
+          <text class="index-value">{{item.value}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 农业气象 -->
+    <view class="forecast-section">
+      <view class="section-title">农业气象</view>
+      <view class="agro-info">
+        <view class="agro-item" wx:for="{{weatherData.agroMet}}" wx:key="type">
+          <view class="agro-header">
+            <image src="/images/temp/panda.webp" mode="aspectFit"></image>
+            <text>{{item.type}}</text>
+          </view>
+          <view class="agro-value">{{item.value}}</view>
+          <view class="agro-desc">{{item.description}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载中遮罩 -->
+  <view class="loading-mask" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 网络错误提示 -->
+  <view class="error-mask" wx:if="{{error}}">
+    <image src="/images/temp/panda.webp" mode="aspectFit"></image>
+    <text class="error-title">{{error.title}}</text>
+    <text class="error-desc">{{error.message}}</text>
+    <button class="retry-btn" bindtap="refreshWeather">重试</button>
+  </view>
+
+  <!-- 城市选择器组件 -->
+  <city-picker 
+    show="{{showCityPicker}}"
+    bind:citySelect="handleCitySelect"
+    bind:close="hideCityPicker">
+  </city-picker>
+</view> 

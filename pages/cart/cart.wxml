@@ -1,0 +1,59 @@
+<view class="container">
+  <!-- 购物车列表 -->
+  <view class="cart-list" wx:if="{{cartList.length > 0}}">
+    <view class="cart-item" wx:for="{{cartList}}" wx:key="id">
+      <!-- 选择框 -->
+      <view class="checkbox" bindtap="onSelectItem" data-index="{{index}}">
+        <image src="{{item.selected ? '/images/selected.png' : '/images/unselected.png'}}" mode="aspectFit"></image>
+      </view>
+
+      <!-- 商品信息 -->
+      <view class="product-info">
+        <image class="product-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="product-detail">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-spec">{{item.spec}}</view>
+          <view class="product-price">
+            <text class="price">¥{{item.price}}</text>
+            <view class="quantity-control">
+              <view class="btn-minus {{item.quantity <= 1 ? 'disabled' : ''}}" bindtap="onQuantityChange" data-index="{{index}}" data-type="minus">-</view>
+              <input type="number" class="quantity-input" value="{{item.quantity}}" disabled />
+              <view class="btn-plus {{item.quantity >= item.stock ? 'disabled' : ''}}" bindtap="onQuantityChange" data-index="{{index}}" data-type="plus">+</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 删除按钮 -->
+      <view class="delete-btn" bindtap="onDeleteItem" data-index="{{index}}">
+        <image src="/images/delete.png" mode="aspectFit"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空购物车 -->
+  <view class="empty-cart" wx:else>
+    <image src="/images/empty-cart.png" mode="aspectFit"></image>
+    <text>购物车是空的</text>
+    <button class="btn-shopping" bindtap="onGoShopping">去逛逛</button>
+  </view>
+
+  <!-- 底部结算栏 -->
+  <view class="footer" wx:if="{{cartList.length > 0}}">
+    <view class="select-all" bindtap="onSelectAll">
+      <image src="{{selectedAll ? '/images/selected.png' : '/images/unselected.png'}}" mode="aspectFit"></image>
+      <text>全选</text>
+    </view>
+    <view class="total-info">
+      <view class="total-price">
+        <text>合计：</text>
+        <text class="price">¥{{totalPrice}}</text>
+      </view>
+      <view class="total-count">共{{totalCount}}件商品</view>
+    </view>
+    <view class="action-buttons">
+      <button class="btn-clear" bindtap="onClearCart">清空</button>
+      <button class="btn-checkout" bindtap="onCheckout">结算</button>
+    </view>
+  </view>
+</view> 

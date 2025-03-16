@@ -1,0 +1,53 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input type="text" placeholder="搜索商品" bindinput="onSearch" />
+  </view>
+
+  <!-- 分类选择器 -->
+  <scroll-view scroll-x class="category-scroll">
+    <view class="category-list">
+      <view class="category-item {{currentCategory === 'all' ? 'active' : ''}}" 
+            bindtap="filterByCategory" 
+            data-category="all">
+        全部
+      </view>
+      <view class="category-item {{currentCategory === item.id ? 'active' : ''}}" 
+            wx:for="{{categories}}" 
+            wx:key="id"
+            bindtap="filterByCategory" 
+            data-category="{{item.id}}">
+        {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 商品列表 -->
+  <view class="product-list">
+    <view class="loading" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+    
+    <view class="product-grid" wx:else>
+      <view class="product-item" 
+            wx:for="{{products}}" 
+            wx:key="id"
+            bindtap="goToProductDetail" 
+            data-id="{{item.id}}">
+        <image src="/images/temp/panda.webp" mode="aspectFill" class="product-image"/>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-price">¥{{item.price}}/{{item.unit}}</text>
+          <text class="product-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{products.length === 0 && !loading}}">
+    <image src="/images/temp/panda.webp" mode="aspectFit" />
+    <text>暂无相关商品</text>
+  </view>
+</view> 

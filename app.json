@@ -1,22 +1,70 @@
 {
   "pages": [
-    "pages/index/home",
-    "pages/product/product"
+    "pages/index/index",
+    "pages/weather/weather",
+    "pages/policy/policy",
+    "pages/policy/detail",
+    "pages/user/user",
+    "pages/developing/developing",
+    "pages/stories/stories",
+    "pages/category/category",
+    "pages/cart/cart",
+    "pages/order/list",
+    "pages/favorites/favorites",
+    "pages/address/list",
+    "pages/coupon/list/list",
+    "pages/customer-service/customer-service",
+    "pages/more/more",
+    "pages/local-specialties-map/index"
   ],
   "window": {
-    "navigationBarTitleText": "楚农优品",  // 
-    "backgroundColor": "#f5f5f5"       // 
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "楚农电商",
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true
   },
-  "tabBar": {                        // 
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#07c160",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/home",
+        "pagePath": "pages/index/index",
         "text": "首页"
       },
       {
-        "pagePath": "pages/product/product",
-        "text": "商品"
+        "pagePath": "pages/weather/weather",
+        "text": "天气"
+      },
+      {
+        "pagePath": "pages/policy/policy",
+        "text": "政策"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我"
       }
     ]
-  }
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于获取当地天气"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "usingComponents": {
+    "city-picker": "/components/CityPicker/index"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
 }

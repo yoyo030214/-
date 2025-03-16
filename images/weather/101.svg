@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 太阳 -->
+    <circle cx="8" cy="8" r="3" fill="#FFD700"/>
+    <!-- 云 -->
+    <path d="M7 11C7 9.34315 8.34315 8 10 8H16C17.6569 8 19 9.34315 19 11V11C19 12.6569 17.6569 14 16 14H10C8.34315 14 7 12.6569 7 11V11Z" fill="white" stroke="white" stroke-width="2"/>
+</svg> 

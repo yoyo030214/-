@@ -1,0 +1,52 @@
+{
+  "name": "mall-miniprogram",
+  "version": "1.0.0",
+  "description": "微信小程序商城项目",
+  "main": "app.js",
+  "scripts": {
+    "dev": "npm run build:dev",
+    "build:dev": "cross-env NODE_ENV=development webpack --config webpack.config.js",
+    "build:prod": "cross-env NODE_ENV=production webpack --config webpack.config.js",
+    "lint": "eslint --ext .js,.wxml,.wxss .",
+    "lint:fix": "eslint --ext .js,.wxml,.wxss . --fix",
+    "optimize-images": "node optimize-images.js",
+    "clean-unused": "node clean-unused.js",
+    "compress-images": "node image-compress.js"
+  },
+  "keywords": [
+    "微信小程序",
+    "商城",
+    "购物"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "dayjs": "^1.11.7",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
+    "babel-loader": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.8.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "glob": "^8.1.0",
+    "imagemin": "^8.0.1",
+    "imagemin-jpegtran": "^7.0.0",
+    "imagemin-pngquant": "^9.0.2",
+    "imagemin-svgo": "^10.0.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "prettier": "^2.8.8",
+    "sharp": "^0.33.2",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.1"
+  },
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.0.0"
+  }
+} 

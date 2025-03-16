@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 花朵 (春) -->
+    <path d="M6 6C6 6 7 5 8 6C9 7 8 8 8 8C8 8 7 9 6 8C5 7 6 6 6 6Z" fill="black"/>
+    <!-- 叶子 (秋) -->
+    <path d="M16 6C16 6 17 7 16 8C15 9 14 8 14 8C14 8 13 7 14 6C15 5 16 6 16 6Z" fill="black"/>
+    <!-- 太阳 (夏) -->
+    <circle cx="12" cy="14" r="2" fill="black"/>
+    <path d="M12 10V11M12 17V18M9 14H8M16 14H15M10 12L9 11M14 16L15 17M14 12L15 11M10 16L9 17" stroke="black" stroke-width="1"/>
+    <!-- 雪花 (冬) -->
+    <path d="M18 12L19 11M18 12L19 13M18 12H20M16 12L15 11M16 12L15 13M16 12H14" stroke="black" stroke-width="1"/>
+</svg> 

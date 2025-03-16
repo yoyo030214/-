@@ -1,0 +1,16 @@
+<!-- components/smart-image/smart-image.wxml -->
+<view class="smart-image-container" style="width: {{width}}; height: {{height}}; border-radius: {{radius}};" bindtap="onImageTap">
+  <image 
+    class="smart-image {{error ? 'error' : ''}} {{loading ? 'loading' : 'loaded'}}"
+    src="{{finalSrc}}"
+    mode="{{mode}}"
+    lazy-load="{{lazyLoad}}"
+    bindload="onImageLoad"
+    binderror="onImageError"
+    style="width: 100%; height: 100%; border-radius: {{radius}};"
+  ></image>
+  
+  <view class="loading-indicator" wx:if="{{loading && showLoading}}">
+    <view class="loading-spinner"></view>
+  </view>
+</view> 

@@ -1,5 +1,9 @@
 {
   "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
-  }
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "smart-image": "/components/smart-image/smart-image"
+  },
+  "navigationBarTitleText": "楚农优品",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

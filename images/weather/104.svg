@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 云 -->
+    <path d="M6 12C6 10.3431 7.34315 9 9 9H15C16.6569 9 18 10.3431 18 12V12C18 13.6569 16.6569 15 15 15H9C7.34315 15 6 13.6569 6 12V12Z" fill="#CCCCCC" stroke="#CCCCCC" stroke-width="2"/>
+    <path d="M8 10C8 8.34315 9.34315 7 11 7H17C18.6569 7 20 8.34315 20 10V10C20 11.6569 18.6569 13 17 13H11C9.34315 13 8 11.6569 8 10V10Z" fill="#CCCCCC" stroke="#CCCCCC" stroke-width="2"/>
+</svg> 

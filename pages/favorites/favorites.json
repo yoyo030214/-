@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "我的收藏",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f5f5f5",
+  "usingComponents": {
+    "cart-animation": "/components/cart-animation/cart-animation"
+  }
+}

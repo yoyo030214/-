@@ -1,0 +1,8 @@
+<!--components/cart-animation/cart-animation.wxml-->
+<view class="cart-animation-container" wx:if="{{show || isAnimating}}">
+  <view 
+    class="animation-ball" 
+    style="left: {{left}}px; top: {{top}}px; background-color: {{color}}; opacity: {{opacity}}; transform: scale({{scale}});" 
+    animation="{{animationData}}"
+  ></view>
+</view> 

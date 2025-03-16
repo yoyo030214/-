@@ -1,0 +1,140 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+/* 倒计时 */
+.countdown {
+  background: #07c160;
+  padding: 30rpx;
+  text-align: center;
+  color: #fff;
+}
+
+.countdown text {
+  font-size: 28rpx;
+  margin-right: 20rpx;
+}
+
+.countdown .time {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 订单信息 */
+.order-info {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.amount {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 20rpx;
+}
+
+.amount .label {
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 20rpx;
+}
+
+.amount .value {
+  font-size: 48rpx;
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 支付方式 */
+.payment-methods {
+  background: #fff;
+  padding: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 30rpx;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.payment-method:last-child {
+  border-bottom: none;
+}
+
+.payment-method image {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+}
+
+.payment-method text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.payment-method .check {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 0;
+}
+
+.payment-method.active {
+  color: #07c160;
+}
+
+/* 底部按钮 */
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.total {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.total .price {
+  font-size: 36rpx;
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.btn-pay {
+  width: 240rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  background: #07c160;
+  color: #fff;
+  font-size: 32rpx;
+  border-radius: 40rpx;
+  margin-left: 20rpx;
+}
+
+.btn-pay.loading {
+  opacity: 0.7;
+} 

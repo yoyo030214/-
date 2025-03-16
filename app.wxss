@@ -1,12 +1,341 @@
-/* 正确颜色规范 */
-.primary-color: #1aad19; /* 主色调：农绿 */
-.secondary-color: #ffffff; /* 辅助色：纯白*/
+/* 全局样式表 */
+.primary-color {
+  color: #1aad19;
+}
+
+.secondary-color {
+  color: #ffffff;
+}
 
 .container {
-  display: flex;          /* ✔️ 修复属性名 */
-  flex-direction: column;   /* 建议添加纵向布局 */
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 20rpx 0;
   box-sizing: border-box;
+}
+
+/* 商品卡片样式（移除阴影属性） */
+.product-card {
+  background-color: #ffffff;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+  padding: 15rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.product-card::before {
+  content: "";
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: #f5f5f5;
+  border-radius: 12rpx;
+  z-index: -1;
+}
+
+.product-card image {
+  width: 100%;
+  height: 200rpx;
+  object-fit: cover;
+  border-radius: 4rpx;
+}
+
+.product-name {
+  font-size: 18rpx;
+  font-weight: bold;
+  margin-top: 10rpx;
+  color: #1aad19;
+}
+
+.product-price {
+  font-size: 16rpx;
+  color: #ff7a45;
+  margin-top: 5rpx;
+}
+
+/* 底部导航栏样式 */
+.tab-bar {
+  display: flex;
+  height: 100rpx;
+  background-color: #f5f5f5;
+  border-top: 1rpx solid #eeeeee;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.tab-item active {
+  color: #1aad19;
+  border-bottom: 4rpx solid #1aad19;
+}
+
+/* 全局样式 */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+    Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+    sans-serif;
+  font-size: 28rpx;
+  color: #333;
+  background: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 清除按钮默认样式 */
+button {
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+  line-height: inherit;
+}
+
+button::after {
+  border: none;
+}
+
+/* 清除导航栏默认样式 */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #fff;
+  padding-top: env(safe-area-inset-top);
+}
+
+.nav-bar-content {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.nav-bar-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.nav-bar-back {
+  position: absolute;
+  left: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 20rpx;
+}
+
+.nav-bar-back image {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+/* 通用容器 */
+.container {
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 通用列表 */
+.list {
+  background: #fff;
+  margin-bottom: 20rpx;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-item-label {
+  width: 160rpx;
+  color: #666;
+}
+
+.list-item-value {
+  flex: 1;
+  color: #333;
+}
+
+/* 通用按钮 */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  font-size: 32rpx;
+  border-radius: 40rpx;
+}
+
+.btn-primary {
+  background: #07c160;
+  color: #fff;
+}
+
+.btn-default {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.btn-danger {
+  background: #ff4d4f;
+  color: #fff;
+}
+
+/* 通用图片 */
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-cover {
+  object-fit: cover;
+}
+
+.image-contain {
+  object-fit: contain;
+}
+
+/* 通用文本 */
+.text-primary {
+  color: #07c160;
+}
+
+.text-danger {
+  color: #ff4d4f;
+}
+
+.text-gray {
+  color: #999;
+}
+
+.text-small {
+  font-size: 24rpx;
+}
+
+.text-large {
+  font-size: 32rpx;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+/* 通用间距 */
+.mt-10 { margin-top: 10rpx; }
+.mt-20 { margin-top: 20rpx; }
+.mt-30 { margin-top: 30rpx; }
+.mb-10 { margin-bottom: 10rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.mb-30 { margin-bottom: 30rpx; }
+.ml-10 { margin-left: 10rpx; }
+.ml-20 { margin-left: 20rpx; }
+.ml-30 { margin-left: 30rpx; }
+.mr-10 { margin-right: 10rpx; }
+.mr-20 { margin-right: 20rpx; }
+.mr-30 { margin-right: 30rpx; }
+
+/* 通用flex布局 */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+/* 通用动画 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-in-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@font-face {
+  font-family: "iconfont";
+  src: url('data:font/woff2;charset=utf-8;base64,d09GMgABAAAAAAKcAAsAAAAABkQAAAJQAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHFQGYACCcApcdgE2AiQDCAsGAAQgBYRtBzAbpQXInpo8KVKhQgUAQEDx8P1+zp03b/6qJkkUbZJJ0iQxJEgkCZ1EhVAZhVDp5P4Df/ye3H3XxqhimqDZPRGZJVs9b3H04r4E4QnlCSXC4XC4hAX8/8/l9FoX0Nw2QFRRRRc94L4ATkXvAXpLdIAc+A/jLtETeB4CeJSkGq1tXT2YZGDPBMjcmdMnMVXkYEwwSSgVa4bkBQqT3OoeAc/934t/UmGSKBT2xIGz7W2Y+Cn+VENGrB1RBwjBcXYFxSqggLSG5klVglhVglc1qWA/1eCn2j4VYPT+5YlCrR4wDZhLT/BTDYeAgoEeIBUAyUCyLW0VebMzrBqp3rx+5vT09o2L4wd3b0TVuGV+3/6jh+7OxY1ZeePw/oPXwq9v3zi5/+jR/f/CACYmwsaGwvr6+3N1lcA3ovxe5RmA94rnr+/hT+3lB+9/yh++fwLwY+CnGgD4v9wbAPDjYO0bVcC3oobCZ1A7QwJ4pEkAk0xS7Mq1hP/wNsDDI/6NvUqqYFAwKUPBpBqpYDUoGNSBklEzeFQy7+mBKXFEsoAl0wCEaUcQTXuDwrRrUsF+Q8GiP5RMh4JHzyHpmYEZcPlYxQgVaEP/QZTSGeqXlvj8hrY9Yc0ssvyCNGkJ47iGPXxhj+yxprwsQUxpgVt0HnkeYWjTQtpym9K80hlK6QzTpyUkAa0B2gP0DgiJ0jPon2otn98GbfYIlmkmEr+AmKiWYHh0VR+/wrzUPax0eWIRiCVZgLPQeYjHRTCozZ6CaFbOVorGK52CUm0ZQ/XVFZ7xDHiYb9sjRY4SVejL97kVzdKZaa0GAAA=') format('woff2');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-down:before {
+  content: "\e665";
 }

@@ -1,0 +1,132 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="page-title">{{pageTitle || '蔬果生鲜'}}</view>
+  </view>
+
+  <!-- 分类导航 - 带图标的版本 -->
+  <view class="category-nav" wx:if="{{showCategoryIcons}}">
+    <scroll-view scroll-x="true" class="category-scroll">
+      <view class="category-scroll-content">
+        <block wx:for="{{categories}}" wx:key="id">
+          <view 
+            class="category-card {{item.active ? 'active' : ''}}" 
+            bindtap="switchCategory" 
+            data-category="{{item.name}}"
+          >
+            <image 
+              class="category-icon" 
+              src="{{item.icon}}" 
+              mode="aspectFit"
+              lazy-load="true"
+              binderror="handleIconError"
+              data-index="{{index}}"
+            ></image>
+            <view class="category-name">{{item.name}}</view>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 分类导航 - 文字版本 -->
+  <view class="category-nav" wx:else>
+    <scroll-view scroll-x="true" class="category-scroll">
+      <view class="category-scroll-content">
+        <block wx:for="{{categories}}" wx:key="id">
+          <view 
+            class="category-item {{item.active ? 'active' : ''}}" 
+            bindtap="switchCategory" 
+            data-category="{{item.name}}"
+          >
+            {{item.name}}
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 切换图标按钮 -->
+  <view class="toggle-icons-btn" bindtap="toggleCategoryIcons">
+    {{showCategoryIcons ? '简洁视图' : '图标视图'}}
+  </view>
+  
+  <!-- 排序栏 -->
+  <view class="sort-bar">
+    <view class="category-info">{{currentCategory === '全部' ? '全部农产品' : currentCategory + '类农产品'}}</view>
+    <view class="sort-btn" bindtap="showSort">
+      <text>{{currentSort}}</text>
+      <text class="sort-icon">▼</text>
+    </view>
+    
+    <!-- 排序选项弹出层 -->
+    <view class="sort-options {{showSortOptions ? 'show' : ''}}" wx:if="{{showSortOptions}}">
+      <view class="sort-mask" bindtap="hideSort"></view>
+      <view class="sort-list">
+        <block wx:for="{{sortOptions}}" wx:key="id">
+          <view 
+            class="sort-option {{item.active ? 'active' : ''}}" 
+            bindtap="selectSort" 
+            data-sort="{{item.name}}"
+          >
+            {{item.name}}
+            <text class="check-icon" wx:if="{{item.active}}">✓</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 产品列表 -->
+  <view class="product-list" wx:if="{{!isLoading}}">
+    <block wx:for="{{products}}" wx:key="id">
+      <view class="product-item" bindtap="viewProductDetail" data-id="{{item.id}}">
+        <image 
+          class="product-image" 
+          src="{{item.image}}" 
+          mode="aspectFill" 
+          lazy-load="true"
+          binderror="handleImageError"
+          data-index="{{index}}"
+        />
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-category">{{item.category}}类</view>
+          <view class="product-price">
+            <view class="price-item">
+              <text class="price-label">批发价：</text>
+              <text class="price-value">¥{{item.wholesalePrice}}</text>
+              <text class="price-unit">/{{item.unit}}</text>
+            </view>
+            <view class="price-item">
+              <text class="price-label">市场价：</text>
+              <text class="price-value market">¥{{item.marketPrice}}</text>
+              <text class="price-unit">/{{item.unit}}</text>
+            </view>
+          </view>
+          <view class="product-sales">销量: {{item.sales}}{{item.unit}}</view>
+        </view>
+        <view class="cart-btn" catchtap="addToCart" data-id="{{item.id}}">
+          <text class="cart-icon">+</text>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!isLoading && products.length === 0}}">
+    <view class="empty-icon">🔍</view>
+    <view class="empty-text">暂无相关产品</view>
+  </view>
+  
+  <!-- 底部提示 -->
+  <view class="footer-tip" wx:if="{{!isLoading && products.length > 0}}">
+    -- 已经到底啦 --
+  </view>
+</view> 

@@ -1,0 +1,142 @@
+.developing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+
+.developing-icon {
+  font-size: 120rpx;
+  margin-bottom: 40rpx;
+}
+
+.developing-text {
+  font-size: 36rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.developing-desc {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.container {
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.home-btn {
+  font-size: 28rpx;
+  color: #07c160;
+  padding: 10rpx 20rpx;
+  border: 1px solid #07c160;
+  border-radius: 30rpx;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300rpx;
+}
+
+.loading {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #07c160;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 查看全部按钮 */
+.view-all-btn {
+  background: #07c160;
+  color: #fff;
+  font-size: 32rpx;
+  padding: 20rpx 0;
+  text-align: center;
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 10rpx rgba(7, 193, 96, 0.3);
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  background: #fff;
+  border-radius: 10rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.category-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+}
+
+.category-content {
+  flex: 1;
+}
+
+.category-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.category-desc {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.category-arrow {
+  font-size: 32rpx;
+  color: #ccc;
+  margin-left: 20rpx;
+}
+
+.footer-tip {
+  text-align: center;
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 40rpx;
+  padding: 20rpx 0;
+} 

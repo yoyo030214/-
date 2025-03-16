@@ -1,0 +1,76 @@
+/* 全局样式 */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+    Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+    sans-serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: #333;
+  background: #f8f8f8;
+}
+
+/* 常用flex布局 */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 常用间距 */
+.mt-10 { margin-top: 10rpx; }
+.mt-20 { margin-top: 20rpx; }
+.mt-30 { margin-top: 30rpx; }
+.mb-10 { margin-bottom: 10rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.mb-30 { margin-bottom: 30rpx; }
+.ml-10 { margin-left: 10rpx; }
+.ml-20 { margin-left: 20rpx; }
+.ml-30 { margin-left: 30rpx; }
+.mr-10 { margin-right: 10rpx; }
+.mr-20 { margin-right: 20rpx; }
+.mr-30 { margin-right: 30rpx; }
+
+/* 常用文字样式 */
+.text-primary { color: #07c160; }
+.text-warning { color: #ff976a; }
+.text-danger { color: #ee0a24; }
+.text-info { color: #909399; }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* 常用按钮样式 */
+.btn {
+  display: inline-block;
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.btn-primary {
+  background: #07c160;
+  color: #fff;
+}
+
+.btn-default {
+  background: #fff;
+  color: #333;
+  border: 1rpx solid #ddd;
+} 

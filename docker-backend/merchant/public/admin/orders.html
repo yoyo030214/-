@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单管理 - 农业应用商家管理后台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            transform: translateX(5px);
+        }
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .main-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .order-card {
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        .order-items {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        .navbar {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-outline-primary:hover {
+            box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+        }
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-white text-center mb-4">商家管理后台</h4>
+                <nav class="nav flex-column">
+                            <a class="nav-link" href="index.html">
+                        <i class="fas fa-home me-2"></i>首页
+                            </a>
+                            <a class="nav-link" href="products.html">
+                        <i class="fas fa-box me-2"></i>商品管理
+                            </a>
+                            <a class="nav-link active" href="orders.html">
+                        <i class="fas fa-shopping-cart me-2"></i>订单管理
+                            </a>
+                            <a class="nav-link" href="customers.html">
+                        <i class="fas fa-users me-2"></i>客户管理
+                            </a>
+                            <a class="nav-link" href="statistics.html">
+                        <i class="fas fa-chart-bar me-2"></i>数据统计
+                            </a>
+                            <a class="nav-link" href="settings.html">
+                        <i class="fas fa-cog me-2"></i>系统设置
+                            </a>
+            </nav>
+                </div>
+
+            <!-- 主要内容区 -->
+            <div class="col-md-10 main-content">
+                <!-- 顶部导航栏 -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                    <div class="container-fluid">
+                        <span class="navbar-brand"><i class="fas fa-shopping-cart me-2 text-primary"></i>订单管理</span>
+                        <div class="d-flex">
+                            <div class="dropdown me-3">
+                                <button class="btn btn-link position-relative text-dark" type="button" id="notificationDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        2
+                                    </span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end p-0" style="width: 300px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 10px; overflow: hidden;">
+                                    <div class="p-3 bg-light border-bottom">
+                                        <h6 class="mb-0">通知</h6>
+                    </div>
+                                    <div class="p-2">
+                                        <a href="#" class="dropdown-item p-2 rounded">
+                                            <div class="d-flex">
+                                                <div class="me-2"><i class="fas fa-info-circle text-info"></i></div>
+                                                <div>
+                                                    <div class="small fw-bold">系统升级通知</div>
+                                                    <div class="small text-muted">系统将于今晚22:00-23:00进行例行维护</div>
+                        </div>
+                    </div>
+                                        </a>
+                                        <a href="#" class="dropdown-item p-2 rounded">
+                                            <div class="d-flex">
+                                                <div class="me-2"><i class="fas fa-exclamation-triangle text-warning"></i></div>
+                                                <div>
+                                                    <div class="small fw-bold">待处理订单提醒</div>
+                                                    <div class="small text-muted">您有5个订单等待处理</div>
+                    </div>
+                </div>
+                                        </a>
+                            </div>
+                        </div>
+                    </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle text-dark" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 10px;">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2 text-primary"></i>个人信息</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-key me-2 text-warning"></i>修改密码</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2 text-danger"></i>退出登录</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- 筛选条件 -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-2">
+                                        <label for="orderStatusFilter" class="form-label small text-muted">订单状态</label>
+                                        <select class="form-select" id="orderStatusFilter">
+                                            <option value="">所有状态</option>
+                                            <option value="待付款">待付款</option>
+                                            <option value="待发货">待发货</option>
+                                            <option value="已发货">已发货</option>
+                                            <option value="已完成">已完成</option>
+                                            <option value="已取消">已取消</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label for="dateRangeFilter" class="form-label small text-muted">时间范围</label>
+                                        <select class="form-select" id="dateRangeFilter">
+                                            <option value="">全部时间</option>
+                                            <option value="today">今天</option>
+                                            <option value="yesterday">昨天</option>
+                                            <option value="thisWeek">本周</option>
+                                            <option value="lastWeek">上周</option>
+                                            <option value="thisMonth">本月</option>
+                                            <option value="lastMonth">上月</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label for="searchInput" class="form-label small text-muted">搜索订单号/客户名</label>
+                                        <input type="text" class="form-control" id="searchInput" placeholder="订单号或客户名">
+                                    </div>
+                                    <div class="col-md-3 mb-2 d-flex align-items-end">
+                                        <div class="d-grid w-100">
+                                            <button class="btn btn-primary" id="filterBtn">
+                                                <i class="fas fa-filter me-2"></i>筛选
+                                            </button>
+                            </div>
+                        </div>
+                    </div>
+                                <div class="row mt-2">
+                                    <div class="col-12 text-end">
+                                        <button class="btn btn-sm btn-outline-secondary" id="resetFilterBtn">
+                                            <i class="fas fa-redo me-1"></i>重置筛选
+                                        </button>
+                        </div>
+                    </div>
+                            </div>
+                        </div>
+                    </div>
+                            </div>
+
+                <!-- 订单摘要信息 -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="alert alert-light">
+                            <span>共找到 <strong id="orderCount">0</strong> 个订单</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 提示信息容器 -->
+                <div id="alertPlaceholder" class="alert-container"></div>
+
+                <!-- 订单列表 -->
+                <div id="orderList">
+                    <!-- 订单卡片将通过JavaScript动态加载 -->
+                </div>
+
+                <!-- 分页 -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center" id="pagination">
+                                <!-- 分页将通过JavaScript动态加载 -->
+                    </ul>
+                </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单详情模态框 -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailTitle">订单详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="orderDetailBody">
+                    <!-- 订单详情将通过JavaScript动态加载 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 检查登录状态
+        const token = localStorage.getItem('merchantToken');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+        
+        // 商家ID（从token中解析）
+        let merchantId;
+        try {
+            const tokenData = JSON.parse(atob(token.split('.')[1]));
+            merchantId = tokenData.id;
+        } catch (error) {
+            console.error('解析token错误:', error);
+        }
+        
+        // 全局变量
+        let currentPage = 1;
+        let totalPages = 1;
+        let pageSize = 8;
+        let orderData = [];
+        let currentFilters = {
+            status: '',
+            startDate: '',
+            endDate: '',
+            search: ''
+        };
+        
+        // 页面加载时获取订单数据
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOrders();
+            
+            // 添加事件监听器
+            document.getElementById('filterBtn').addEventListener('click', () => {
+                applyFilters();
+            });
+            
+            document.getElementById('searchInput').addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    applyFilters();
+                }
+            });
+            
+            document.getElementById('orderStatusFilter').addEventListener('change', () => {
+                applyFilters();
+            });
+            
+            document.getElementById('dateRangeFilter').addEventListener('change', () => {
+                applyFilters();
+            });
+            
+            document.getElementById('resetFilterBtn').addEventListener('click', () => {
+                resetFilters();
+            });
+        });
+        
+        // 应用筛选条件
+        function applyFilters() {
+            // 搜索值可能是客户名或订单号
+            currentFilters.search = document.getElementById('searchInput').value.trim();
+            currentFilters.status = document.getElementById('orderStatusFilter').value;
+            
+            // 处理日期范围
+            const dateRangeValue = document.getElementById('dateRangeFilter').value;
+            setDateRange(dateRangeValue);
+            
+            fetchOrders(1);
+        }
+        
+        // 重置筛选条件
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('orderStatusFilter').value = '';
+            document.getElementById('dateRangeFilter').value = '';
+            
+            currentFilters = {
+                status: '',
+                startDate: '',
+                endDate: '',
+                search: ''
+            };
+            
+            fetchOrders(1);
+        }
+        
+        // 设置日期范围
+        function setDateRange(rangeType) {
+            const now = new Date();
+            let startDate = '';
+            let endDate = now.toISOString().split('T')[0];  // 今天
+            
+            switch (rangeType) {
+                case 'today':
+                    startDate = endDate;
+                    break;
+                case 'yesterday':
+                    const yesterday = new Date(now);
+                    yesterday.setDate(now.getDate() - 1);
+                    startDate = yesterday.toISOString().split('T')[0];
+                    endDate = startDate;
+                    break;
+                case 'thisWeek':
+                    const thisWeekStart = new Date(now);
+                    thisWeekStart.setDate(now.getDate() - now.getDay());
+                    startDate = thisWeekStart.toISOString().split('T')[0];
+                    break;
+                case 'lastWeek':
+                    const lastWeekStart = new Date(now);
+                    lastWeekStart.setDate(now.getDate() - now.getDay() - 7);
+                    startDate = lastWeekStart.toISOString().split('T')[0];
+                    const lastWeekEnd = new Date(now);
+                    lastWeekEnd.setDate(now.getDate() - now.getDay() - 1);
+                    endDate = lastWeekEnd.toISOString().split('T')[0];
+                    break;
+                case 'thisMonth':
+                    const thisMonthStart = new Date(now);
+                    thisMonthStart.setDate(1);
+                    startDate = thisMonthStart.toISOString().split('T')[0];
+                    break;
+                case 'lastMonth':
+                    const lastMonthStart = new Date(now);
+                    lastMonthStart.setMonth(now.getMonth() - 1);
+                    lastMonthStart.setDate(1);
+                    startDate = lastMonthStart.toISOString().split('T')[0];
+                    const lastMonthEnd = new Date(now);
+                    lastMonthEnd.setDate(0);
+                    endDate = lastMonthEnd.toISOString().split('T')[0];
+                    break;
+                default:
+                    startDate = '';
+                    endDate = '';
+            }
+            
+            currentFilters.startDate = startDate;
+            currentFilters.endDate = endDate;
+        }
+        
+        // 获取所有订单
+        async function fetchOrders(page = 1) {
+            try {
+                // 显示加载状态
+                document.getElementById('orderList').innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">加载订单数据...</p></div>';
+                
+                currentPage = page;
+                
+                // 构建查询参数
+                const queryParams = new URLSearchParams({
+                    page: currentPage,
+                    limit: pageSize
+                });
+                
+                if (currentFilters.status) queryParams.append('status', currentFilters.status);
+                if (currentFilters.startDate) queryParams.append('startDate', currentFilters.startDate);
+                if (currentFilters.endDate) queryParams.append('endDate', currentFilters.endDate);
+                if (currentFilters.search) queryParams.append('search', currentFilters.search);
+                
+                // 调用后端API获取订单列表
+                const response = await fetch(`/api/merchant/orders?${queryParams.toString()}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    orderData = data.orders;
+                    totalPages = data.pagination.totalPages;
+                    
+                    // 更新订单计数
+                    document.getElementById('orderCount').textContent = data.count || 0;
+                    
+                    // 渲染订单列表
+                    renderOrders(orderData);
+                    
+                    // 渲染分页
+                    renderPagination(currentPage, totalPages);
+                } else {
+                    throw new Error(data.message || '获取订单失败');
+                }
+            } catch (error) {
+                console.error('获取订单列表错误:', error);
+                document.getElementById('orderList').innerHTML = '<div class="text-center py-5"><div class="text-danger"><i class="fas fa-exclamation-circle fa-2x"></i><p class="mt-2">获取订单失败: ' + error.message + '</p></div></div>';
+            }
+        }
+        
+        // 渲染订单列表
+        function renderOrders(orders) {
+            const orderList = document.getElementById('orderList');
+            
+            if (orders.length === 0) {
+                orderList.innerHTML = '<div class="text-center py-5"><div class="text-muted"><i class="fas fa-search fa-2x"></i><p class="mt-2">没有找到符合条件的订单</p></div></div>';
+                return;
+            }
+            
+            orderList.innerHTML = '';
+            
+            orders.forEach(order => {
+                const orderDate = new Date(order.orderDate).toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const statusClass = getStatusClass(order.status);
+                const statusBadge = `<span class="badge ${statusClass}">${order.status}</span>`;
+                
+                const paymentStatusClass = getPaymentStatusClass(order.paymentStatus);
+                const paymentStatusBadge = `<span class="badge ${paymentStatusClass}">${order.paymentStatus}</span>`;
+                
+                const orderCard = document.createElement('div');
+                orderCard.className = 'card order-card mb-3';
+                orderCard.innerHTML = `
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">订单 #${order.orderNumber}</h5>
+                            <small class="text-muted">下单时间: ${orderDate}</small>
+                        </div>
+                        <div>
+                            ${statusBadge}
+                            ${paymentStatusBadge}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="row mb-3">
+                            <div class="col-md-4">
+                                <p class="mb-1"><i class="fas fa-user me-2 text-primary"></i>客户: ${order.customerName || '未知客户'}</p>
+                                <p class="mb-1"><i class="fas fa-phone me-2 text-info"></i>联系电话: ${order.customerPhone || '无'}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><i class="fas fa-map-marker-alt me-2 text-danger"></i>配送地址: ${order.shippingAddress || '无'}</p>
+                                <p class="mb-1"><i class="fas fa-truck me-2 text-success"></i>配送方式: ${order.shippingMethod || '普通快递'}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><i class="fas fa-credit-card me-2 text-warning"></i>支付方式: ${order.paymentMethod || '未知'}</p>
+                                <p class="mb-1"><i class="fas fa-money-bill-wave me-2 text-success"></i>订单金额: <span class="text-primary fw-bold">¥${order.totalAmount.toFixed(2)}</span></p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="viewOrderDetail('${order.id}')"><i class="fas fa-eye me-1"></i>查看详情</button>
+                            ${getActionButtons(order)}
+                        </div>
+                    </div>
+                `;
+                
+                orderList.appendChild(orderCard);
+            });
+        }
+        
+        // 根据订单状态获取可用的操作按钮
+        function getActionButtons(order) {
+            let buttons = '';
+            
+            switch (order.status) {
+                case '待付款':
+                    buttons += `<button class="btn btn-sm btn-success me-2" onclick="updateOrderStatus('${order.id}', '已付款')"><i class="fas fa-check me-1"></i>确认付款</button>`;
+                    buttons += `<button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order.id}', '已取消')"><i class="fas fa-times me-1"></i>取消订单</button>`;
+                    break;
+                case '已付款':
+                    buttons += `<button class="btn btn-sm btn-primary me-2" onclick="updateOrderStatus('${order.id}', '处理中')"><i class="fas fa-box me-1"></i>开始处理</button>`;
+                    buttons += `<button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order.id}', '已取消')"><i class="fas fa-times me-1"></i>取消订单</button>`;
+                    break;
+                case '处理中':
+                    buttons += `<button class="btn btn-sm btn-info me-2" onclick="updateOrderStatus('${order.id}', '已发货')"><i class="fas fa-shipping-fast me-1"></i>确认发货</button>`;
+                    break;
+                case '已发货':
+                    buttons += `<button class="btn btn-sm btn-success me-2" onclick="updateOrderStatus('${order.id}', '已完成')"><i class="fas fa-check-circle me-1"></i>确认完成</button>`;
+                    break;
+                case '已完成':
+                    buttons += `<button class="btn btn-sm btn-secondary me-2" onclick="printOrder('${order.id}')"><i class="fas fa-print me-1"></i>打印订单</button>`;
+                    break;
+                case '已取消':
+                    buttons += `<button class="btn btn-sm btn-secondary" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash me-1"></i>删除订单</button>`;
+                    break;
+            }
+            
+            return buttons;
+        }
+        
+        // 渲染分页
+        function renderPagination(currentPage, totalPages) {
+            const paginationElement = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationElement.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchOrders(${currentPage - 1}); return false;">上一页</a>
+                </li>
+            `;
+            
+            const pagesToShow = 5;
+            const pagesToShowBefore = Math.floor(pagesToShow / 2);
+            const pagesToShowAfter = Math.ceil(pagesToShow / 2);
+            
+            let startPage = Math.max(currentPage - pagesToShowBefore, 1);
+            let endPage = Math.min(currentPage + pagesToShowAfter, totalPages);
+            
+            if (endPage - startPage < pagesToShow - 1) {
+                if (startPage === 1) {
+                    endPage = Math.min(pagesToShow, totalPages);
+                } else if (endPage === totalPages) {
+                    startPage = Math.max(totalPages - pagesToShow + 1, 1);
+                }
+            }
+            
+            if (startPage > 1) {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="fetchOrders(1); return false;">1</a>
+                    </li>
+                `;
+                
+                if (startPage > 2) {
+                    paginationHTML += `
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">...</a>
+                        </li>
+                    `;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="fetchOrders(${i}); return false;">${i}</a>
+                    </li>
+                `;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">...</a>
+                        </li>
+                    `;
+                }
+                
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="fetchOrders(${totalPages}); return false;">${totalPages}</a>
+                    </li>
+                `;
+            }
+            
+            paginationHTML += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchOrders(${currentPage + 1}); return false;">下一页</a>
+                </li>
+            `;
+            
+            paginationElement.innerHTML = paginationHTML;
+        }
+        
+        // 查看订单详情
+        async function viewOrderDetail(orderId) {
+            try {
+                // 显示加载状态
+                document.getElementById('orderDetailBody').innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">加载订单详情...</p></div>';
+                
+                // 显示模态框
+                const orderDetailModal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                orderDetailModal.show();
+                
+                const response = await fetch(`/api/merchant/orders/${orderId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const order = data.order;
+                    
+                    // 格式化日期时间
+                    const orderDate = new Date(order.orderDate).toLocaleString();
+                    const paymentDate = order.paymentDate ? new Date(order.paymentDate).toLocaleString() : '未付款';
+                    const shippingDate = order.shippingDate ? new Date(order.shippingDate).toLocaleString() : '未发货';
+                    const completionDate = order.completionDate ? new Date(order.completionDate).toLocaleString() : '未完成';
+                    
+                    // 设置订单标题
+                    document.getElementById('orderDetailTitle').textContent = `订单详情 #${order.orderNumber}`;
+                    
+                    // 渲染订单详情
+                    let orderDetailHTML = `
+                        <div class="row mb-4">
+                        <div class="col-md-6">
+                                <h5 class="border-bottom pb-2 mb-3">订单信息</h5>
+                            <table class="table table-sm">
+                                    <tr>
+                                        <th width="30%" class="text-muted">订单号</th>
+                                        <td>${order.orderNumber}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">下单时间</th>
+                                        <td>${orderDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">订单状态</th>
+                                        <td><span class="badge ${getStatusClass(order.status)}">${order.status}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">支付状态</th>
+                                        <td><span class="badge ${getPaymentStatusClass(order.paymentStatus)}">${order.paymentStatus}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">支付方式</th>
+                                        <td>${order.paymentMethod || '未指定'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">支付时间</th>
+                                        <td>${paymentDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">发货时间</th>
+                                        <td>${shippingDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">完成时间</th>
+                                        <td>${completionDate}</td>
+                                    </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                                <h5 class="border-bottom pb-2 mb-3">客户信息</h5>
+                            <table class="table table-sm">
+                                    <tr>
+                                        <th width="30%" class="text-muted">客户姓名</th>
+                                        <td>${order.customerName || '未知客户'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">联系电话</th>
+                                        <td>${order.customerPhone || '无'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">配送地址</th>
+                                        <td>${order.shippingAddress || '无'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">配送方式</th>
+                                        <td>${order.shippingMethod || '普通快递'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">物流单号</th>
+                                        <td>${order.trackingNumber || '未发货'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">客户备注</th>
+                                        <td>${order.note || '无'}</td>
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+                        
+                        <h5 class="border-bottom pb-2 mb-3">订单商品</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>商品名称</th>
+                                <th>单价</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+                    
+                    // 订单项
+                    if (order.items && order.items.length > 0) {
+                        order.items.forEach(item => {
+                            orderDetailHTML += `
+                                <tr>
+                                    <td>${item.productName}</td>
+                                    <td>¥${item.unitPrice.toFixed(2)}</td>
+                                    <td>${item.quantity} ${item.unit || '件'}</td>
+                                    <td>¥${item.totalPrice.toFixed(2)}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        orderDetailHTML += `
+                            <tr>
+                                <td colspan="4" class="text-center">暂无商品信息</td>
+                            </tr>
+                        `;
+                    }
+                    
+                    // 订单金额汇总
+                    orderDetailHTML += `
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="3" class="text-end">商品总额：</td>
+                                        <td>¥${(order.totalAmount - (order.shippingFee || 0)).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                        <td colspan="3" class="text-end">运费：</td>
+                                        <td>¥${(order.shippingFee || 0).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                        <td colspan="3" class="text-end fw-bold">订单总额：</td>
+                                        <td class="fw-bold text-primary">¥${order.totalAmount.toFixed(2)}</td>
+                            </tr>
+                                </tfoot>
+                    </table>
+                </div>
+                        
+                        <div class="d-flex justify-content-end mt-4">
+                            ${getActionButtons(order)}
+                </div>
+                    `;
+                    
+                    document.getElementById('orderDetailBody').innerHTML = orderDetailHTML;
+                } else {
+                    document.getElementById('orderDetailBody').innerHTML = '<div class="text-center py-5 text-danger"><i class="fas fa-exclamation-circle fa-2x"></i><p class="mt-2">获取订单详情失败</p></div>';
+                }
+            } catch (error) {
+                console.error('获取订单详情错误:', error);
+                document.getElementById('orderDetailBody').innerHTML = '<div class="text-center py-5 text-danger"><i class="fas fa-exclamation-circle fa-2x"></i><p class="mt-2">获取订单详情失败: ' + error.message + '</p></div>';
+            }
+        }
+        
+        // 更新订单状态
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                if (!confirm(`确定将订单状态更改为 "${newStatus}" 吗？`)) {
+                    return;
+                }
+                
+                // 如果是发货状态，需要填写物流信息
+                let trackingNumber = '';
+                let shippingMethod = '';
+                
+                if (newStatus === '已发货') {
+                    shippingMethod = prompt('请输入配送方式', '普通快递');
+                    if (!shippingMethod) return;
+                    
+                    trackingNumber = prompt('请输入物流单号');
+                    if (!trackingNumber) return;
+                }
+                
+                const response = await fetch(`/api/merchant/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: newStatus,
+                        trackingNumber,
+                        shippingMethod
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', `订单状态已更新为: ${newStatus}`);
+                    
+                    // 如果是在详情模态框中
+                    const orderDetailModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailModal'));
+                    if (orderDetailModal) {
+                        orderDetailModal.hide();
+                    }
+                    
+                    // 重新加载订单列表
+                    fetchOrders(currentPage);
+                } else {
+                    showAlert('danger', `更新订单状态失败：${data.message}`);
+                }
+            } catch (error) {
+                console.error('更新订单状态错误:', error);
+                showAlert('danger', `更新订单状态失败：${error.message}`);
+            }
+        }
+        
+        // 删除订单
+        async function deleteOrder(orderId) {
+            try {
+                if (!confirm('确定要删除此订单吗？此操作无法撤销!')) {
+                    return;
+                }
+                
+                const response = await fetch(`/api/merchant/orders/${orderId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', '订单已删除');
+                    
+                    // 如果是在详情模态框中
+                    const orderDetailModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailModal'));
+                    if (orderDetailModal) {
+                        orderDetailModal.hide();
+                    }
+                    
+                    // 重新加载订单列表
+                    fetchOrders(currentPage);
+                } else {
+                    showAlert('danger', `删除订单失败：${data.message}`);
+                }
+            } catch (error) {
+                console.error('删除订单错误:', error);
+                showAlert('danger', `删除订单失败：${error.message}`);
+            }
+        }
+        
+        // 打印订单
+        function printOrder(orderId) {
+            // 打开新窗口进行打印
+            window.open(`/api/merchant/orders/${orderId}/print?token=${token}`, '_blank');
+        }
+        
+        // 获取订单状态对应的样式类
+        function getStatusClass(status) {
+            switch (status) {
+                case '待付款':
+                    return 'bg-warning text-dark';
+                case '已付款':
+                    return 'bg-info text-white';
+                case '处理中':
+                    return 'bg-primary text-white';
+                case '已发货':
+                    return 'bg-primary text-white';
+                case '已完成':
+                    return 'bg-success text-white';
+                case '已取消':
+                    return 'bg-secondary text-white';
+                default:
+                    return 'bg-light text-dark';
+            }
+        }
+        
+        // 获取支付状态对应的样式类
+        function getPaymentStatusClass(status) {
+            switch (status) {
+                case '已支付':
+                    return 'bg-success text-white';
+                case '未支付':
+                    return 'bg-warning text-dark';
+                case '已退款':
+                    return 'bg-info text-white';
+                default:
+                    return 'bg-light text-dark';
+            }
+        }
+        
+        // 显示提示消息
+        function showAlert(type, message) {
+            const alertPlaceholder = document.getElementById('alertPlaceholder');
+            const alert = document.createElement('div');
+            
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            alertPlaceholder.appendChild(alert);
+            
+            // 5秒后自动关闭
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 150);
+            }, 5000);
+        }
+        
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('merchantToken');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html> 

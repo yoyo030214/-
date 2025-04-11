@@ -1,0 +1,158 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 主要内容 -->
+  <block wx:else>
+    <!-- 图片轮播 -->
+    <swiper 
+      class="product-swiper" 
+      indicator-dots="{{true}}"
+      autoplay="{{true}}"
+      interval="{{3000}}"
+      duration="{{500}}"
+      bindchange="onImageChange"
+    >
+      <swiper-item wx:for="{{product.images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" class="product-image"></image>
+      </swiper-item>
+    </swiper>
+
+    <!-- 产品信息 -->
+    <view class="product-info">
+      <view class="product-header">
+        <view class="product-name">{{product.name}}</view>
+        <view class="product-price">¥{{product.price}}</view>
+      </view>
+
+      <!-- 季节性标签 -->
+      <view class="seasonal-tags">
+        <view class="tag {{product.isInSeason ? 'seasonal' : ''}}" wx:if="{{product.isInSeason}}">当季</view>
+        <view class="tag season" wx:for="{{product.seasonalTags}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <!-- 产品特性 -->
+      <view class="product-features" wx:if="{{product.features.length > 0}}">
+        <view class="feature-item" wx:for="{{product.features}}" wx:key="*this">
+          <text class="feature-icon">✓</text>
+          <text class="feature-text">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 数量选择 -->
+      <view class="quantity-selector">
+        <text class="label">数量</text>
+        <view class="quantity-control">
+          <view class="btn minus {{quantity <= 1 ? 'disabled' : ''}}" 
+                bindtap="adjustQuantity" 
+                data-type="minus">-</view>
+          <input type="number" 
+                 class="quantity-input" 
+                 value="{{quantity}}" 
+                 disabled/>
+          <view class="btn plus {{quantity >= product.stock ? 'disabled' : ''}}" 
+                bindtap="adjustQuantity" 
+                data-type="plus">+</view>
+        </view>
+      </view>
+
+      <!-- 产品详情 -->
+      <view class="product-details">
+        <!-- 营养成分 -->
+        <view class="detail-section">
+          <view class="section-header" bindtap="toggleInfo" data-type="Nutrition">
+            <text class="title">营养成分</text>
+            <text class="arrow {{showNutrition ? 'up' : 'down'}}"></text>
+          </view>
+          <view class="section-content {{showNutrition ? 'show' : ''}}">
+            <view class="nutrition-grid">
+              <view class="nutrition-item" wx:for="{{product.nutrition}}" wx:key="name">
+                <text class="name">{{item.name}}</text>
+                <text class="value">{{item.value}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 生产环境 -->
+        <view class="detail-section">
+          <view class="section-header" bindtap="toggleInfo" data-type="Environment">
+            <text class="title">生产环境</text>
+            <text class="arrow {{showEnvironment ? 'up' : 'down'}}"></text>
+          </view>
+          <view class="section-content {{showEnvironment ? 'show' : ''}}">
+            <view class="environment-info">
+              <view class="info-item" wx:for="{{product.environment}}" wx:key="name">
+                <text class="label">{{item.name}}</text>
+                <text class="value">{{item.value}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 生产过程 -->
+        <view class="detail-section">
+          <view class="section-header" bindtap="toggleInfo" data-type="Process">
+            <text class="title">生产过程</text>
+            <text class="arrow {{showProcess ? 'up' : 'down'}}"></text>
+          </view>
+          <view class="section-content {{showProcess ? 'show' : ''}}">
+            <view class="process-steps">
+              <view class="step-item" wx:for="{{product.process}}" wx:key="*this">
+                <view class="step-number">{{index + 1}}</view>
+                <view class="step-content">{{item}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 文化背景 -->
+        <view class="detail-section">
+          <view class="section-header" bindtap="toggleInfo" data-type="Culture">
+            <text class="title">文化背景</text>
+            <text class="arrow {{showCulture ? 'up' : 'down'}}"></text>
+          </view>
+          <view class="section-content {{showCulture ? 'show' : ''}}">
+            <text class="culture-text">{{product.culture}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="bottom-bar">
+      <view class="left-buttons">
+        <view class="icon-btn" bindtap="showShareMenu">
+          <image src="/images/share.png" mode="aspectFit"></image>
+        </view>
+        <view class="icon-btn {{isInCart ? 'active' : ''}}">
+          <image src="/images/cart.png" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="right-buttons">
+        <button class="btn add-cart" bindtap="addToCart">加入购物车</button>
+        <button class="btn buy-now" bindtap="buyNow">立即购买</button>
+      </view>
+    </view>
+
+    <!-- 分享菜单 -->
+    <view class="share-menu {{showShareMenu ? 'show' : ''}}" bindtap="hideShareMenu">
+      <view class="share-content" catchtap="stopPropagation">
+        <view class="share-title">分享到</view>
+        <view class="share-options">
+          <button class="share-btn" open-type="share">
+            <image src="/images/wechat.png" mode="aspectFit"></image>
+            <text>微信好友</text>
+          </button>
+          <button class="share-btn" open-type="share" data-type="timeline">
+            <image src="/images/moments.png" mode="aspectFit"></image>
+            <text>朋友圈</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </block>
+</view> 

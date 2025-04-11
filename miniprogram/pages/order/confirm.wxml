@@ -1,0 +1,115 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <block wx:else>
+    <!-- 收货地址 -->
+    <view class="section address-section" bindtap="showAddressList">
+      <view class="section-content">
+        <block wx:if="{{address}}">
+          <view class="address-info">
+            <view class="contact">
+              <text class="name">{{address.name}}</text>
+              <text class="phone">{{address.phone}}</text>
+            </view>
+            <view class="address">{{address.province}}{{address.city}}{{address.district}}{{address.detail}}</view>
+          </view>
+          <view class="edit-btn" catchtap="editAddress">
+            <image src="/images/edit.png" mode="aspectFit"></image>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="no-address">
+            <text>请选择收货地址</text>
+            <image src="/images/arrow-right.png" mode="aspectFit"></image>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 商品列表 -->
+    <view class="section products-section">
+      <view class="section-title">商品信息</view>
+      <view class="product-list">
+        <view class="product-item" wx:for="{{orderItems}}" wx:key="id">
+          <image class="product-image" src="{{item.images[0]}}" mode="aspectFill"></image>
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-price">¥{{item.price}}</view>
+            <view class="product-quantity">x{{item.quantity}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单备注 -->
+    <view class="section remark-section">
+      <view class="section-title">订单备注</view>
+      <input class="remark-input" 
+             placeholder="请输入订单备注(选填)" 
+             value="{{remark}}"
+             bindinput="onRemarkInput"/>
+    </view>
+
+    <!-- 价格信息 -->
+    <view class="section price-section">
+      <view class="price-item">
+        <text>商品总额</text>
+        <text class="price">¥{{totalPrice}}</text>
+      </view>
+      <view class="price-item">
+        <text>运费</text>
+        <text class="price">¥{{freight}}</text>
+      </view>
+      <view class="price-item total">
+        <text>实付金额</text>
+        <text class="price">¥{{actualPrice}}</text>
+      </view>
+    </view>
+
+    <!-- 底部提交栏 -->
+    <view class="bottom-bar">
+      <view class="total-info">
+        <text>实付金额：</text>
+        <text class="total-price">¥{{actualPrice}}</text>
+      </view>
+      <button class="submit-btn {{submitting ? 'disabled' : ''}}" 
+              bindtap="submitOrder"
+              disabled="{{submitting}}">
+        {{submitting ? '提交中...' : '提交订单'}}
+      </button>
+    </view>
+
+    <!-- 地址选择弹窗 -->
+    <view class="address-modal {{showAddressList ? 'show' : ''}}" bindtap="hideAddressList">
+      <view class="modal-content" catchtap="stopPropagation">
+        <view class="modal-header">
+          <text class="title">选择收货地址</text>
+          <view class="add-btn" bindtap="addAddress">
+            <image src="/images/add.png" mode="aspectFit"></image>
+            <text>新增地址</text>
+          </view>
+        </view>
+        <scroll-view class="address-list" scroll-y>
+          <view class="address-item {{item.id === address.id ? 'selected' : ''}}"
+                wx:for="{{addressList}}"
+                wx:key="id"
+                bindtap="selectAddress"
+                data-address="{{item}}">
+            <view class="address-info">
+              <view class="contact">
+                <text class="name">{{item.name}}</text>
+                <text class="phone">{{item.phone}}</text>
+              </view>
+              <view class="address">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
+            </view>
+            <view class="default-tag" wx:if="{{item.isDefault}}">默认</view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </block>
+</view> 

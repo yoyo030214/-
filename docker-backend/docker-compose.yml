@@ -1,0 +1,48 @@
+# 农业应用后台服务 Docker Compose 配置
+# 移除了过时的version标签
+
+services:
+  api:
+    build: .
+    container_name: agricultural-api
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=lol110606YY
+      - DB_NAME=agricultural_app
+      - JWT_SECRET=your_jwt_secret
+      - JWT_EXPIRES_IN=7d
+      - NODE_ENV=production
+    networks:
+      - agricultural-network
+
+  db:
+    # 使用mysql镜像替代mariadb，提高兼容性
+    image: mysql:5.7
+    container_name: agricultural-db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=lol110606YY
+      - MYSQL_DATABASE=agricultural_app
+      - MYSQL_CHARACTER_SET_SERVER=utf8mb4
+      - MYSQL_COLLATION_SERVER=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - agricultural-network
+
+networks:
+  agricultural-network:
+    driver: bridge
+
+volumes:
+  db-data: 

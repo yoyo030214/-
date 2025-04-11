@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据统计 - 农业应用商家管理后台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px 0;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+        }
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .stat-card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .date-filter {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-white text-center mb-4">商家管理后台</h4>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="index.html">
+                        <i class="fas fa-home me-2"></i>首页
+                    </a>
+                    <a class="nav-link" href="products.html">
+                        <i class="fas fa-box me-2"></i>商品管理
+                    </a>
+                    <a class="nav-link" href="orders.html">
+                        <i class="fas fa-shopping-cart me-2"></i>订单管理
+                    </a>
+                    <a class="nav-link" href="customers.html">
+                        <i class="fas fa-users me-2"></i>客户管理
+                    </a>
+                    <a class="nav-link active" href="statistics.html">
+                        <i class="fas fa-chart-bar me-2"></i>数据统计
+                    </a>
+                    <a class="nav-link" href="settings.html">
+                        <i class="fas fa-cog me-2"></i>系统设置
+                    </a>
+                </nav>
+            </div>
+
+            <!-- 主要内容区 -->
+            <div class="col-md-10 main-content">
+                <!-- 顶部导航栏 -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                    <div class="container-fluid">
+                        <span class="navbar-brand">数据统计</span>
+                        <div class="d-flex">
+                            <div class="dropdown me-3">
+                                <button class="btn btn-link position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        3
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>个人信息</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-key me-2"></i>修改密码</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- 日期筛选 -->
+                <div class="date-filter">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <select class="form-select" id="timeRange">
+                                <option value="today">今日</option>
+                                <option value="yesterday">昨日</option>
+                                <option value="week">本周</option>
+                                <option value="month">本月</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="customDateRange" style="display: none;">
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+                        <div class="col-md-3" id="customDateRangeEnd" style="display: none;">
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary w-100" id="applyFilter">
+                                <i class="fas fa-filter me-2"></i>应用筛选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card stat-card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <h5 class="card-title">总订单数</h5>
+                                <h2 class="card-text" id="totalOrders">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card bg-success text-white">
+                            <div class="card-body">
+                                <div class="icon">
+                                    <i class="fas fa-yuan-sign"></i>
+                                </div>
+                                <h5 class="card-title">总销售额</h5>
+                                <h2 class="card-text" id="totalSales">¥0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card bg-info text-white">
+                            <div class="card-body">
+                                <div class="icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h5 class="card-title">新增客户</h5>
+                                <h2 class="card-text" id="newCustomers">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <h5 class="card-title">商品销量</h5>
+                                <h2 class="card-text" id="totalProducts">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图表区域 -->
+                <div class="row">
+                    <!-- 销售趋势图 -->
+                    <div class="col-md-8">
+                        <div class="chart-container">
+                            <h5 class="mb-3">销售趋势</h5>
+                            <canvas id="salesTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- 商品分类占比 -->
+                    <div class="col-md-4">
+                        <div class="chart-container">
+                            <h5 class="mb-3">商品分类占比</h5>
+                            <canvas id="categoryPieChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- 客户来源分布 -->
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h5 class="mb-3">客户来源分布</h5>
+                            <canvas id="customerSourceChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- 支付方式分布 -->
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h5 class="mb-3">支付方式分布</h5>
+                            <canvas id="paymentMethodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // 检查登录状态
+        const token = localStorage.getItem('merchantToken');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // 获取统计数据
+        async function fetchStatistics(timeRange = 'today', startDate = null, endDate = null) {
+            try {
+                const queryParams = new URLSearchParams({
+                    timeRange,
+                    ...(startDate && { startDate }),
+                    ...(endDate && { endDate })
+                });
+                
+                const response = await fetch(`/api/merchant/statistics?${queryParams}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatistics(data.stats);
+                    updateCharts(data.charts);
+                }
+            } catch (error) {
+                console.error('获取统计数据失败:', error);
+            }
+        }
+
+        // 更新统计数据
+        function updateStatistics(stats) {
+            document.getElementById('totalOrders').textContent = stats.totalOrders;
+            document.getElementById('totalSales').textContent = `¥${stats.totalSales.toFixed(2)}`;
+            document.getElementById('newCustomers').textContent = stats.newCustomers;
+            document.getElementById('totalProducts').textContent = stats.totalProducts;
+        }
+
+        // 更新图表
+        function updateCharts(charts) {
+            // 销售趋势图
+            new Chart(document.getElementById('salesTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: charts.salesTrend.labels,
+                    datasets: [{
+                        label: '销售额',
+                        data: charts.salesTrend.data,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 商品分类占比图
+            new Chart(document.getElementById('categoryPieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: charts.categoryPie.labels,
+                    datasets: [{
+                        data: charts.categoryPie.data,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            // 客户来源分布图
+            new Chart(document.getElementById('customerSourceChart'), {
+                type: 'bar',
+                data: {
+                    labels: charts.customerSource.labels,
+                    datasets: [{
+                        label: '客户数量',
+                        data: charts.customerSource.data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 支付方式分布图
+            new Chart(document.getElementById('paymentMethodChart'), {
+                type: 'pie',
+                data: {
+                    labels: charts.paymentMethod.labels,
+                    datasets: [{
+                        data: charts.paymentMethod.data,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        // 时间范围选择处理
+        document.getElementById('timeRange').addEventListener('change', function() {
+            const customDateRange = document.getElementById('customDateRange');
+            const customDateRangeEnd = document.getElementById('customDateRangeEnd');
+            
+            if (this.value === 'custom') {
+                customDateRange.style.display = 'block';
+                customDateRangeEnd.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+                customDateRangeEnd.style.display = 'none';
+            }
+        });
+
+        // 应用筛选
+        document.getElementById('applyFilter').addEventListener('click', () => {
+            const timeRange = document.getElementById('timeRange').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            fetchStatistics(timeRange, startDate, endDate);
+        });
+
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('merchantToken');
+            window.location.href = 'login.html';
+        });
+
+        // 初始加载
+        fetchStatistics();
+    </script>
+</body>
+</html> 

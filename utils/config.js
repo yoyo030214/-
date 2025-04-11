@@ -2,7 +2,7 @@
 module.exports = {
   // API配置
   api: {
-    baseUrl: 'https://api.example.com',
+    baseUrl: 'http://localhost:9000',
     timeout: 10000,
     version: 'v1'
   },
@@ -33,9 +33,9 @@ module.exports = {
 
   // 缓存配置
   storage: {
-    tokenKey: 'token',
-    userInfoKey: 'userInfo',
-    cartKey: 'cart'
+    tokenKey: 'merchantToken',
+    userInfoKey: 'merchantInfo',
+    cartKey: 'merchantCart'
   },
 
   // 分页配置
@@ -66,7 +66,7 @@ module.exports = {
     }
   },
 
-  baseUrl: 'https://api.example.com', // 替换为实际的API地址
+  baseUrl: 'http://localhost:9000', // 本地开发环境API地址
   version: '1.0.0',
   debug: true
 }; 

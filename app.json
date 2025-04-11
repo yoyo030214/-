@@ -15,7 +15,8 @@
     "pages/coupon/list/list",
     "pages/customer-service/customer-service",
     "pages/more/more",
-    "pages/local-specialties-map/index"
+    "pages/local-specialties-map/index",
+    "pages/elder-mode/elder-mode"
   ],
   "window": {
     "backgroundTextStyle": "light",

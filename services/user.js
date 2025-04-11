@@ -1,45 +1,66 @@
-const { request } = require('../utils/request');
+const request = require('../utils/request');
+const config = require('../utils/config');
 
 const userApi = {
-  async login(data) {
-    try {
-      const res = await request({
-        url: '/api/user/login',
-        method: 'POST',
-        data
-      });
-      return res.data;
-    } catch (error) {
-      console.error('登录失败:', error);
-      throw error;
-    }
+  // 用户登录
+  login(data) {
+    return request({
+      url: '/user/login',
+      method: 'POST',
+      data
+    });
   },
 
-  async getUserInfo() {
-    try {
-      const res = await request({
-        url: '/api/user/info',
-        method: 'GET'
-      });
-      return res.data;
-    } catch (error) {
-      console.error('获取用户信息失败:', error);
-      throw error;
-    }
+  // 获取用户信息
+  getUserInfo() {
+    return request({
+      url: '/user/info',
+      method: 'GET'
+    });
   },
 
-  async updateUserInfo(data) {
-    try {
-      const res = await request({
-        url: '/api/user/info',
-        method: 'PUT',
-        data
-      });
-      return res.data;
-    } catch (error) {
-      console.error('更新用户信息失败:', error);
-      throw error;
-    }
+  // 更新用户信息
+  updateUserInfo(data) {
+    return request({
+      url: '/user/info',
+      method: 'PUT',
+      data
+    });
+  },
+
+  // 获取用户订单列表
+  getOrderList(params) {
+    return request({
+      url: '/user/orders',
+      method: 'GET',
+      data: params
+    });
+  },
+
+  // 获取用户收藏列表
+  getFavoriteList(params) {
+    return request({
+      url: '/user/favorites',
+      method: 'GET',
+      data: params
+    });
+  },
+
+  // 添加收藏
+  addFavorite(productId) {
+    return request({
+      url: '/user/favorites',
+      method: 'POST',
+      data: { productId }
+    });
+  },
+
+  // 取消收藏
+  removeFavorite(productId) {
+    return request({
+      url: `/user/favorites/${productId}`,
+      method: 'DELETE'
+    });
   }
 };
 

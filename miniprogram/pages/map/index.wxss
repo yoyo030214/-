@@ -1,0 +1,226 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f8f8;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #2ecc71;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 筛选栏 */
+.filter-bar {
+  background: #ffffff;
+  padding: 20rpx 0;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.filter-scroll {
+  white-space: nowrap;
+  padding: 0 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.filter-scroll:last-child {
+  margin-bottom: 0;
+}
+
+.filter-group {
+  display: inline-flex;
+  padding: 0 10rpx;
+}
+
+.filter-item {
+  display: inline-block;
+  padding: 12rpx 24rpx;
+  margin-right: 16rpx;
+  font-size: 26rpx;
+  color: #666666;
+  background: #f5f5f5;
+  border-radius: 26rpx;
+  transition: all 0.3s ease;
+}
+
+.filter-item.active {
+  color: #ffffff;
+  background: #2ecc71;
+}
+
+/* 地图组件 */
+.map {
+  width: 100%;
+  height: 50vh;
+  position: relative;
+}
+
+/* 底部产品列表 */
+.product-list {
+  background: #ffffff;
+  padding: 20rpx;
+  border-radius: 20rpx 20rpx 0 0;
+  margin-top: -20rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 300rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-list.has-products {
+  padding-bottom: 0;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding: 0 10rpx;
+}
+
+.title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+}
+
+.count {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.list-content {
+  flex: 1;
+  white-space: nowrap;
+  margin: 0 -20rpx;
+  padding: 0 20rpx 20rpx;
+}
+
+.product-item {
+  display: inline-block;
+  width: 300rpx;
+  margin-right: 20rpx;
+  background: #ffffff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.product-item:active {
+  transform: scale(0.98);
+}
+
+.product-image {
+  width: 100%;
+  height: 200rpx;
+  background: #f5f5f5;
+}
+
+.product-info {
+  padding: 16rpx;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.product-price {
+  font-size: 32rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.product-season {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  background: #f8f8f8;
+  color: #666666;
+}
+
+.product-season.spring { background: #e8f5e9; color: #4caf50; }
+.product-season.summer { background: #fff3e0; color: #ff9800; }
+.product-season.autumn { background: #fff3f0; color: #ff5722; }
+.product-season.winter { background: #e3f2fd; color: #2196f3; }
+
+.product-location {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.location-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 4rpx;
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTBjMCA3LTkgMTMtOSAxM3MtOS02LTktMTNhOSA5IDAgMCAxIDE4IDB6Ii8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iMyIvPjwvc3ZnPg==') center/contain no-repeat;
+}
+
+.product-tags {
+  padding: 12rpx 16rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.tag {
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
+  background: #f8f8f8;
+  color: #666666;
+  border-radius: 4rpx;
+}
+
+/* 加载更多 */
+.load-more {
+  text-align: center;
+  padding: 20rpx 0;
+  color: #999999;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.load-more .loading-icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 10rpx;
+} 

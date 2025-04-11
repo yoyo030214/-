@@ -1,71 +1,64 @@
-const { request } = require('../utils/request');
+const request = require('../utils/request');
+const config = require('../utils/config');
 
 const cartApi = {
-  async getCartList() {
-    try {
-      const res = await request({
-        url: '/api/cart',
-        method: 'GET'
-      });
-      return res.data;
-    } catch (error) {
-      console.error('获取购物车列表失败:', error);
-      throw error;
-    }
+  // 获取购物车列表
+  getCartList() {
+    return request({
+      url: '/cart',
+      method: 'GET'
+    });
   },
 
-  async addToCart(data) {
-    try {
-      const res = await request({
-        url: '/api/cart',
-        method: 'POST',
-        data
-      });
-      return res.data;
-    } catch (error) {
-      console.error('添加购物车失败:', error);
-      throw error;
-    }
+  // 添加商品到购物车
+  addToCart(data) {
+    return request({
+      url: '/cart/add',
+      method: 'POST',
+      data
+    });
   },
 
-  async updateCartItem(id, data) {
-    try {
-      const res = await request({
-        url: `/api/cart/${id}`,
-        method: 'PUT',
-        data
-      });
-      return res.data;
-    } catch (error) {
-      console.error('更新购物车商品失败:', error);
-      throw error;
-    }
+  // 更新购物车商品数量
+  updateCartQuantity(data) {
+    return request({
+      url: '/cart/update',
+      method: 'PUT',
+      data
+    });
   },
 
-  async removeFromCart(id) {
-    try {
-      const res = await request({
-        url: `/api/cart/${id}`,
-        method: 'DELETE'
-      });
-      return res.data;
-    } catch (error) {
-      console.error('删除购物车商品失败:', error);
-      throw error;
-    }
+  // 删除购物车商品
+  removeFromCart(productId) {
+    return request({
+      url: `/cart/remove/${productId}`,
+      method: 'DELETE'
+    });
   },
 
-  async clearCart() {
-    try {
-      const res = await request({
-        url: '/api/cart/clear',
-        method: 'POST'
-      });
-      return res.data;
-    } catch (error) {
-      console.error('清空购物车失败:', error);
-      throw error;
-    }
+  // 清空购物车
+  clearCart() {
+    return request({
+      url: '/cart/clear',
+      method: 'DELETE'
+    });
+  },
+
+  // 选择/取消选择购物车商品
+  toggleSelect(productId) {
+    return request({
+      url: `/cart/select/${productId}`,
+      method: 'PUT'
+    });
+  },
+
+  // 全选/取消全选购物车商品
+  toggleSelectAll(selected) {
+    return request({
+      url: '/cart/select-all',
+      method: 'PUT',
+      data: { selected }
+    });
   }
 };
 

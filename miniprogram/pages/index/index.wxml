@@ -1,0 +1,65 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 内容区域 -->
+  <block wx:else>
+    <!-- 轮播图 -->
+    <swiper class="banner" indicator-dots autoplay circular>
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <image src="{{item.imageUrl}}" mode="aspectFill"></image>
+      </swiper-item>
+    </swiper>
+
+    <!-- 分类导航 -->
+    <view class="category-nav">
+      <view class="category-item" 
+            wx:for="{{categories}}" 
+            wx:key="id"
+            bindtap="navigateToCategory"
+            data-id="{{item.id}}">
+        <image class="category-icon" src="{{item.icon}}" mode="aspectFit"></image>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 当季推荐 -->
+    <view class="section seasonal-section" bindtap="navigateToSeasonal">
+      <view class="section-header">
+        <text class="section-title">当季推荐</text>
+        <text class="section-more">更多 ></text>
+      </view>
+      <view class="seasonal-content">
+        <image class="seasonal-bg" src="{{seasonalImage}}" mode="aspectFill"></image>
+        <view class="seasonal-info">
+          <text class="seasonal-title">{{seasonalTitle}}</text>
+          <text class="seasonal-desc">{{seasonalDesc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门商品 -->
+    <view class="section hot-section">
+      <view class="section-header">
+        <text class="section-title">热门商品</text>
+        <text class="section-more" bindtap="navigateToProducts">更多 ></text>
+      </view>
+      <view class="product-grid">
+        <view class="product-item" 
+              wx:for="{{hotProducts}}" 
+              wx:key="id"
+              bindtap="navigateToProductDetail"
+              data-id="{{item.id}}">
+          <image class="product-image" src="{{item.images[0]}}" mode="aspectFill"></image>
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-price">¥{{item.price}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view> 

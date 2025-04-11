@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 农业应用商家管理后台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 加载状态 -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 提示信息容器 -->
+    <div id="alertPlaceholder"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4>商家管理后台</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">
+                                <i class="fas fa-home"></i>
+                                控制台
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/products">
+                                <i class="fas fa-box"></i>
+                                商品管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/orders">
+                                <i class="fas fa-shopping-cart"></i>
+                                订单管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/customers">
+                                <i class="fas fa-users"></i>
+                                客户管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/marketing">
+                                <i class="fas fa-bullhorn"></i>
+                                营销管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/settings">
+                                <i class="fas fa-cog"></i>
+                                系统设置
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- 主要内容区 -->
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1 class="page-title">系统设置</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refresh-btn">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 基本设置 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">基本设置</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="basic-settings-form">
+                            <div class="mb-3">
+                                <label for="merchant-name" class="form-label">商家名称</label>
+                                <input type="text" class="form-control" id="merchant-name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="merchant-phone" class="form-label">联系电话</label>
+                                <input type="tel" class="form-control" id="merchant-phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="merchant-email" class="form-label">电子邮箱</label>
+                                <input type="email" class="form-control" id="merchant-email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="merchant-address" class="form-label">商家地址</label>
+                                <textarea class="form-control" id="merchant-address" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="merchant-logo" class="form-label">商家Logo</label>
+                                <input type="file" class="form-control" id="merchant-logo" accept="image/*">
+                                <div id="logo-preview" class="mt-2"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">保存基本设置</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 订单设置 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">订单设置</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="order-settings-form">
+                            <div class="mb-3">
+                                <label for="order-auto-cancel" class="form-label">订单自动取消时间(分钟)</label>
+                                <input type="number" class="form-control" id="order-auto-cancel" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="order-auto-complete" class="form-label">订单自动完成时间(天)</label>
+                                <input type="number" class="form-control" id="order-auto-complete" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="order-min-amount" class="form-label">最低订单金额</label>
+                                <input type="number" class="form-control" id="order-min-amount" min="0" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="order-free-shipping" class="form-label">免运费门槛</label>
+                                <input type="number" class="form-control" id="order-free-shipping" min="0" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="order-shipping-fee" class="form-label">运费</label>
+                                <input type="number" class="form-control" id="order-shipping-fee" min="0" step="0.01" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">保存订单设置</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 安全设置 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">安全设置</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="security-settings-form">
+                            <div class="mb-3">
+                                <label for="current-password" class="form-label">当前密码</label>
+                                <input type="password" class="form-control" id="current-password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new-password" class="form-label">新密码</label>
+                                <input type="password" class="form-control" id="new-password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm-password" class="form-label">确认新密码</label>
+                                <input type="password" class="form-control" id="confirm-password" required>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="enable-2fa">
+                                    <label class="form-check-label" for="enable-2fa">启用两步验证</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">保存安全设置</button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        // 获取商家设置
+        async function fetchSettings() {
+            try {
+                const data = await apiRequest('/api/merchant/settings');
+                if (data && data.success) {
+                    const settings = data.data;
+                    
+                    // 填充基本设置
+                    document.getElementById('merchant-name').value = settings.merchantName || '';
+                    document.getElementById('merchant-phone').value = settings.merchantPhone || '';
+                    document.getElementById('merchant-email').value = settings.merchantEmail || '';
+                    document.getElementById('merchant-address').value = settings.merchantAddress || '';
+                    
+                    // 显示Logo预览
+                    if (settings.merchantLogo) {
+                        const logoPreview = document.getElementById('logo-preview');
+                        logoPreview.innerHTML = `<img src="${settings.merchantLogo}" alt="商家Logo" style="max-width: 200px;">`;
+                    }
+                    
+                    // 填充订单设置
+                    document.getElementById('order-auto-cancel').value = settings.orderAutoCancel || 30;
+                    document.getElementById('order-auto-complete').value = settings.orderAutoComplete || 7;
+                    document.getElementById('order-min-amount').value = settings.orderMinAmount || 0;
+                    document.getElementById('order-free-shipping').value = settings.orderFreeShipping || 0;
+                    document.getElementById('order-shipping-fee').value = settings.orderShippingFee || 0;
+                    
+                    // 填充安全设置
+                    document.getElementById('enable-2fa').checked = settings.enable2FA || false;
+                }
+            } catch (error) {
+                console.error('获取设置错误:', error);
+                showError('获取设置失败');
+            }
+        }
+
+        // 保存基本设置
+        async function saveBasicSettings(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('basic-settings-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('merchantName', document.getElementById('merchant-name').value);
+            formData.append('merchantPhone', document.getElementById('merchant-phone').value);
+            formData.append('merchantEmail', document.getElementById('merchant-email').value);
+            formData.append('merchantAddress', document.getElementById('merchant-address').value);
+
+            const logoFile = document.getElementById('merchant-logo').files[0];
+            if (logoFile) {
+                formData.append('merchantLogo', logoFile);
+            }
+
+            try {
+                const data = await apiRequest('/api/merchant/settings/basic', {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (data && data.success) {
+                    showAlert('success', '基本设置已更新');
+                    fetchSettings();
+                }
+            } catch (error) {
+                console.error('保存基本设置错误:', error);
+                showError('保存基本设置失败');
+            }
+        }
+
+        // 保存订单设置
+        async function saveOrderSettings(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('order-settings-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const orderSettings = {
+                orderAutoCancel: parseInt(document.getElementById('order-auto-cancel').value),
+                orderAutoComplete: parseInt(document.getElementById('order-auto-complete').value),
+                orderMinAmount: parseFloat(document.getElementById('order-min-amount').value),
+                orderFreeShipping: parseFloat(document.getElementById('order-free-shipping').value),
+                orderShippingFee: parseFloat(document.getElementById('order-shipping-fee').value)
+            };
+
+            try {
+                const data = await apiRequest('/api/merchant/settings/order', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderSettings)
+                });
+
+                if (data && data.success) {
+                    showAlert('success', '订单设置已更新');
+                    fetchSettings();
+                }
+            } catch (error) {
+                console.error('保存订单设置错误:', error);
+                showError('保存订单设置失败');
+            }
+        }
+
+        // 保存安全设置
+        async function saveSecuritySettings(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('security-settings-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                showError('两次输入的密码不一致');
+                return;
+            }
+
+            const securitySettings = {
+                currentPassword: document.getElementById('current-password').value,
+                newPassword: newPassword,
+                enable2FA: document.getElementById('enable-2fa').checked
+            };
+
+            try {
+                const data = await apiRequest('/api/merchant/settings/security', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(securitySettings)
+                });
+
+                if (data && data.success) {
+                    showAlert('success', '安全设置已更新');
+                    form.reset();
+                    fetchSettings();
+                }
+            } catch (error) {
+                console.error('保存安全设置错误:', error);
+                showError('保存安全设置失败');
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoading();
+            try {
+                await fetchSettings();
+            } catch (error) {
+                console.error('初始化页面错误:', error);
+                showError('页面加载失败');
+            } finally {
+                hideLoading();
+            }
+
+            // 添加事件监听
+            document.getElementById('refresh-btn').addEventListener('click', fetchSettings);
+            document.getElementById('basic-settings-form').addEventListener('submit', saveBasicSettings);
+            document.getElementById('order-settings-form').addEventListener('submit', saveOrderSettings);
+            document.getElementById('security-settings-form').addEventListener('submit', saveSecuritySettings);
+        });
+    </script>
+</body>
+</html> 

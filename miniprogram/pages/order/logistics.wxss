@@ -1,0 +1,178 @@
+.container {
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #999;
+  font-size: 24rpx;
+}
+
+.loading-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #2ecc71;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 物流状态 */
+.logistics-status {
+  background: #2ecc71;
+  color: #fff;
+  padding: 40rpx 30rpx;
+}
+
+.status-text {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.status-desc {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+/* 通用section样式 */
+.section {
+  background: #fff;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  padding-left: 20rpx;
+  border-left: 8rpx solid #2ecc71;
+}
+
+/* 物流信息 */
+.logistics-info {
+  font-size: 28rpx;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  color: #666;
+}
+
+.value {
+  color: #333;
+}
+
+/* 物流轨迹 */
+.track-list {
+  position: relative;
+  padding-left: 30rpx;
+}
+
+.track-list::before {
+  content: '';
+  position: absolute;
+  left: 15rpx;
+  top: 0;
+  bottom: 0;
+  width: 2rpx;
+  background: #e5e5e5;
+}
+
+.track-item {
+  position: relative;
+  padding-bottom: 40rpx;
+}
+
+.track-item:last-child {
+  padding-bottom: 0;
+}
+
+.track-item.active .track-dot {
+  background: #2ecc71;
+  border-color: #2ecc71;
+}
+
+.track-item.active .track-time,
+.track-item.active .track-status {
+  color: #2ecc71;
+}
+
+.track-dot {
+  position: absolute;
+  left: -36rpx;
+  top: 0;
+  width: 16rpx;
+  height: 16rpx;
+  border: 4rpx solid #e5e5e5;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.track-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.track-content {
+  background: #f8f8f8;
+  padding: 20rpx;
+  border-radius: 10rpx;
+}
+
+.track-status {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.track-location {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 收货信息 */
+.address-info {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.contact {
+  margin-bottom: 10rpx;
+}
+
+.name {
+  margin-right: 20rpx;
+}
+
+.phone {
+  color: #666;
+}
+
+.address {
+  color: #666;
+  line-height: 1.5;
+} 

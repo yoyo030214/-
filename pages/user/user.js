@@ -49,7 +49,8 @@ Page({
       return map[status] || status;
     },
     inputText: '',
-    scrollTop: 0
+    scrollTop: 0,
+    isElderMode: false,
   },
 
   onLoad() {
@@ -58,6 +59,16 @@ Page({
   },
 
   onShow() {
+    // 检查是否有缓存的长辈模式状态
+    const elderModeStatus = wx.getStorageSync('elderModeStatus');
+    if (elderModeStatus !== undefined) {
+      this.setData({
+        isElderMode: elderModeStatus
+      });
+      // 读取后清除缓存
+      wx.removeStorageSync('elderModeStatus');
+    }
+    
     this.loadOrderCounts();
   },
 
@@ -325,5 +336,46 @@ Page({
         showCancel: false
       });
     }
-  }
+  },
+
+  // 切换长辈模式
+  toggleElderMode(e) {
+    const isElderMode = e.detail.value;
+    this.setData({ isElderMode });
+
+    if (isElderMode) {
+      console.log('正在打开长辈模式...');
+      wx.showLoading({
+        title: '加载中...',
+      });
+
+      // 直接使用switchTab而不是navigateTo
+      setTimeout(() => {
+        wx.hideLoading();
+        // 使用reLaunch确保能够跳转
+        wx.reLaunch({
+          url: '/pages/elder-mode/elder-mode',
+          success: () => {
+            console.log('长辈模式页面跳转成功');
+            wx.showToast({
+              title: '已开启长辈模式',
+              icon: 'success'
+            });
+          },
+          fail: (err) => {
+            console.error('跳转失败:', err);
+            wx.showToast({
+              title: '跳转失败，请重试',
+              icon: 'none'
+            });
+          }
+        });
+      }, 500);
+    } else {
+      wx.showToast({
+        title: '已关闭长辈模式',
+        icon: 'success'
+      });
+    }
+  },
 }); 

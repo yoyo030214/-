@@ -1,0 +1,37 @@
+{
+  "name": "merchant-backend",
+  "version": "1.0.0",
+  "description": "农业应用商家管理后台",
+  "main": "independent-server.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "start:policy-fetcher": "node src/scripts/policyFetcher.js",
+    "dev": "nodemon independent-server.js",
+    "migrate": "sequelize db:migrate",
+    "migrate:undo": "sequelize db:migrate:undo",
+    "test:fetch": "FETCH_NOW=true node src/scripts/policyFetcher.js",
+    "check-db": "node utils/check-db.js",
+    "check-customers": "node utils/check-customers.js",
+    "check-customer-data": "node utils/check-customer-data.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "bcryptjs": "^3.0.2",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.5",
+    "node-cron": "^3.0.3",
+    "sequelize": "^6.35.1",
+    "sequelize-cli": "^6.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

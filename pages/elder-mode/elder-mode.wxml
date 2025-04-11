@@ -1,0 +1,74 @@
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <text class="title">长辈版页面</text>
+  </view>
+
+  <!-- 主要功能区 -->
+  <view class="main-content">
+    <!-- 天气模块 -->
+    <view class="module">
+      <view class="module-header">
+        <text class="module-title">天气</text>
+      </view>
+      <view class="module-content">
+        <view class="weather-item" bindtap="viewWeather">
+          <text>今日天气</text>
+        </view>
+        <view class="weather-item" bindtap="viewWeatherForecast">
+          <text>未来几天</text>
+        </view>
+        <view class="weather-item" bindtap="viewAgriWeather">
+          <text>农业天气</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 政策模块 -->
+    <view class="module">
+      <view class="module-header">
+        <text class="module-title">政策</text>
+      </view>
+      <view class="module-content">
+        <view class="policy-item" bindtap="viewPolicy" data-type="agri">
+          <text>农业政策</text>
+        </view>
+        <view class="policy-item" bindtap="viewPolicy" data-type="subsidy">
+          <text>补贴政策</text>
+        </view>
+        <view class="policy-item" bindtap="viewPolicy" data-type="tech">
+          <text>技术推广</text>
+        </view>
+        <view class="policy-item" bindtap="viewPolicy" data-type="market">
+          <text>市场行情</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 我的模块 -->
+    <view class="module">
+      <view class="module-header">
+        <text class="module-title">我的</text>
+      </view>
+      <view class="module-content">
+        <view class="my-item" bindtap="navigateTo" data-url="/pages/order/list">
+          <text>我的订单</text>
+        </view>
+        <view class="my-item" bindtap="navigateTo" data-url="/pages/address/list">
+          <text>地址管理</text>
+        </view>
+        <view class="my-item" bindtap="contactService">
+          <text>联系客服</text>
+        </view>
+        <view class="my-item" bindtap="navigateTo" data-url="/pages/favorites/list">
+          <text>我的收藏</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部关闭按钮 -->
+  <view class="footer">
+    <button class="close-btn" bindtap="closeElderMode">关闭长辈模式</button>
+  </view>
+</view> 

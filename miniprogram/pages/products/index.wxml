@@ -1,0 +1,120 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 主要内容 -->
+  <block wx:else>
+    <!-- 筛选栏 -->
+    <view class="filter-bar">
+      <scroll-view scroll-x class="filter-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="filter-group">
+          <view 
+            class="filter-item {{currentFilter === item.id ? 'active' : ''}}"
+            wx:for="{{filters}}"
+            wx:key="id"
+            data-filter="{{item.id}}"
+            bindtap="onFilterChange"
+          >
+            {{item.name}}
+          </view>
+        </view>
+      </scroll-view>
+      
+      <scroll-view scroll-x class="filter-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="filter-group">
+          <view 
+            class="filter-item {{currentSeason === item.id ? 'active' : ''}}"
+            wx:for="{{seasons}}"
+            wx:key="id"
+            data-season="{{item.id}}"
+            bindtap="onSeasonChange"
+          >
+            {{item.name}}
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 当季产品区域 -->
+    <view class="seasonal-section" wx:if="{{seasonalProducts.length > 0}}">
+      <view class="section-header">
+        <text class="title">当季时令</text>
+        <text class="subtitle">应季好物 品质保证</text>
+      </view>
+      
+      <scroll-view 
+        class="seasonal-scroll" 
+        scroll-x 
+        enhanced 
+        show-scrollbar="{{false}}"
+        enable-flex
+      >
+        <view class="seasonal-item" 
+              wx:for="{{seasonalProducts}}" 
+              wx:key="id"
+              bindtap="navigateToProduct"
+              data-id="{{item.id}}">
+          <image 
+            class="product-image" 
+            src="{{item.images[0]}}" 
+            mode="aspectFill"
+            lazy-load
+          ></image>
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-meta">
+              <view class="product-price">¥{{item.price}}</view>
+              <view class="product-season {{item.season}}">{{item.seasonName || '当季'}}</view>
+            </view>
+            <view class="product-tags">
+              <text class="tag" wx:for="{{item.seasonalTags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 其他产品列表 -->
+    <view class="product-list">
+      <view class="list-header">
+        <text class="title">全部产品</text>
+        <text class="count">共{{products.length}}个</text>
+      </view>
+      
+      <view class="product-grid">
+        <view class="product-item" 
+              wx:for="{{products}}" 
+              wx:key="id"
+              bindtap="navigateToProduct"
+              data-id="{{item.id}}">
+          <image 
+            class="product-image" 
+            src="{{item.images[0]}}" 
+            mode="aspectFill"
+            lazy-load
+          ></image>
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-meta">
+              <view class="product-price">¥{{item.price}}</view>
+              <view class="product-season {{item.season}}">{{item.seasonName || '全年'}}</view>
+            </view>
+            <view class="product-tags">
+              <text class="tag" wx:for="{{item.seasonalTags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多提示 -->
+      <view class="load-more" wx:if="{{hasMore}}">
+        <view class="loading-icon" wx:if="{{isLoadingMore}}"></view>
+        <text wx:if="{{isLoadingMore}}">加载更多...</text>
+        <text wx:else>上拉加载更多</text>
+      </view>
+    </view>
+  </block>
+</view> 

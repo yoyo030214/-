@@ -1,0 +1,2 @@
+com.alibaba.cloud.ai.autoconfigure.DashScopeAutoConfiguration
+com.alibaba.cloud.ai.autoconfigure.DeepseekAutoConfiguration 

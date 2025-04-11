@@ -19,6 +19,7 @@ Page({
     forecast: [],         // 7天预报
     lifeIndices: [],      // 生活指数
     farmingTips: '',      // 农事建议
+    lastUpdateTime: 0     // 最后更新时间戳
   },
 
   onLoad: async function() {
@@ -108,15 +109,100 @@ Page({
     this.loadOfflineData(this.data.city);
   },
 
+  // 检查数据是否需要更新
+  checkNeedUpdate() {
+    const now = new Date().getTime();
+    const updateInterval = 30 * 60 * 1000; // 30分钟更新一次
+    return (now - this.data.lastUpdateTime) > updateInterval;
+  },
+
+  // 加载天气数据
+  async loadWeatherData(cityCode) {
+    // 检查是否需要更新
+    if (!this.checkNeedUpdate() && !this.data.isOffline) {
+      console.log('数据仍在有效期内，无需更新');
+      return;
+    }
+
+    this.setData({ loading: true, networkError: false });
+    
+    try {
+      console.log('开始加载天气数据, cityCode:', cityCode);
+      const [nowRes, forecastRes, hourlyRes, indicesRes, agroRes] = await Promise.all([
+        weatherService.getNowWeather(cityCode),
+        weatherService.getWeatherForecast(cityCode),
+        weatherService.getHourlyForecast(cityCode),
+        weatherService.getLifeIndices(cityCode),
+        weatherService.getAgroMeteo(cityCode)
+      ]);
+
+      // 处理实时天气数据
+      const weatherData = {
+        temperature: nowRes.now.temp,
+        weatherDesc: nowRes.now.text,
+        humidity: nowRes.now.humidity,
+        windLevel: nowRes.now.windScale,
+        pressure: nowRes.now.pressure,
+        visibility: nowRes.now.vis,
+        updateTime: this.formatTime(new Date()),
+        lastUpdateTime: new Date().getTime(),
+        isOffline: false
+      };
+
+      // 处理24小时预报
+      weatherData.hourlyForecast = hourlyRes.hourly.map(item => ({
+        time: this.formatHour(item.fxTime),
+        temp: item.temp,
+        text: item.text
+      }));
+
+      // 处理7天预报
+      weatherData.forecast = forecastRes.daily.map(item => ({
+        date: this.formatDate(item.fxDate),
+        maxTemp: item.tempMax,
+        minTemp: item.tempMin,
+        textDay: item.textDay
+      }));
+
+      // 处理生活指数
+      weatherData.lifeIndices = indicesRes.daily.map(item => ({
+        name: item.name,
+        value: item.category
+      }));
+
+      // 处理农业气象
+      weatherData.farmingTips = agroRes.tips;
+
+      // 保存数据到缓存
+      wx.setStorageSync(`weatherData_${this.data.city}`, weatherData);
+      
+      // 更新页面数据
+      this.setData({
+        ...weatherData,
+        loading: false
+      });
+
+      wx.showToast({
+        title: '天气已更新',
+        icon: 'success',
+        duration: 1500
+      });
+
+    } catch (error) {
+      console.error('加载天气数据失败:', error);
+      this.handleNetworkError();
+    }
+  },
+
   // 加载离线数据
   loadOfflineData(cityName) {
     const cachedData = wx.getStorageSync(`weatherData_${cityName}`);
     if (cachedData) {
       const now = new Date().getTime();
-      const cacheTime = cachedData.timestamp || 0;
-      const cacheAge = now - cacheTime;
+      const cacheAge = now - (cachedData.lastUpdateTime || 0);
+      const maxCacheAge = 2 * 60 * 60 * 1000; // 2小时缓存过期
       
-      if (cacheAge > 3600000) {
+      if (cacheAge > maxCacheAge) {
         wx.showToast({
           title: '当前为离线数据，可能已过期',
           icon: 'none',
@@ -138,99 +224,29 @@ Page({
         pressure: '--',
         visibility: '--',
         updateTime: '暂无更新',
-        hourlyForecast: Array(24).fill({
+        hourlyForecast: Array(5).fill({
           time: '--:--',
-          temp: '--'
+          temp: '--',
+          text: '暂无'
         }),
-        forecast: Array(7).fill({
+        forecast: Array(5).fill({
           date: '暂无',
           maxTemp: '--',
-          minTemp: '--'
+          minTemp: '--',
+          textDay: '暂无'
         }),
         lifeIndices: Array(4).fill({
           name: '暂无',
           value: '--'
         }),
         farmingTips: '暂无农事建议',
-        isOffline: true
+        isOffline: true,
+        lastUpdateTime: 0
       };
       this.setData({
         ...defaultData,
         loading: false
       });
-    }
-  },
-
-  // 加载天气数据
-  async loadWeatherData(cityCode) {
-    this.setData({ loading: true, networkError: false });
-    
-    try {
-      console.log('开始加载天气数据, cityCode:', cityCode); // 添加日志
-      const [nowRes, forecastRes, hourlyRes, indicesRes, agroRes] = await Promise.all([
-        weatherService.getNowWeather(cityCode),
-        weatherService.getWeatherForecast(cityCode),
-        weatherService.getHourlyForecast(cityCode),
-        weatherService.getLifeIndices(cityCode),
-        weatherService.getAgroMeteo(cityCode)
-      ]);
-
-      console.log('天气数据加载完成:', { nowRes, forecastRes, hourlyRes, indicesRes, agroRes }); // 添加日志
-
-      // 处理实时天气数据
-      const now = nowRes.now;
-      const weatherData = {
-        temperature: now.temp,
-        weatherDesc: now.text,
-        humidity: now.humidity,
-        windLevel: now.windScale,
-        pressure: now.pressure,
-        visibility: now.vis,
-        updateTime: this.formatTime(new Date(now.obsTime)),
-        isOffline: false,
-        timestamp: new Date().getTime()
-      };
-
-      // 处理24小时预报
-      weatherData.hourlyForecast = hourlyRes.hourly.map(item => ({
-        time: this.formatHour(item.fxTime),
-        temp: item.temp
-      }));
-
-      // 处理7天预报
-      weatherData.forecast = forecastRes.daily.map(item => ({
-        date: this.formatDate(item.fxDate),
-        maxTemp: item.tempMax,
-        minTemp: item.tempMin
-      }));
-
-      // 处理生活指数
-      weatherData.lifeIndices = indicesRes.daily.slice(0, 4).map(item => ({
-        name: item.name,
-        value: item.category
-      }));
-
-      // 处理农业气象
-      weatherData.farmingTips = agroRes.tips || '暂无农事建议';
-
-      // 保存数据到缓存
-      wx.setStorageSync(`weatherData_${this.data.city}`, weatherData);
-      
-      // 更新页面数据
-      this.setData({
-        ...weatherData,
-        loading: false
-      });
-
-      wx.showToast({
-        title: '天气已更新',
-        icon: 'success',
-        duration: 1500
-      });
-
-    } catch (error) {
-      console.error('加载天气数据失败:', error);
-      this.handleNetworkError();
     }
   },
 

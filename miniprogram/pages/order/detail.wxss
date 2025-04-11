@@ -1,0 +1,314 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 订单状态 */
+.status-section {
+  background: #fff;
+  padding: 40rpx 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-text {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.status-desc {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.status-image {
+  width: 120rpx;
+  height: 120rpx;
+}
+
+/* 物流信息 */
+.logistics-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logistics-info {
+  flex: 1;
+}
+
+.logistics-company {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.logistics-no {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.arrow-right {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+/* 收货地址 */
+.address-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.address-info {
+  flex: 1;
+}
+
+.contact {
+  margin-bottom: 10rpx;
+}
+
+.name {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.phone {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.address {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 商品列表 */
+.products-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-item {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.product-item:last-child {
+  border-bottom: none;
+}
+
+.product-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.product-price {
+  font-size: 32rpx;
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.product-quantity {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 订单信息 */
+.order-info-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.value {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.value-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.copy-btn {
+  font-size: 24rpx;
+  color: #3498db;
+  margin-left: 20rpx;
+}
+
+/* 价格信息 */
+.price-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.price-item.total {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #eee;
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.price {
+  color: #e74c3c;
+}
+
+/* 订单备注 */
+.remark-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.remark-content {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20rpx 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.left-actions {
+  display: flex;
+}
+
+.right-actions {
+  display: flex;
+}
+
+.action-btn {
+  margin-left: 20rpx;
+  padding: 0 30rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  font-size: 26rpx;
+  border-radius: 32rpx;
+  background: #f5f5f5;
+  color: #666;
+}
+
+.action-btn.cancel {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.action-btn.primary {
+  background: #e74c3c;
+  color: #fff;
+} 

@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片管理 - 农业应用后台管理系统</title>
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.4/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 48px 0 0;
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+      background-color: #f8f9fa;
+    }
+    
+    .sidebar-sticky {
+      position: relative;
+      top: 0;
+      height: calc(100vh - 48px);
+      padding-top: .5rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    
+    .navbar {
+      padding: .75rem 1rem;
+      border-width: 0;
+      border-radius: 0;
+    }
+    
+    .navbar-brand {
+      padding-top: .75rem;
+      padding-bottom: .75rem;
+      font-size: 1rem;
+      background-color: rgba(0, 0, 0, .25);
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+    }
+    
+    .navbar .navbar-toggler {
+      top: .25rem;
+      right: 1rem;
+    }
+    
+    .main-content {
+      padding-top: 56px;
+    }
+
+    .image-card {
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .image-card:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,.1);
+      transform: translateY(-2px);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .image-card .card-body {
+      padding: 10px;
+    }
+
+    .image-card .card-title {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .image-card .card-text {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .image-card .card-footer {
+      background-color: #f8f9fa;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .image-card .btn-group {
+      width: 100%;
+    }
+
+    .image-card .btn-group .btn {
+      flex: 1;
+      font-size: 12px;
+      padding: 2px 0;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">农业应用管理系统</a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="d-flex align-items-center">
+      <span class="text-white me-3" id="username">加载中...</span>
+      <button class="btn btn-outline-light me-3" id="logout-btn">退出登录</button>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <div class="sidebar-sticky pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin">
+                <i class="bi bi-house"></i>
+                控制台
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin/images">
+                <i class="bi bi-images"></i>
+                图片管理
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/users">
+                <i class="bi bi-people"></i>
+                用户管理
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/products">
+                <i class="bi bi-cart"></i>
+                产品管理
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/orders">
+                <i class="bi bi-bag"></i>
+                订单管理
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/policies">
+                <i class="bi bi-file-text"></i>
+                政策管理
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">图片管理</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#uploadModal">
+              <i class="bi bi-cloud-upload"></i> 上传图片
+            </button>
+            <div class="btn-group me-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="refresh-btn">刷新列表</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning d-none" id="login-alert">
+          您需要登录才能访问管理页面。<a href="#" id="login-redirect">点击登录</a>
+        </div>
+
+        <!-- 筛选条件 -->
+        <div class="row mb-3">
+          <div class="col-md-3 mb-2">
+            <select class="form-select form-select-sm" id="category-filter">
+              <option value="">所有分类</option>
+              <option value="product">产品图片</option>
+              <option value="policy">政策图片</option>
+              <option value="avatar">用户头像</option>
+              <option value="temp">临时图片</option>
+            </select>
+          </div>
+          <div class="col-md-2 mb-2">
+            <select class="form-select form-select-sm" id="limit-filter">
+              <option value="12">12张/页</option>
+              <option value="24">24张/页</option>
+              <option value="48">48张/页</option>
+            </select>
+          </div>
+          <div class="col-md-5 mb-2">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" id="search-input" placeholder="按文件名搜索">
+              <button class="btn btn-outline-secondary" type="button" id="search-btn">搜索</button>
+            </div>
+          </div>
+          <div class="col-md-2 mb-2 text-end">
+            <button class="btn btn-sm btn-outline-danger" id="clear-filter-btn">清除筛选</button>
+          </div>
+        </div>
+
+        <!-- 图片列表 -->
+        <div class="row" id="images-container">
+          <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">加载中...</span>
+            </div>
+            <p class="mt-2">正在加载图片...</p>
+          </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="row">
+          <div class="col-12">
+            <nav aria-label="图片分页" class="d-flex justify-content-center">
+              <ul class="pagination" id="pagination">
+                <!-- 分页将由JS生成 -->
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 上传图片模态框 -->
+  <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="uploadModalLabel">上传图片</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="upload-form">
+            <div class="mb-3">
+              <label for="image-file" class="form-label">选择图片文件</label>
+              <input class="form-control" type="file" id="image-file" name="image" accept="image/*" required>
+              <div class="form-text">支持JPG、PNG、GIF和WEBP格式，最大5MB</div>
+            </div>
+            <div class="mb-3">
+              <label for="image-category" class="form-label">图片分类</label>
+              <select class="form-select" id="image-category" name="category">
+                <option value="product">产品图片</option>
+                <option value="policy">政策图片</option>
+                <option value="avatar">用户头像</option>
+                <option value="temp">临时图片</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="image-related-id" class="form-label">关联ID (可选)</label>
+              <input type="number" class="form-control" id="image-related-id" name="relatedId" placeholder="关联的产品/政策ID">
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="image-public" name="isPublic" checked>
+              <label class="form-check-label" for="image-public">
+                公开可访问
+              </label>
+            </div>
+            <div class="mb-3 d-none" id="upload-preview-container">
+              <label class="form-label">预览</label>
+              <div class="text-center">
+                <img id="upload-preview" class="img-fluid rounded" style="max-height: 200px;" alt="预览图">
+              </div>
+            </div>
+            <div class="alert alert-danger d-none" id="upload-error"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" id="upload-submit-btn">上传</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 图片详情模态框 -->
+  <div class="modal fade" id="imageDetailModal" tabindex="-1" aria-labelledby="imageDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="imageDetailModalLabel">图片详情</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="text-center mb-3">
+                <img id="detail-image" class="img-fluid rounded" src="" alt="图片详情">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-2">
+                <strong>ID:</strong> <span id="detail-id"></span>
+              </div>
+              <div class="mb-2">
+                <strong>文件名:</strong> <span id="detail-filename"></span>
+              </div>
+              <div class="mb-2">
+                <strong>原始文件名:</strong> <span id="detail-originalname"></span>
+              </div>
+              <div class="mb-2">
+                <strong>URL:</strong> <a href="#" id="detail-url" target="_blank"></a>
+              </div>
+              <div class="mb-2">
+                <strong>MIME类型:</strong> <span id="detail-mimetype"></span>
+              </div>
+              <div class="mb-2">
+                <strong>文件大小:</strong> <span id="detail-size"></span>
+              </div>
+              <div class="mb-2">
+                <strong>分类:</strong> <span id="detail-category"></span>
+              </div>
+              <div class="mb-2">
+                <strong>关联ID:</strong> <span id="detail-related-id"></span>
+              </div>
+              <div class="mb-2">
+                <strong>上传者:</strong> <span id="detail-uploader"></span>
+              </div>
+              <div class="mb-2">
+                <strong>是否公开:</strong> <span id="detail-public"></span>
+              </div>
+              <div class="mb-2">
+                <strong>上传时间:</strong> <span id="detail-created"></span>
+              </div>
+              <div class="mb-2">
+                <strong>更新时间:</strong> <span id="detail-updated"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <a href="#" class="btn btn-primary" id="detail-download-btn" download>下载图片</a>
+          <button type="button" class="btn btn-danger" id="detail-delete-btn">删除图片</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let currentPage = 1;
+    let totalPages = 1;
+    let filters = {
+      category: '',
+      limit: 12,
+      page: 1,
+      sortBy: 'createdAt',
+      sortOrder: 'DESC'
+    };
+
+    // 检查登录状态
+    function checkLogin() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        $('#login-alert').removeClass('d-none');
+        return false;
+      }
+      return true;
+    }
+
+    // 加载用户信息
+    function loadUserInfo() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      $.ajax({
+        url: '/api/users/me',
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        success: function(response) {
+          $('#username').text(response.user.name || response.user.username);
+          
+          // 检查是否为管理员
+          if (response.user.role !== 'admin') {
+            alert('您没有管理员权限，将跳转到首页');
+            window.location.href = '/';
+          }
+        },
+        error: function(xhr) {
+          console.error('获取用户信息失败', xhr);
+          localStorage.removeItem('token');
+          $('#login-alert').removeClass('d-none');
+        }
+      });
+    }
+
+    // 加载图片列表
+    function loadImages() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      $('#images-container').html(`
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">加载中...</span>
+          </div>
+          <p class="mt-2">正在加载图片...</p>
+        </div>
+      `);
+
+      $.ajax({
+        url: '/api/images',
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        data: filters,
+        success: function(response) {
+          const { images, pagination } = response;
+          
+          if (images.length === 0) {
+            $('#images-container').html(`
+              <div class="col-12 text-center py-5">
+                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                <p class="mt-2">暂无图片</p>
+              </div>
+            `);
+            $('#pagination').empty();
+            return;
+          }
+
+          // 生成图片列表
+          let html = '';
+          images.forEach(image => {
+            html += `
+              <div class="col-md-3 col-sm-6">
+                <div class="image-card">
+                  <img src="${image.url}" alt="${image.originalname}" class="image-thumbnail" data-id="${image.id}">
+                  <div class="card-body">
+                    <h5 class="card-title" title="${image.originalname}">${image.originalname}</h5>
+                    <p class="card-text">${formatFileSize(image.size)} · ${image.category}</p>
+                  </div>
+                  <div class="card-footer text-muted">
+                    ${new Date(image.createdAt).toLocaleDateString()}
+                    <div class="btn-group mt-2">
+                      <button type="button" class="btn btn-sm btn-outline-primary view-btn" data-id="${image.id}">
+                        <i class="bi bi-eye"></i> 查看
+                      </button>
+                      <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-id="${image.id}">
+                        <i class="bi bi-trash"></i> 删除
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          $('#images-container').html(html);
+
+          // 更新分页
+          totalPages = pagination.pages;
+          currentPage = pagination.page;
+          updatePagination(pagination.page, pagination.pages);
+          
+          // 绑定事件
+          $('.view-btn').click(function() {
+            const imageId = $(this).data('id');
+            showImageDetail(imageId);
+          });
+
+          $('.delete-btn').click(function() {
+            const imageId = $(this).data('id');
+            if (confirm('确定要删除这张图片吗？此操作不可撤销。')) {
+              deleteImage(imageId);
+            }
+          });
+
+          $('.image-thumbnail').click(function() {
+            const imageId = $(this).data('id');
+            showImageDetail(imageId);
+          });
+        },
+        error: function(xhr) {
+          console.error('获取图片列表失败', xhr);
+          $('#images-container').html(`
+            <div class="col-12 text-center py-5">
+              <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+              <p class="mt-2">加载失败: ${xhr.responseJSON?.message || '未知错误'}</p>
+              <button class="btn btn-outline-primary btn-sm" id="retry-btn">重试</button>
+            </div>
+          `);
+          
+          $('#retry-btn').click(function() {
+            loadImages();
+          });
+
+          if (xhr.status === 401 || xhr.status === 403) {
+            localStorage.removeItem('token');
+            $('#login-alert').removeClass('d-none');
+          }
+        }
+      });
+    }
+
+    // 更新分页
+    function updatePagination(current, total) {
+      if (total <= 1) {
+        $('#pagination').empty();
+        return;
+      }
+
+      let html = '';
+      
+      // 上一页按钮
+      html += `
+        <li class="page-item ${current === 1 ? 'disabled' : ''}">
+          <a class="page-link" href="#" data-page="${current - 1}" aria-label="上一页">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      `;
+
+      // 页码按钮
+      const maxPages = 5;
+      let startPage = Math.max(1, current - 2);
+      let endPage = Math.min(total, startPage + maxPages - 1);
+      
+      if (endPage - startPage < maxPages - 1) {
+        startPage = Math.max(1, endPage - maxPages + 1);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        html += `
+          <li class="page-item ${i === current ? 'active' : ''}">
+            <a class="page-link" href="#" data-page="${i}">${i}</a>
+          </li>
+        `;
+      }
+
+      // 下一页按钮
+      html += `
+        <li class="page-item ${current === total ? 'disabled' : ''}">
+          <a class="page-link" href="#" data-page="${current + 1}" aria-label="下一页">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      `;
+
+      $('#pagination').html(html);
+
+      // 绑定分页事件
+      $('.page-link').click(function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        if (page && page !== current && page > 0 && page <= total) {
+          filters.page = page;
+          loadImages();
+        }
+      });
+    }
+
+    // 显示图片详情
+    function showImageDetail(imageId) {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      $.ajax({
+        url: `/api/images/${imageId}`,
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        success: function(response) {
+          const image = response.image;
+          
+          // 填充模态框数据
+          $('#detail-id').text(image.id);
+          $('#detail-filename').text(image.filename);
+          $('#detail-originalname').text(image.originalname);
+          $('#detail-url').text(image.url).attr('href', image.url);
+          $('#detail-mimetype').text(image.mimetype);
+          $('#detail-size').text(formatFileSize(image.size));
+          $('#detail-category').text(image.category);
+          $('#detail-related-id').text(image.relatedId || '-');
+          $('#detail-uploader').text(image.uploader ? (image.uploader.name || image.uploader.username) : '-');
+          $('#detail-public').text(image.isPublic ? '是' : '否');
+          $('#detail-created').text(new Date(image.createdAt).toLocaleString());
+          $('#detail-updated').text(new Date(image.updatedAt).toLocaleString());
+
+          // 设置图片和下载链接
+          $('#detail-image').attr('src', image.url);
+          $('#detail-download-btn').attr('href', image.url);
+
+          // 设置删除按钮
+          $('#detail-delete-btn').data('id', image.id);
+
+          // 显示模态框
+          const modal = new bootstrap.Modal(document.getElementById('imageDetailModal'));
+          modal.show();
+        },
+        error: function(xhr) {
+          console.error('获取图片详情失败', xhr);
+          alert('获取图片详情失败: ' + (xhr.responseJSON?.message || '未知错误'));
+        }
+      });
+    }
+
+    // 删除图片
+    function deleteImage(imageId) {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      $.ajax({
+        url: `/api/images/${imageId}`,
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        success: function() {
+          alert('图片删除成功');
+          
+          // 关闭详情模态框（如果打开）
+          const modal = bootstrap.Modal.getInstance(document.getElementById('imageDetailModal'));
+          if (modal) {
+            modal.hide();
+          }
+          
+          // 重新加载图片列表
+          loadImages();
+        },
+        error: function(xhr) {
+          console.error('删除图片失败', xhr);
+          alert('删除图片失败: ' + (xhr.responseJSON?.message || '未知错误'));
+        }
+      });
+    }
+
+    // 上传图片
+    function uploadImage() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const fileInput = document.getElementById('image-file');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        $('#upload-error').text('请选择文件').removeClass('d-none');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+      formData.append('category', $('#image-category').val());
+      
+      const relatedId = $('#image-related-id').val();
+      if (relatedId) {
+        formData.append('relatedId', relatedId);
+      }
+      
+      formData.append('isPublic', $('#image-public').is(':checked'));
+
+      // 显示上传中提示
+      $('#upload-submit-btn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 上传中...');
+      $('#upload-error').addClass('d-none');
+
+      $.ajax({
+        url: '/api/images/upload',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // 重置表单
+          $('#upload-form')[0].reset();
+          $('#upload-preview-container').addClass('d-none');
+          
+          // 关闭模态框
+          const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+          modal.hide();
+          
+          // 提示成功并刷新列表
+          alert('图片上传成功');
+          loadImages();
+        },
+        error: function(xhr) {
+          console.error('上传图片失败', xhr);
+          $('#upload-error').text('上传失败: ' + (xhr.responseJSON?.message || '未知错误')).removeClass('d-none');
+        },
+        complete: function() {
+          $('#upload-submit-btn').prop('disabled', false).text('上传');
+        }
+      });
+    }
+
+    // 格式化文件大小
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // 预览上传图片
+    function previewImage(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          $('#upload-preview').attr('src', e.target.result);
+          $('#upload-preview-container').removeClass('d-none');
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        $('#upload-preview-container').addClass('d-none');
+      }
+    }
+
+    // 初始化页面
+    $(document).ready(function() {
+      // 检查登录状态
+      if (checkLogin()) {
+        loadUserInfo();
+        loadImages();
+      }
+
+      // 刷新按钮
+      $('#refresh-btn').click(function() {
+        loadImages();
+      });
+
+      // 筛选器事件
+      $('#category-filter').change(function() {
+        filters.category = $(this).val();
+        filters.page = 1;
+        loadImages();
+      });
+
+      $('#limit-filter').change(function() {
+        filters.limit = $(this).val();
+        filters.page = 1;
+        loadImages();
+      });
+
+      $('#search-btn').click(function() {
+        const search = $('#search-input').val().trim();
+        if (search) {
+          filters.search = search;
+        } else {
+          delete filters.search;
+        }
+        filters.page = 1;
+        loadImages();
+      });
+
+      $('#search-input').keypress(function(e) {
+        if (e.which === 13) {
+          $('#search-btn').click();
+        }
+      });
+
+      $('#clear-filter-btn').click(function() {
+        filters = {
+          category: '',
+          limit: 12,
+          page: 1,
+          sortBy: 'createdAt',
+          sortOrder: 'DESC'
+        };
+        
+        $('#category-filter').val('');
+        $('#limit-filter').val('12');
+        $('#search-input').val('');
+        
+        loadImages();
+      });
+
+      // 上传图片
+      $('#image-file').change(function() {
+        previewImage(this);
+      });
+
+      $('#upload-submit-btn').click(function() {
+        uploadImage();
+      });
+
+      // 删除图片（详情模态框中）
+      $('#detail-delete-btn').click(function() {
+        const imageId = $(this).data('id');
+        if (confirm('确定要删除这张图片吗？此操作不可撤销。')) {
+          deleteImage(imageId);
+        }
+      });
+
+      // 登录按钮
+      $('#login-redirect').click(function(e) {
+        e.preventDefault();
+        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+      });
+
+      // 退出登录
+      $('#logout-btn').click(function() {
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+      });
+    });
+  </script>
+</body>
+</html> 

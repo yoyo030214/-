@@ -1,0 +1,88 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <block wx:else>
+    <!-- 商品信息 -->
+    <view class="product-section">
+      <image class="product-image" 
+             src="{{productInfo.image}}" 
+             mode="aspectFill"></image>
+      <view class="product-info">
+        <view class="product-name">{{productInfo.name}}</view>
+        <view class="product-price">¥{{productInfo.price}}</view>
+      </view>
+    </view>
+
+    <!-- 评分 -->
+    <view class="rating-section">
+      <view class="section-title">商品评分</view>
+      <view class="rating-content">
+        <slider class="rating-slider" 
+                min="1" 
+                max="5" 
+                step="1" 
+                value="{{rating}}"
+                activeColor="#e74c3c"
+                block-size="24"
+                bindchange="onRatingChange"></slider>
+        <view class="rating-text">{{rating}}分</view>
+      </view>
+    </view>
+
+    <!-- 评价内容 -->
+    <view class="content-section">
+      <view class="section-title">评价内容</view>
+      <textarea class="content-textarea" 
+                placeholder="请输入您的评价内容(最少10个字)"
+                maxlength="500"
+                value="{{content}}"
+                bindinput="onContentInput"></textarea>
+    </view>
+
+    <!-- 上传图片 -->
+    <view class="image-section">
+      <view class="section-title">上传图片</view>
+      <view class="image-list">
+        <view class="image-item" 
+              wx:for="{{images}}" 
+              wx:key="*this">
+          <image class="preview-image" 
+                 src="{{item}}" 
+                 mode="aspectFill"
+                 bindtap="previewImage"
+                 data-url="{{item}}"></image>
+          <view class="delete-btn" 
+                catchtap="deleteImage"
+                data-index="{{index}}">×</view>
+        </view>
+        <view class="upload-btn" 
+              bindtap="chooseImage"
+              wx:if="{{images.length < 9 && !isUploading}}">
+          <image class="upload-icon" 
+                 src="/images/upload.png" 
+                 mode="aspectFit"></image>
+          <text>上传图片</text>
+        </view>
+        <view class="upload-progress" 
+              wx:if="{{isUploading}}">
+          <view class="progress-bar">
+            <view class="progress-inner" 
+                  style="width: {{uploadProgress}}%"></view>
+          </view>
+          <text class="progress-text">上传中 {{uploadProgress}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <button class="submit-btn" 
+              bindtap="submitEvaluate"
+              disabled="{{isUploading}}">提交评价</button>
+    </view>
+  </block>
+</view> 

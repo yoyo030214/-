@@ -1,0 +1,203 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 20rpx;
+}
+
+/* 顶部标题 */
+.header {
+  text-align: center;
+  padding: 30rpx 0;
+  border-bottom: 2rpx solid #fff;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+/* 主要内容区 */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 模块通用样式 */
+.module {
+  margin: 20rpx 0;
+  border: 2rpx solid #fff;
+  border-radius: 10rpx;
+}
+
+.module-header {
+  padding: 20rpx;
+  border-bottom: 2rpx solid #fff;
+  text-align: center;
+}
+
+.module-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.module-content {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20rpx;
+  justify-content: space-between;
+}
+
+/* 天气项 */
+.weather-item {
+  width: 45%;
+  height: 100rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid #fff;
+  border-radius: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 政策项 */
+.policy-item {
+  width: 45%;
+  height: 100rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid #fff;
+  border-radius: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 我的项 */
+.my-item {
+  width: 45%;
+  height: 100rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid #fff;
+  border-radius: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 底部按钮 */
+.footer {
+  padding: 30rpx 0;
+  text-align: center;
+  margin-top: 20rpx;
+}
+
+.close-btn {
+  width: 60%;
+  background: #fff;
+  color: #000;
+  font-size: 32rpx;
+  padding: 20rpx 0;
+  border-radius: 100rpx;
+  font-weight: bold;
+}
+
+/* 导航栏样式 */
+.nav-bar {
+  height: 88rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-back {
+  font-size: 40rpx;
+  color: #333;
+}
+
+/* 功能列表样式 */
+.function-list {
+  margin: 20rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.function-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40rpx 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.function-item:last-child {
+  border-bottom: none;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+}
+
+.item-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+}
+
+.item-title {
+  font-size: 36rpx;
+  color: #333;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+}
+
+.icon-arrow-right {
+  font-size: 32rpx;
+  color: #999;
+}
+
+/* 操作提示样式 */
+.tips-section {
+  margin: 40rpx 20rpx;
+  padding: 30rpx;
+  background: #fff;
+  border-radius: 20rpx;
+}
+
+.tips-title {
+  font-size: 36rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tips-content text {
+  font-size: 32rpx;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 10rpx;
+} 

@@ -1,0 +1,102 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 空购物车 -->
+  <view class="empty-cart" wx:elif="{{showEmpty}}">
+    <image src="/images/empty-cart.png" mode="aspectFit"></image>
+    <text>购物车是空的</text>
+    <button class="continue-shopping" bindtap="continueShopping">去逛逛</button>
+  </view>
+
+  <!-- 购物车列表 -->
+  <block wx:else>
+    <scroll-view 
+      class="cart-list" 
+      scroll-y 
+      enable-back-to-top
+      refresher-enabled="{{true}}"
+      refresher-triggered="{{refreshing}}"
+      bindrefresherrefresh="onPullDownRefresh"
+    >
+      <view class="cart-item" wx:for="{{cartItems}}" wx:key="id">
+        <!-- 选择框 -->
+        <view class="checkbox" bindtap="selectItem" data-id="{{item.id}}">
+          <view class="checkbox-inner {{item.selected ? 'checked' : ''}}"></view>
+        </view>
+
+        <!-- 商品信息 -->
+        <view class="item-content">
+          <image class="product-image" src="{{item.images[0]}}" mode="aspectFill"></image>
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            
+            <!-- 季节性标签 -->
+            <view class="seasonal-tags">
+              <view class="tag {{item.isInSeason ? 'seasonal' : ''}}" wx:if="{{item.isInSeason}}">当季</view>
+              <view class="tag season" wx:for="{{item.seasonalTags}}" wx:key="*this">{{item}}</view>
+            </view>
+
+            <!-- 库存提示 -->
+            <view class="stock-info" wx:if="{{item.stock < 10}}">
+              <text class="stock-warning">库存仅剩{{item.stock}}件</text>
+            </view>
+
+            <view class="product-price">¥{{item.price}}</view>
+          </view>
+        </view>
+
+        <!-- 数量控制 -->
+        <view class="quantity-control">
+          <view class="btn minus {{item.quantity <= 1 ? 'disabled' : ''}}" 
+                bindtap="adjustQuantity" 
+                data-id="{{item.id}}" 
+                data-type="minus">-</view>
+          <input type="number" 
+                 class="quantity-input" 
+                 value="{{item.quantity}}" 
+                 disabled/>
+          <view class="btn plus {{item.quantity >= item.stock ? 'disabled' : ''}}" 
+                bindtap="adjustQuantity" 
+                data-id="{{item.id}}" 
+                data-type="plus">+</view>
+        </view>
+
+        <!-- 删除按钮 -->
+        <view class="delete-btn" bindtap="showDeleteConfirm" data-id="{{item.id}}">
+          <image src="/images/delete.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 底部结算栏 -->
+    <view class="bottom-bar">
+      <view class="select-all" bindtap="selectAll">
+        <view class="checkbox-inner {{selectedAll ? 'checked' : ''}}"></view>
+        <text>全选</text>
+      </view>
+      
+      <view class="total-info">
+        <text>合计：</text>
+        <text class="total-price">¥{{totalPrice}}</text>
+      </view>
+      
+      <button class="checkout-btn" bindtap="checkout">结算</button>
+    </view>
+  </block>
+
+  <!-- 删除确认弹窗 -->
+  <view class="delete-modal {{showDeleteConfirm ? 'show' : ''}}" bindtap="cancelDelete">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-title">确认删除</view>
+      <view class="modal-text">确定要删除这个商品吗？</view>
+      <view class="modal-buttons">
+        <button class="btn cancel" bindtap="cancelDelete">取消</button>
+        <button class="btn confirm" bindtap="confirmDelete">确定</button>
+      </view>
+    </view>
+  </view>
+</view> 

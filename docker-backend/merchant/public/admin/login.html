@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 农业应用商家后台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background-color: var(--light-gray);
+        }
+        
+        .form-signin {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            margin: auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .form-signin .form-floating:focus-within {
+            z-index: 2;
+        }
+        
+        .form-signin input[type="text"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        
+        .form-signin .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .form-signin .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .form-signin .form-check {
+            text-align: left;
+        }
+        
+        .logo {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .text-muted a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .text-muted a:hover {
+            text-decoration: underline;
+        }
+        
+        #loginError {
+            display: none;
+            color: #dc3545;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 5px;
+            display: none;
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="text-center">
+    <main class="form-signin">
+        <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzE5ODc1NCI+PHBhdGggZD0iTTcuNSA2LjVDNy41IDUuMTIgOC42MiA0IDEwIDQgMTEuMzggNCAxMi41IDUuMTIgMTIuNSA2LjUgMTIuNSA3Ljg4IDExLjM4IDkgMTAgOSA4LjYyIDkgNy41IDcuODggNy41IDYuNXptLTEgMEM2LjUgOC40MyA4LjA3IDEwIDEwIDEwIDExLjkzIDEwIDEzLjUgOC40MyAxMy41IDYuNSAxMy41IDQuNTcgMTEuOTMgMyAxMCAzIDguMDcgMyA2LjUgNC41NyA2LjUgNi41ek0yMSAyMVYyMEMyMSAxNy4zMyAxOC42NyAxNSAxNiAxNUgxNVYxM0gxNkMxOS4yMSAxMyAyMS41OCAxNS4zNiAyMS45MiAxOC42OUwyMiAyMFYyMUgyMVpNMTEuNSAxNUg5LjVWMTNIMTEuNVYxNVptMi04LjE0QzE0LjIzIDcuMTIgMTUgNy44OSAxNSA4Ljg5IDEzLjg0IDkuODMgMTMgMTEgMTMgMTIuNSAxMyAxNS41IDE1LjUgMTggMTguNSAxOCAxOC44NSAxOCAxOS4yIDE3Ljk0IDE5LjU0IDE3Ljg4IDE5LjA4IDE5LjA1IDE4LjEyIDIwIDEwIDE5Ljk4IDYuMzggMjAgMy40NCAxNi45OSAzLjA4IDEzLjQyTDMgMTNWMTJMMy4wNCAxMS45MkMzLjMyIDkuODkgNC4xOSA4LjA2IDUuNSA2LjY2IDUuODggNy42NyA2LjY0IDguNTggNy42IDkuMTlDOC42MyA5Ljg1IDkuOCA5LjUgMTAuNSA5LjUgMTAuNTIgOS41IDEwLjUzIDkuNSAxMC41NSA5LjVMMTAgOS41IDEzLjUgNi44NlY2Ljg2WiI+PC9wYXRoPjwvc3ZnPg==" alt="农业应用商家后台">
+        <h1 class="h4 mb-4 fw-normal">商家管理登录</h1>
+        
+        <div id="loginError"></div>
+        
+        <form id="loginForm">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="username" name="username" placeholder="用户名" required>
+                <label for="username">用户名</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password" placeholder="密码" required>
+                <label for="password">密码</label>
+            </div>
+            
+            <div class="form-check d-flex justify-content-between mb-3">
+                <div>
+                    <input class="form-check-input" type="checkbox" value="1" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        记住我
+                    </label>
+                </div>
+                <div>
+                    <a href="forgot-password.html">忘记密码?</a>
+                </div>
+            </div>
+            
+            <button class="w-100 btn btn-lg btn-primary" type="submit">
+                <span class="spinner-border spinner-border-sm" id="loginSpinner" role="status" aria-hidden="true"></span>
+                登录
+            </button>
+        </form>
+        
+        <p class="mt-4 mb-3 text-muted">
+            <small>还没有商家账号? <a href="register.html">立即注册</a></small>
+        </p>
+        <p class="mt-5 mb-3 text-muted">&copy; 2023-2024 农业应用平台</p>
+    </main>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginError = document.getElementById('loginError');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginButton = loginForm.querySelector('button[type="submit"]');
+            
+            // 检查是否有存储的用户名
+            const storedUsername = localStorage.getItem('rememberedUsername');
+            if (storedUsername) {
+                document.getElementById('username').value = storedUsername;
+                document.getElementById('rememberMe').checked = true;
+            }
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // 清除之前的错误信息
+                loginError.style.display = 'none';
+                loginError.textContent = '';
+                
+                // 显示加载状态
+                loginButton.disabled = true;
+                loginSpinner.style.display = 'inline-block';
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const rememberMe = document.getElementById('rememberMe').checked;
+                
+                try {
+                    const response = await fetch('/api/merchant/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        // 登录成功
+                        if (rememberMe) {
+                            localStorage.setItem('rememberedUsername', username);
+                        } else {
+                            localStorage.removeItem('rememberedUsername');
+                        }
+                        
+                        // 存储token和用户信息
+                        localStorage.setItem('merchantToken', data.token);
+                        localStorage.setItem('merchantInfo', JSON.stringify(data.merchant));
+                        localStorage.setItem('tokenExpireTime', Date.now() + 24 * 60 * 60 * 1000); // 24小时过期
+                        
+                        // 显示成功消息
+                        loginError.textContent = '登录成功，正在跳转...';
+                        loginError.style.display = 'block';
+                        loginError.style.color = '#198754';
+                        loginError.style.backgroundColor = 'rgba(25, 135, 84, 0.1)';
+                        
+                        // 重定向到管理后台首页
+                        setTimeout(() => {
+                            window.location.href = '/admin/index.html';
+                        }, 1000);
+                    } else {
+                        // 登录失败
+                        showLoginError(data.message || '登录失败，请检查您的用户名和密码');
+                        
+                        // 登录失败时，清除输入框
+                        document.getElementById('password').value = '';
+                    }
+                } catch (error) {
+                    console.error('登录请求错误:', error);
+                    showLoginError('无法连接到服务器，请稍后再试');
+                } finally {
+                    // 隐藏加载状态
+                    loginButton.disabled = false;
+                    loginSpinner.style.display = 'none';
+                }
+            });
+            
+            function showLoginError(message) {
+                loginError.textContent = message;
+                loginError.style.display = 'block';
+                loginError.style.color = '#dc3545';
+                loginError.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+            }
+
+            // 添加token过期检查
+            function checkTokenExpiration() {
+                const expireTime = localStorage.getItem('tokenExpireTime');
+                if (expireTime && Date.now() > parseInt(expireTime)) {
+                    // token已过期,清除登录状态
+                    localStorage.removeItem('merchantToken');
+                    localStorage.removeItem('merchantInfo');
+                    localStorage.removeItem('tokenExpireTime');
+                    window.location.href = 'login.html';
+                }
+            }
+
+            // 页面加载时检查token
+            checkTokenExpiration();
+        });
+    </script>
+</body>
+</html> 

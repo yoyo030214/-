@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政策管理 - 农业应用商家管理后台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 加载状态 -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 提示信息容器 -->
+    <div id="alertPlaceholder"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4>商家管理后台</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">
+                                <i class="fas fa-home"></i>
+                                控制台
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/products">
+                                <i class="fas fa-box"></i>
+                                商品管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/orders">
+                                <i class="fas fa-shopping-cart"></i>
+                                订单管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/customers">
+                                <i class="fas fa-users"></i>
+                                客户管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/marketing">
+                                <i class="fas fa-bullhorn"></i>
+                                营销管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/policies">
+                                <i class="fas fa-file-alt"></i>
+                                政策管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/settings">
+                                <i class="fas fa-cog"></i>
+                                系统设置
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- 主要内容区 -->
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1 class="page-title">政策管理</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refresh-btn">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="fetch-policies-btn">
+                                <i class="fas fa-cloud-download-alt"></i> 抓取最新政策
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-success" id="add-policy-btn">
+                            <i class="fas fa-plus"></i> 添加政策
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 过滤器 -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text">分类</span>
+                                            <select class="form-select" id="category-filter">
+                                                <option value="">全部</option>
+                                                <option value="补贴">补贴</option>
+                                                <option value="市场">市场</option>
+                                                <option value="资金">资金</option>
+                                                <option value="技术">技术</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="搜索标题或内容..." id="search-input">
+                                            <button class="btn btn-outline-secondary" type="button" id="search-btn">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 政策表格 -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>标题</th>
+                                <th>来源</th>
+                                <th>分类</th>
+                                <th>发布日期</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policies-table">
+                            <tr>
+                                <td colspan="7" class="text-center">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <nav aria-label="分页导航" class="mt-4">
+                    <ul class="pagination justify-content-center" id="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">上一页</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </main>
+        </div>
+    </div>
+
+    <!-- 政策详情模态框 -->
+    <div class="modal fade" id="policyDetailModal" tabindex="-1" aria-labelledby="policyDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="policyDetailModalLabel">政策详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="policy-detail-content">
+                        <h4 id="detail-title" class="mb-3"></h4>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="badge bg-info" id="detail-source"></span>
+                            <span class="badge bg-secondary" id="detail-category"></span>
+                            <span id="detail-date"></span>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <p id="detail-content" class="mb-0"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="edit-policy-btn">编辑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑政策模态框 -->
+    <div class="modal fade" id="policyFormModal" tabindex="-1" aria-labelledby="policyFormModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="policyFormModalLabel">添加政策</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="policy-form">
+                        <input type="hidden" id="policy-id">
+                        <div class="mb-3">
+                            <label for="policy-title" class="form-label">标题</label>
+                            <input type="text" class="form-control" id="policy-title" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="policy-source" class="form-label">来源</label>
+                                <input type="text" class="form-control" id="policy-source" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="policy-category" class="form-label">分类</label>
+                                <select class="form-select" id="policy-category" required>
+                                    <option value="">请选择</option>
+                                    <option value="补贴">补贴</option>
+                                    <option value="市场">市场</option>
+                                    <option value="资金">资金</option>
+                                    <option value="技术">技术</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="policy-publish-date" class="form-label">发布日期</label>
+                            <input type="date" class="form-control" id="policy-publish-date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="policy-content" class="form-label">内容</label>
+                            <textarea class="form-control" id="policy-content" rows="8" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="policy-status" checked>
+                                <label class="form-check-label" for="policy-status">
+                                    启用
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="save-policy-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        // 全局变量
+        let policies = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentPolicy = null;
+        
+        // DOM 元素
+        const policiesTable = document.getElementById('policies-table');
+        const paginationEl = document.getElementById('pagination');
+        const searchInput = document.getElementById('search-input');
+        const categoryFilter = document.getElementById('category-filter');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const addPolicyBtn = document.getElementById('add-policy-btn');
+        const fetchPoliciesBtn = document.getElementById('fetch-policies-btn');
+        const savePolicyBtn = document.getElementById('save-policy-btn');
+        const editPolicyBtn = document.getElementById('edit-policy-btn');
+        
+        // 模态框
+        let policyDetailModal;
+        let policyFormModal;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化 Bootstrap 模态框
+            policyDetailModal = new bootstrap.Modal(document.getElementById('policyDetailModal'));
+            policyFormModal = new bootstrap.Modal(document.getElementById('policyFormModal'));
+            
+            // 初始化页面
+            initPage();
+            
+            // 事件监听
+            refreshBtn.addEventListener('click', loadPolicies);
+            searchInput.addEventListener('keyup', event => {
+                if (event.key === 'Enter') {
+                    loadPolicies();
+                }
+            });
+            document.getElementById('search-btn').addEventListener('click', loadPolicies);
+            categoryFilter.addEventListener('change', loadPolicies);
+            
+            // 添加政策
+            addPolicyBtn.addEventListener('click', () => {
+                currentPolicy = null;
+                document.getElementById('policyFormModalLabel').textContent = '添加政策';
+                document.getElementById('policy-form').reset();
+                document.getElementById('policy-id').value = '';
+                document.getElementById('policy-publish-date').value = new Date().toISOString().split('T')[0];
+                policyFormModal.show();
+            });
+            
+            // 保存政策
+            savePolicyBtn.addEventListener('click', savePolicy);
+            
+            // 编辑政策
+            editPolicyBtn.addEventListener('click', () => {
+                if (!currentPolicy) return;
+                
+                document.getElementById('policyFormModalLabel').textContent = '编辑政策';
+                document.getElementById('policy-id').value = currentPolicy.id;
+                document.getElementById('policy-title').value = currentPolicy.title;
+                document.getElementById('policy-source').value = currentPolicy.source;
+                document.getElementById('policy-category').value = currentPolicy.category;
+                document.getElementById('policy-publish-date').value = currentPolicy.publishDate;
+                document.getElementById('policy-content').value = currentPolicy.content;
+                document.getElementById('policy-status').checked = currentPolicy.status === 'active';
+                
+                policyDetailModal.hide();
+                policyFormModal.show();
+            });
+            
+            // 抓取政策
+            fetchPoliciesBtn.addEventListener('click', fetchPolicies);
+        });
+        
+        // 初始化页面
+        function initPage() {
+            checkAuth()
+                .then(() => loadPolicies())
+                .catch(error => {
+                    console.error('认证检查失败:', error);
+                    window.location.href = '/admin/login.html';
+                });
+        }
+        
+        // 加载政策列表
+        async function loadPolicies() {
+            showLoading();
+            
+            try {
+                // 获取过滤条件
+                const searchTerm = searchInput.value.trim();
+                const category = categoryFilter.value;
+                
+                // 构建请求URL
+                let url = `/api/policies?page=${currentPage}`;
+                if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
+                if (category) url += `&category=${encodeURIComponent(category)}`;
+                
+                console.log("发起请求: " + url);
+                const data = await apiRequest(url);
+                console.log("接收到响应:", data);
+                
+                if (data && data.success) {
+                    policies = data.data || [];
+                    renderPoliciesTable();
+                } else {
+                    showError('加载政策列表失败');
+                    policiesTable.innerHTML = '<tr><td colspan="7" class="text-center">加载失败，请重试</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载政策列表错误:', error);
+                showError('加载政策列表失败');
+                policiesTable.innerHTML = '<tr><td colspan="7" class="text-center">加载失败，请重试</td></tr>';
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 渲染政策表格
+        function renderPoliciesTable() {
+            if (!policies || policies.length === 0) {
+                policiesTable.innerHTML = '<tr><td colspan="7" class="text-center">暂无数据</td></tr>';
+                return;
+            }
+            
+            policiesTable.innerHTML = policies.map((policy, index) => `
+                <tr>
+                    <td>${policy.id}</td>
+                    <td><a href="#" class="policy-title-link" data-id="${policy.id}">${policy.title}</a></td>
+                    <td>${policy.source || '未知'}</td>
+                    <td><span class="badge bg-${getCategoryBadgeColor(policy.category)}">${policy.category || '未分类'}</span></td>
+                    <td>${policy.publishDate || '未知'}</td>
+                    <td><span class="badge bg-${policy.status === 'active' ? 'success' : 'danger'}">${policy.status === 'active' ? '已启用' : '已禁用'}</span></td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-primary view-policy-btn" data-id="${policy.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-warning edit-policy-btn" data-id="${policy.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger delete-policy-btn" data-id="${policy.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // 添加事件监听
+            document.querySelectorAll('.policy-title-link, .view-policy-btn').forEach(btn => {
+                btn.addEventListener('click', event => {
+                    event.preventDefault();
+                    const id = parseInt(event.currentTarget.dataset.id);
+                    viewPolicyDetail(id);
+                });
+            });
+            
+            document.querySelectorAll('.edit-policy-btn').forEach(btn => {
+                btn.addEventListener('click', event => {
+                    const id = parseInt(event.currentTarget.dataset.id);
+                    editPolicy(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-policy-btn').forEach(btn => {
+                btn.addEventListener('click', event => {
+                    const id = parseInt(event.currentTarget.dataset.id);
+                    deletePolicy(id);
+                });
+            });
+        }
+        
+        // 查看政策详情
+        async function viewPolicyDetail(id) {
+            showLoading();
+            
+            try {
+                const data = await apiRequest(`/api/policies/${id}`);
+                
+                if (data && data.success) {
+                    currentPolicy = data.data;
+                    
+                    // 填充详情模态框
+                    document.getElementById('detail-title').textContent = currentPolicy.title || '无标题';
+                    document.getElementById('detail-source').textContent = currentPolicy.source || '未知来源';
+                    document.getElementById('detail-category').textContent = currentPolicy.category || '未分类';
+                    document.getElementById('detail-date').textContent = currentPolicy.publishDate || '未知日期';
+                    document.getElementById('detail-content').innerHTML = (currentPolicy.content || '无内容').replace(/\n/g, '<br>');
+                    
+                    // 显示模态框
+                    policyDetailModal.show();
+                } else {
+                    showError('获取政策详情失败');
+                }
+            } catch (error) {
+                console.error('获取政策详情错误:', error);
+                showError('获取政策详情失败');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 编辑政策
+        function editPolicy(id) {
+            const policy = policies.find(p => p.id === id);
+            if (!policy) return;
+            
+            currentPolicy = policy;
+            
+            document.getElementById('policyFormModalLabel').textContent = '编辑政策';
+            document.getElementById('policy-id').value = policy.id;
+            document.getElementById('policy-title').value = policy.title || '';
+            document.getElementById('policy-source').value = policy.source || '';
+            document.getElementById('policy-category').value = policy.category || '';
+            document.getElementById('policy-publish-date').value = policy.publishDate || new Date().toISOString().split('T')[0];
+            document.getElementById('policy-content').value = policy.content || '';
+            document.getElementById('policy-status').checked = policy.status === 'active';
+            
+            policyFormModal.show();
+        }
+        
+        // 保存政策
+        async function savePolicy() {
+            // 表单验证
+            const form = document.getElementById('policy-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const policyId = document.getElementById('policy-id').value;
+                const isUpdate = policyId !== '';
+                
+                const policyData = {
+                    title: document.getElementById('policy-title').value,
+                    source: document.getElementById('policy-source').value,
+                    category: document.getElementById('policy-category').value,
+                    publishDate: document.getElementById('policy-publish-date').value,
+                    content: document.getElementById('policy-content').value,
+                    status: document.getElementById('policy-status').checked ? 'active' : 'inactive'
+                };
+                
+                // 更新或新增
+                const url = isUpdate ? `/api/policies/${policyId}` : '/api/policies';
+                const method = isUpdate ? 'PUT' : 'POST';
+                
+                const data = await apiRequest(url, method, policyData);
+                
+                if (data && data.success) {
+                    showSuccess(isUpdate ? '政策更新成功' : '政策添加成功');
+                    policyFormModal.hide();
+                    await loadPolicies();
+                } else {
+                    showError(isUpdate ? '更新政策失败' : '添加政策失败');
+                }
+            } catch (error) {
+                console.error('保存政策错误:', error);
+                showError('保存政策失败');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 删除政策
+        async function deletePolicy(id) {
+            if (!confirm('确定要删除这条政策吗？')) return;
+            
+            showLoading();
+            
+            try {
+                const data = await apiRequest(`/api/policies/${id}`, 'DELETE');
+                
+                if (data && data.success) {
+                    showSuccess('政策删除成功');
+                    await loadPolicies();
+                } else {
+                    showError('删除政策失败');
+                }
+            } catch (error) {
+                console.error('删除政策错误:', error);
+                showError('删除政策失败');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 抓取最新政策
+        async function fetchPolicies() {
+            if (!confirm('确定要抓取最新政策吗？此操作可能需要一些时间。')) return;
+            
+            showLoading();
+            
+            try {
+                console.log('开始抓取政策...');
+                // 添加调试信息，显示当前token
+                console.log('当前Token:', token ? '已设置' : '未设置');
+                
+                const data = await apiRequest('/api/policies/fetch', 'POST');
+                console.log('抓取结果:', data);
+                
+                if (data && data.success) {
+                    showSuccess(data.message || '政策抓取成功');
+                    await loadPolicies();
+                } else if (data) {
+                    showError(data.message || '抓取政策失败');
+                    console.error('抓取失败详情:', data);
+                } else {
+                    showError('抓取政策请求失败，可能是未授权');
+                    console.error('请求失败，无返回数据');
+                }
+            } catch (error) {
+                console.error('抓取政策错误:', error);
+                showError('抓取政策失败: ' + (error.message || '未知错误'));
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 获取分类标签颜色
+        function getCategoryBadgeColor(category) {
+            const colors = {
+                '补贴': 'success',
+                '市场': 'info',
+                '资金': 'warning',
+                '技术': 'primary',
+                '其他': 'secondary'
+            };
+            return colors[category] || 'secondary';
+        }
+    </script>
+</body>
+</html> 

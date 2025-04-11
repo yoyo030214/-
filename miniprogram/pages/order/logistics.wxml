@@ -1,0 +1,68 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 物流信息 -->
+  <block wx:else>
+    <!-- 物流状态 -->
+    <view class="logistics-status">
+      <view class="status-text">{{logistics.status}}</view>
+      <view class="status-desc">{{logistics.description}}</view>
+    </view>
+
+    <!-- 物流信息 -->
+    <view class="section">
+      <view class="section-title">物流信息</view>
+      <view class="logistics-info">
+        <view class="info-item">
+          <text class="label">快递公司</text>
+          <text class="value">{{logistics.company}}</text>
+        </view>
+        <view class="info-item">
+          <text class="label">运单编号</text>
+          <text class="value">{{logistics.trackingNo}}</text>
+        </view>
+        <view class="info-item">
+          <text class="label">发货时间</text>
+          <text class="value">{{logistics.shippingTime}}</text>
+        </view>
+        <view class="info-item">
+          <text class="label">预计送达</text>
+          <text class="value">{{logistics.estimatedDelivery}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 物流轨迹 -->
+    <view class="section">
+      <view class="section-title">物流轨迹</view>
+      <view class="track-list">
+        <view class="track-item {{index === 0 ? 'active' : ''}}" 
+              wx:for="{{logistics.tracks}}" 
+              wx:key="time">
+          <view class="track-time">{{item.time}}</view>
+          <view class="track-content">
+            <view class="track-status">{{item.status}}</view>
+            <view class="track-location">{{item.location}}</view>
+          </view>
+          <view class="track-dot"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 收货信息 -->
+    <view class="section">
+      <view class="section-title">收货信息</view>
+      <view class="address-info">
+        <view class="contact">
+          <text class="name">{{order.address.name}}</text>
+          <text class="phone">{{order.address.phone}}</text>
+        </view>
+        <view class="address">{{order.address.province}}{{order.address.city}}{{order.address.district}}{{order.address.detail}}</view>
+      </view>
+    </view>
+  </block>
+</view> 

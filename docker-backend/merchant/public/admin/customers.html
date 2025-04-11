@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户管理 - 农业应用商家管理后台</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 加载状态 -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 提示信息容器 -->
+    <div id="alertPlaceholder"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+    <!-- 侧边栏 -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4>商家管理后台</h4>
+                    </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                            <a class="nav-link" href="/admin">
+                                <i class="fas fa-home"></i>
+                                控制台
+                    </a>
+                </li>
+                <li class="nav-item">
+                            <a class="nav-link" href="/admin/products">
+                                <i class="fas fa-box"></i>
+                                商品管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                            <a class="nav-link" href="/admin/orders">
+                                <i class="fas fa-shopping-cart"></i>
+                                订单管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                            <a class="nav-link active" href="/admin/customers">
+                                <i class="fas fa-users"></i>
+                                客户管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                            <a class="nav-link" href="/admin/marketing">
+                                <i class="fas fa-bullhorn"></i>
+                                营销管理
+                    </a>
+                </li>
+                <li class="nav-item">
+                            <a class="nav-link" href="/admin/settings">
+                                <i class="fas fa-cog"></i>
+                                系统设置
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+            <!-- 主要内容区 -->
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1 class="page-title">客户管理</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refresh-btn">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                </div>
+            </div>
+        </div>
+
+                <!-- 筛选器 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                        <form id="filter-form" class="row g-3">
+                    <div class="col-md-3">
+                                <label for="level" class="form-label">客户等级</label>
+                                <select class="form-select" id="level">
+                                    <option value="">全部</option>
+                                    <option value="vip">VIP客户</option>
+                                    <option value="regular">普通客户</option>
+                                    <option value="new">新客户</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                                <label for="status" class="form-label">状态</label>
+                                <select class="form-select" id="status">
+                                    <option value="">全部</option>
+                                    <option value="active">正常</option>
+                                    <option value="inactive">禁用</option>
+                        </select>
+                    </div>
+                            <div class="col-md-3">
+                                <label for="search" class="form-label">搜索</label>
+                                <input type="text" class="form-control" id="search" placeholder="用户名/手机号">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search"></i> 搜索
+                            </button>
+                        </div>
+                        </form>
+            </div>
+        </div>
+
+        <!-- 客户列表 -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>用户ID</th>
+                                        <th>用户名</th>
+                                        <th>手机号</th>
+                                        <th>客户等级</th>
+                                        <th>注册时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customers-table">
+                                    <tr>
+                                        <td colspan="7" class="text-center">加载中...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+        </div>
+
+        <!-- 分页 -->
+                        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center" id="pagination">
+            </ul>
+        </nav>
+                        </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 客户详情模态框 -->
+    <div class="modal fade" id="customer-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">客户详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>基本信息</h6>
+                            <p class="mb-1">用户ID：<span id="customer-id"></span></p>
+                            <p class="mb-1">用户名：<span id="customer-name"></span></p>
+                            <p class="mb-1">手机号：<span id="customer-phone"></span></p>
+                            <p class="mb-1">邮箱：<span id="customer-email"></span></p>
+                            <p class="mb-1">注册时间：<span id="customer-register-time"></span></p>
+                            <p class="mb-1">最后登录：<span id="customer-last-login"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>账户信息</h6>
+                            <p class="mb-1">客户等级：<span id="customer-level"></span></p>
+                            <p class="mb-1">账户状态：<span id="customer-status"></span></p>
+                            <p class="mb-1">积分：<span id="customer-points"></span></p>
+                            <p class="mb-1">消费总额：<span id="customer-total-spent"></span></p>
+                            <p class="mb-1">订单数：<span id="customer-order-count"></span></p>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                            <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>下单时间</th>
+                                    <th>订单金额</th>
+                                    <th>订单状态</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customer-orders">
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="edit-customer-btn">
+                        <i class="fas fa-edit"></i> 编辑
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑客户模态框 -->
+    <div class="modal fade" id="edit-customer-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑客户信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                <div class="modal-body">
+                    <form id="edit-customer-form">
+                        <input type="hidden" id="edit-customer-id">
+                        <div class="mb-3">
+                            <label for="edit-customer-level" class="form-label">客户等级</label>
+                            <select class="form-select" id="edit-customer-level" required>
+                                <option value="vip">VIP客户</option>
+                                <option value="regular">普通客户</option>
+                                <option value="new">新客户</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-customer-status" class="form-label">账户状态</label>
+                            <select class="form-select" id="edit-customer-status" required>
+                                <option value="active">正常</option>
+                                <option value="inactive">禁用</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-customer-points" class="form-label">积分</label>
+                            <input type="number" class="form-control" id="edit-customer-points" required>
+                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="save-customer-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        let currentPage = 1;
+        let customerModal;
+        let editCustomerModal;
+
+        // 获取客户列表
+        async function fetchCustomers(page = 1) {
+            try {
+                const level = document.getElementById('level').value;
+                const status = document.getElementById('status').value;
+                const search = document.getElementById('search').value;
+
+                const params = new URLSearchParams({
+                    page,
+                    limit: 10,
+                    level,
+                    status,
+                    search
+                });
+
+                const data = await apiRequest(`/api/merchant/customers?${params}`);
+                if (data && data.success) {
+                    const tbody = document.getElementById('customers-table');
+                    tbody.innerHTML = data.data.customers.map(customer => `
+                        <tr>
+                            <td>${customer.id}</td>
+                            <td>${customer.username}</td>
+                            <td>${customer.phone}</td>
+                            <td>
+                                <span class="badge bg-${getLevelBadgeColor(customer.level)}">
+                                    ${getLevelText(customer.level)}
+                                </span>
+                            </td>
+                            <td>${formatDate(customer.createdAt)}</td>
+                            <td>
+                                <span class="badge bg-${getStatusBadgeColor(customer.status)}">
+                                    ${getStatusText(customer.status)}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="viewCustomer('${customer.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="toggleCustomerStatus('${customer.id}', '${customer.status}')">
+                                    <i class="fas fa-${customer.status === 'active' ? 'ban' : 'check'}"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    // 更新分页
+                    updatePagination(data.data.total, data.data.page, data.data.limit);
+                }
+            } catch (error) {
+                console.error('获取客户列表错误:', error);
+                showError('获取客户列表失败');
+            }
+        }
+
+        // 更新分页
+        function updatePagination(total, currentPage, limit) {
+            const totalPages = Math.ceil(total / limit);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            // 上一页
+            pagination.innerHTML += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchCustomers(${currentPage - 1})">上一页</a>
+                </li>
+            `;
+
+            // 页码
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.innerHTML += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="fetchCustomers(${i})">${i}</a>
+                    </li>
+                `;
+            }
+
+            // 下一页
+            pagination.innerHTML += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchCustomers(${currentPage + 1})">下一页</a>
+                </li>
+            `;
+        }
+
+        // 获取等级标签颜色
+        function getLevelBadgeColor(level) {
+            const colors = {
+                'vip': 'danger',
+                'regular': 'primary',
+                'new': 'success'
+            };
+            return colors[level] || 'secondary';
+        }
+
+        // 获取等级文本
+        function getLevelText(level) {
+            const texts = {
+                'vip': 'VIP客户',
+                'regular': '普通客户',
+                'new': '新客户'
+            };
+            return texts[level] || level;
+        }
+
+        // 获取状态标签颜色
+        function getStatusBadgeColor(status) {
+            const colors = {
+                'active': 'success',
+                'inactive': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const texts = {
+                'active': '正常',
+                'inactive': '禁用'
+            };
+            return texts[status] || status;
+        }
+
+        // 查看客户详情
+        async function viewCustomer(id) {
+            try {
+                const data = await apiRequest(`/api/merchant/customers/${id}`);
+                if (data && data.success) {
+                    const customer = data.data;
+                    
+                    // 更新基本信息
+                    document.getElementById('customer-id').textContent = customer.id;
+                    document.getElementById('customer-name').textContent = customer.username;
+                    document.getElementById('customer-phone').textContent = customer.phone;
+                    document.getElementById('customer-email').textContent = customer.email || '未设置';
+                    document.getElementById('customer-register-time').textContent = formatDate(customer.createdAt);
+                    document.getElementById('customer-last-login').textContent = formatDate(customer.lastLoginAt);
+                    
+                    // 更新账户信息
+                    document.getElementById('customer-level').textContent = getLevelText(customer.level);
+                    document.getElementById('customer-status').textContent = getStatusText(customer.status);
+                    document.getElementById('customer-points').textContent = customer.points || 0;
+                    document.getElementById('customer-total-spent').textContent = `¥${formatPrice(customer.totalSpent || 0)}`;
+                    document.getElementById('customer-order-count').textContent = customer.orderCount || 0;
+                    
+                    // 更新订单列表
+                    const ordersTable = document.getElementById('customer-orders');
+                    if (customer.orders && customer.orders.length > 0) {
+                        ordersTable.innerHTML = customer.orders.map(order => `
+                            <tr>
+                                <td>${order.orderNumber}</td>
+                                <td>${formatDate(order.createdAt)}</td>
+                                <td>¥${formatPrice(order.totalAmount)}</td>
+                                <td>
+                                    <span class="badge bg-${getStatusBadgeColor(order.status)}">
+                                        ${getStatusText(order.status)}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        ordersTable.innerHTML = '<tr><td colspan="4" class="text-center">暂无订单记录</td></tr>';
+                    }
+                    
+                    // 设置编辑按钮
+                    document.getElementById('edit-customer-btn').onclick = () => showEditCustomerModal(customer);
+                    
+                    customerModal.show();
+                }
+            } catch (error) {
+                console.error('获取客户详情错误:', error);
+                showError('获取客户详情失败');
+            }
+        }
+
+        // 显示编辑客户模态框
+        function showEditCustomerModal(customer) {
+            document.getElementById('edit-customer-id').value = customer.id;
+            document.getElementById('edit-customer-level').value = customer.level;
+            document.getElementById('edit-customer-status').value = customer.status;
+            document.getElementById('edit-customer-points').value = customer.points || 0;
+            
+            customerModal.hide();
+            editCustomerModal.show();
+        }
+
+        // 保存客户信息
+        async function saveCustomer() {
+            const form = document.getElementById('edit-customer-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const customerId = document.getElementById('edit-customer-id').value;
+            const customerData = {
+                level: document.getElementById('edit-customer-level').value,
+                status: document.getElementById('edit-customer-status').value,
+                points: parseInt(document.getElementById('edit-customer-points').value)
+            };
+
+            try {
+                const data = await apiRequest(`/api/merchant/customers/${customerId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(customerData)
+                });
+
+                if (data && data.success) {
+                    showAlert('success', '客户信息已更新');
+                    editCustomerModal.hide();
+                    fetchCustomers(currentPage);
+                }
+            } catch (error) {
+                console.error('更新客户信息错误:', error);
+                showError('更新客户信息失败');
+            }
+        }
+
+        // 切换客户状态
+        async function toggleCustomerStatus(id, currentStatus) {
+            try {
+                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+                const confirmMessage = `确定要${newStatus === 'active' ? '启用' : '禁用'}该客户吗？`;
+                
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+
+                const data = await apiRequest(`/api/merchant/customers/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (data && data.success) {
+                    showAlert('success', `客户已${newStatus === 'active' ? '启用' : '禁用'}`);
+                    fetchCustomers(currentPage);
+                }
+            } catch (error) {
+                console.error('更新客户状态错误:', error);
+                showError('更新客户状态失败');
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoading();
+            try {
+                await fetchCustomers();
+            } catch (error) {
+                console.error('初始化页面错误:', error);
+                showError('页面加载失败');
+            } finally {
+                hideLoading();
+            }
+
+            // 初始化模态框
+            customerModal = new bootstrap.Modal(document.getElementById('customer-modal'));
+            editCustomerModal = new bootstrap.Modal(document.getElementById('edit-customer-modal'));
+
+            // 添加事件监听
+            document.getElementById('refresh-btn').addEventListener('click', () => fetchCustomers(currentPage));
+            document.getElementById('filter-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                fetchCustomers(1);
+            });
+            document.getElementById('save-customer-btn').addEventListener('click', saveCustomer);
+        });
+    </script>
+</body>
+</html> 

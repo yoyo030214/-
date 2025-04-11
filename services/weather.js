@@ -98,7 +98,18 @@ module.exports = {
     try {
       const res = await request('/weather/now', { location: cityId });
       console.log('实时天气数据:', res);
-      return res;
+      return {
+        now: {
+          temp: res.now.temp,
+          text: res.now.text,
+          icon: res.now.icon,
+          humidity: res.now.humidity,
+          windScale: res.now.windScale,
+          pressure: res.now.pressure,
+          vis: res.now.vis,
+          obsTime: res.now.obsTime
+        }
+      };
     } catch (error) {
       console.error('获取实时天气失败:', error);
       throw error;
@@ -111,7 +122,17 @@ module.exports = {
     try {
       const res = await request('/weather/7d', { location: cityId });
       console.log('天气预报数据:', res);
-      return res;
+      return {
+        daily: res.daily.map(item => ({
+          fxDate: item.fxDate,
+          tempMax: item.tempMax,
+          tempMin: item.tempMin,
+          iconDay: item.iconDay,
+          textDay: item.textDay,
+          windDirDay: item.windDirDay,
+          windScaleDay: item.windScaleDay
+        }))
+      };
     } catch (error) {
       console.error('获取天气预报失败:', error);
       throw error;
@@ -124,7 +145,16 @@ module.exports = {
     try {
       const res = await request('/weather/24h', { location: cityId });
       console.log('24小时预报数据:', res);
-      return res;
+      return {
+        hourly: res.hourly.map(item => ({
+          fxTime: item.fxTime,
+          temp: item.temp,
+          icon: item.icon,
+          text: item.text,
+          windDir: item.windDir,
+          windScale: item.windScale
+        }))
+      };
     } catch (error) {
       console.error('获取24小时预报失败:', error);
       throw error;
@@ -140,7 +170,14 @@ module.exports = {
         type: '1,2,3,4,5,6,7,8,9,10'
       });
       console.log('生活指数数据:', res);
-      return res;
+      return {
+        daily: res.daily.map(item => ({
+          name: item.name,
+          category: item.category,
+          type: item.type,
+          text: item.text
+        }))
+      };
     } catch (error) {
       console.error('获取生活指数失败:', error);
       throw error;
@@ -150,10 +187,19 @@ module.exports = {
   // 获取农业气象
   getAgroMeteo: async (cityId) => {
     console.log('获取农业气象:', cityId);
-    // 由于和风天气没有直接的农业气象API，这里返回模拟数据
-    return Promise.resolve({
-      tips: '今日适合进行农作物管理和田间作业，建议农户适时进行灌溉和施肥。注意防范病虫害的发生。'
-    });
+    try {
+      const res = await request('/weather/now', { location: cityId });
+      return {
+        tips: '今日适合进行农作物管理和田间作业，建议农户适时进行灌溉和施肥。注意防范病虫害的发生。',
+        description: `当前温度${res.now.temp}℃，湿度${res.now.humidity}%，${res.now.text}，适合进行田间作业。`
+      };
+    } catch (error) {
+      console.error('获取农业气象失败:', error);
+      return {
+        tips: '暂无农事建议',
+        description: '暂无详细说明'
+      };
+    }
   },
 
   // 导出API检查方法

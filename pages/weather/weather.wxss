@@ -134,16 +134,16 @@
 .forecast-section {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 40rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
   backdrop-filter: blur(10px);
 }
 
 .section-title {
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: bold;
   color: #333;
-  margin-bottom: 20rpx;
+  margin-bottom: 10rpx;
 }
 
 /* 24小时预报 */
@@ -160,7 +160,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 30rpx;
+  padding: 10rpx 20rpx;
+  min-width: 80rpx;
 }
 
 .time {
@@ -179,6 +180,17 @@
 .forecast-temp {
   font-size: 28rpx;
   color: #333;
+  margin: 4rpx 0;
+}
+
+.forecast-desc {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.forecast-wind {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* 7天预报 */
@@ -190,7 +202,7 @@
 .daily-item {
   display: flex;
   align-items: center;
-  padding: 20rpx 0;
+  padding: 10rpx 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -199,8 +211,8 @@
 }
 
 .date {
-  flex: 1;
-  font-size: 28rpx;
+  width: 100rpx;
+  font-size: 24rpx;
   color: #333;
 }
 
@@ -209,9 +221,8 @@
 }
 
 .temp-range {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
+  width: 120rpx;
+  text-align: center;
 }
 
 .max {
@@ -229,21 +240,46 @@
   color: #4dabf7;
 }
 
+.weather-desc {
+  flex: 1;
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  margin-left: 20rpx;
+}
+
+.wind-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 100rpx;
+}
+
+.wind-dir {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.wind-scale {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4rpx;
+}
+
 /* 生活指数 */
 .indices-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20rpx;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10rpx;
+  padding: 10rpx;
 }
 
 .index-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 20rpx;
+  padding: 10rpx;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 16rpx;
+  border-radius: 8rpx;
 }
 
 .index-item image {
@@ -255,20 +291,25 @@
 
 .index-name {
   font-size: 24rpx;
-  color: rgba(0, 0, 0, 0.6);
-  margin-bottom: 6rpx;
+  color: #333;
 }
 
 .index-value {
-  font-size: 28rpx;
-  color: #333;
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4rpx;
+}
+
+.index-desc {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 8rpx;
+  line-height: 1.4;
 }
 
 /* 农业气象 */
 .agro-info {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
+  padding: 10rpx;
 }
 
 .agro-item {
@@ -297,9 +338,9 @@
 }
 
 .agro-value {
-  font-size: 32rpx;
-  color: #333;
-  margin-bottom: 8rpx;
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.4;
 }
 
 .agro-desc {
@@ -384,4 +425,26 @@
 
 .retry-btn:active {
   opacity: 0.8;
+}
+
+/* 列表通用样式 */
+.hourly-list, .daily-list, .indices-list, .agro-list {
+  padding: 5rpx 10rpx;
+}
+
+.hourly-list text, .daily-list text, .indices-list text, .agro-list text {
+  display: block;
+  font-size: 26rpx;
+  color: #333;
+  padding: 8rpx 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.hourly-list text:last-child, .daily-list text:last-child, 
+.indices-list text:last-child, .agro-list text:last-child {
+  border-bottom: none;
+}
+
+.agro-list text {
+  line-height: 1.3;
 } 

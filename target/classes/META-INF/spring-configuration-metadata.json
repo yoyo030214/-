@@ -1,0 +1,42 @@
+{
+  "groups": [
+    {
+      "name": "deepseek",
+      "type": "com.example.deepseek.config.DeepseekProperties",
+      "sourceType": "com.example.deepseek.config.DeepseekProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "deepseek.api-key",
+      "type": "java.lang.String",
+      "description": "Deepseek API 密钥",
+      "sourceType": "com.example.deepseek.config.DeepseekProperties"
+    },
+    {
+      "name": "deepseek.base-url",
+      "type": "java.lang.String",
+      "description": "API 基础URL",
+      "sourceType": "com.example.deepseek.config.DeepseekProperties"
+    },
+    {
+      "name": "deepseek.max-tokens",
+      "type": "java.lang.Integer",
+      "description": "最大token数",
+      "sourceType": "com.example.deepseek.config.DeepseekProperties"
+    },
+    {
+      "name": "deepseek.model",
+      "type": "java.lang.String",
+      "description": "默认模型",
+      "sourceType": "com.example.deepseek.config.DeepseekProperties"
+    },
+    {
+      "name": "deepseek.temperature",
+      "type": "java.lang.Double",
+      "description": "温度参数",
+      "sourceType": "com.example.deepseek.config.DeepseekProperties"
+    }
+  ],
+  "hints": []
+}

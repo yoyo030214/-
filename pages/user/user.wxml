@@ -60,6 +60,16 @@
         </view>
       </view>
     </block>
+    <!-- 长辈模式开关 -->
+    <view class="order-item elder-mode-item">
+      <view class="item-left">
+        <image class="item-icon" src="/images/icons/elder.png" />
+        <text class="item-title">长辈模式</text>
+      </view>
+      <view class="item-right">
+        <switch checked="{{isElderMode}}" bindchange="toggleElderMode" color="#07c160" />
+      </view>
+    </view>
   </view>
 
   <!-- 农业详情卡片 -->
@@ -81,11 +91,5 @@
         <text class="tip">已覆盖{{coveredVillages}}个自然村</text>
       </view>
     </view>
-  </view>
-
-  <!-- 客服入口按钮 -->
-  <view class="customer-service-entry" bindtap="navigateToCustomerService">
-    <image class="icon" src="/static/images/cs-icon.png" />
-    <text>在线客服</text>
   </view>
 </view> 

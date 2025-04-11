@@ -51,57 +51,43 @@
     <!-- 24小时预报 -->
     <view class="forecast-section">
       <view class="section-title">24小时预报</view>
-      <scroll-view class="hourly-forecast" scroll-x="true">
-        <view class="forecast-list">
-          <view class="forecast-item" wx:for="{{weatherData.hourly}}" wx:key="time">
-            <text class="time">{{item.time}}</text>
-            <image class="forecast-icon" src="/images/temp/panda.webp" mode="aspectFit"></image>
-            <text class="forecast-temp">{{item.temp}}°</text>
-          </view>
-        </view>
-      </scroll-view>
+      <view class="hourly-list">
+        <text>00:00 18° 多云</text>
+        <text>03:00 17° 多云</text>
+        <text>06:00 16° 阴</text>
+        <text>09:00 19° 多云</text>
+        <text>12:00 22° 晴</text>
+      </view>
     </view>
 
     <!-- 7天预报 -->
     <view class="forecast-section">
       <view class="section-title">7天预报</view>
-      <view class="daily-forecast">
-        <view class="daily-item" wx:for="{{weatherData.daily}}" wx:key="date">
-          <text class="date">{{item.date}}</text>
-          <image class="forecast-icon" src="/images/temp/panda.webp" mode="aspectFit"></image>
-          <view class="temp-range">
-            <text class="max">{{item.maxTemp}}°</text>
-            <text class="divider">/</text>
-            <text class="min">{{item.minTemp}}°</text>
-          </view>
-        </view>
+      <view class="daily-list">
+        <text>今天 18°/12° 多云</text>
+        <text>明天 20°/13° 晴</text>
+        <text>后天 19°/14° 多云</text>
+        <text>周五 17°/12° 小雨</text>
+        <text>周六 16°/11° 阴</text>
       </view>
     </view>
 
     <!-- 生活指数 -->
     <view class="forecast-section">
       <view class="section-title">生活指数</view>
-      <view class="indices-grid">
-        <view class="index-item" wx:for="{{weatherData.indices}}" wx:key="name">
-          <image src="/images/temp/panda.webp" mode="aspectFit"></image>
-          <text class="index-name">{{item.name}}</text>
-          <text class="index-value">{{item.value}}</text>
-        </view>
+      <view class="indices-list">
+        <text>穿衣 较舒适</text>
+        <text>运动 适宜</text>
+        <text>感冒 易发</text>
+        <text>空气 良好</text>
       </view>
     </view>
 
     <!-- 农业气象 -->
     <view class="forecast-section">
       <view class="section-title">农业气象</view>
-      <view class="agro-info">
-        <view class="agro-item" wx:for="{{weatherData.agroMet}}" wx:key="type">
-          <view class="agro-header">
-            <image src="/images/temp/panda.webp" mode="aspectFit"></image>
-            <text>{{item.type}}</text>
-          </view>
-          <view class="agro-value">{{item.value}}</view>
-          <view class="agro-desc">{{item.description}}</view>
-        </view>
+      <view class="agro-list">
+        <text>今日气温适宜，建议农户适时进行春耕备耕工作</text>
       </view>
     </view>
   </view>

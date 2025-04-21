@@ -1,0 +1,840 @@
+# 数据库模型汇总文档
+
+## 1. 用户相关模型
+
+### 1.1 User 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class User extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      username: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true
+      },
+      password: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+      },
+      email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true
+      },
+      phone: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+      },
+      avatar: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      role: {
+        type: DataTypes.ENUM('user', 'admin', 'farmer'),
+        defaultValue: 'user'
+      },
+      is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+      },
+      last_login: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'users',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 1.2 Customer 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class Customer extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      username: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
+      },
+      password: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      phone: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      email: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      address: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      avatar: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      status: {
+        type: DataTypes.ENUM('正常', '已冻结'),
+        defaultValue: '正常'
+      },
+      points: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'customers',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+## 2. 商家相关模型
+
+### 2.1 Merchant 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class Merchant extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      username: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
+      },
+      password: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      store_name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      contact_name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      contact_phone: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      email: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      address: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      business_license: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      logo: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      member_level: {
+        type: DataTypes.ENUM('基础版', '专业版', '高级版'),
+        defaultValue: '基础版'
+      },
+      status: {
+        type: DataTypes.ENUM('待审核', '正常', '已冻结'),
+        defaultValue: '待审核'
+      },
+      balance: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'merchants',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 2.2 MerchantProduct 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class MerchantProduct extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      name: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
+      category: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM('active', 'inactive'),
+        defaultValue: 'active'
+      },
+      merchant_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'merchants',
+          key: 'id'
+        }
+      },
+      unit: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        defaultValue: '个'
+      },
+      images: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      is_on_sale: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+      },
+      sales_count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      is_recommended: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'merchant_products',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 2.3 MerchantOrder 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class MerchantOrder extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      order_number: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true
+      },
+      total_amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM('pending', 'paid', 'shipped', 'delivered', 'cancelled'),
+        defaultValue: 'pending'
+      },
+      shipping_address: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      payment_method: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+      merchant_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'merchants',
+          key: 'id'
+        }
+      },
+      customer_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'customers',
+          key: 'id'
+        }
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'merchant_orders',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 2.4 MerchantOrderItem 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class MerchantOrderItem extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1
+      },
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      order_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'merchant_orders',
+          key: 'id'
+        }
+      },
+      product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'merchant_products',
+          key: 'id'
+        }
+      },
+      product_name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      total_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      discount: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0
+      },
+      notes: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'merchant_order_items',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+## 3. 订单相关模型
+
+### 3.1 Order 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class Order extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      order_number: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+        unique: true
+      },
+      total_amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM('pending', 'paid', 'shipped', 'delivered', 'cancelled'),
+        defaultValue: 'pending'
+      },
+      payment_method: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+      },
+      payment_status: {
+        type: DataTypes.ENUM('pending', 'completed', 'failed', 'refunded'),
+        defaultValue: 'pending'
+      },
+      shipping_address: {
+        type: DataTypes.JSON,
+        allowNull: false
+      },
+      shipping_method: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+      },
+      shipping_fee: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0
+      },
+      discount: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0
+      },
+      notes: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'orders',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 3.2 OrderItem 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class OrderItem extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      order_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'orders',
+          key: 'id'
+        }
+      },
+      product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'products',
+          key: 'id'
+        }
+      },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1
+      },
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      subtotal: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'order_items',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 3.3 Product 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class Product extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      name: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
+      category: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+      images: {
+        type: DataTypes.JSON,
+        allowNull: true
+      },
+      origin: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      harvest_date: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      farmer_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
+      featured: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      is_organic: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'products',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+## 4. 其他模型
+
+### 4.1 Image 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class Image extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      url: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      type: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+      entity_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      entity_type: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'images',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 4.2 Policy 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class Policy extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      title: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      content: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      },
+      category: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'policies',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+### 4.3 PolicyFavorite 模型
+```javascript
+const { Model, DataTypes } = require('sequelize');
+
+class PolicyFavorite extends Model {
+  static init(sequelize) {
+    super.init({
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
+      policy_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'policies',
+          key: 'id'
+        }
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      sequelize,
+      tableName: 'policy_favorites',
+      timestamps: true,
+      underscored: true
+    });
+  }
+}
+```
+
+## 5. 模型关联配置 (index.js)
+```javascript
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const process = require('process');
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/database.js');
+const db = {};
+
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
+    );
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db; 

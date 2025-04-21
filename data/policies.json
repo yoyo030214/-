@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "关于促进乡村产业振兴的指导意见",
+    "publishDate": "2025-01-15",
+    "category": "产业振兴",
+    "status": "已发布"
+  },
+  {
+    "id": 2,
+    "title": "2025年农业补贴政策解读",
+    "publishDate": "2025-02-23",
+    "category": "补贴政策",
+    "status": "已发布"
+  },
+  {
+    "id": 3,
+    "title": "优质农产品认证标准更新通知",
+    "publishDate": "2025-03-10",
+    "category": "产品标准",
+    "status": "待审核"
+  }
+]

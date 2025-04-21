@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ORD2025030001",
+    "customer": "周小明",
+    "amount": 126.5,
+    "orderTime": "2025-03-15 09:23",
+    "status": "已付款"
+  },
+  {
+    "id": "ORD2025030002",
+    "customer": "赵大海",
+    "amount": 258,
+    "orderTime": "2025-03-15 10:45",
+    "status": "已发货"
+  },
+  {
+    "id": "ORD2025030003",
+    "customer": "林小花",
+    "amount": 75.2,
+    "orderTime": "2025-03-15 14:30",
+    "status": "待付款"
+  }
+]

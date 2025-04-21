@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "123456",
+    "role": "管理员",
+    "registerDate": "2025-01-01",
+    "status": "活跃"
+  },
+  {
+    "id": 2,
+    "username": "zhangsan",
+    "password": "123456",
+    "role": "农户",
+    "registerDate": "2025-01-15",
+    "status": "活跃"
+  },
+  {
+    "id": 3,
+    "username": "lisi",
+    "password": "123456",
+    "role": "客户",
+    "registerDate": "2025-02-20",
+    "status": "待验证"
+  }
+]

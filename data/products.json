@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "有机红富士苹果",
+    "price": "15.8",
+    "unit": "kg",
+    "stock": 500,
+    "farmer": "张大山",
+    "status": "在售"
+  },
+  {
+    "id": 2,
+    "name": "生态散养土鸡",
+    "price": "68.0",
+    "unit": "只",
+    "stock": 50,
+    "farmer": "李小芳",
+    "status": "在售"
+  },
+  {
+    "id": 3,
+    "name": "农家自制腊肉",
+    "price": "85.0",
+    "unit": "kg",
+    "stock": 0,
+    "farmer": "王老二",
+    "status": "缺货"
+  }
+]

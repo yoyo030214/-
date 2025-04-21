@@ -31,38 +31,32 @@ Page({
     this.setData({ loading: true });
 
     try {
-      // 这里替换为实际的API调用
-      const newStories = [
-        {
-          id: 1,
-          image: '/images/farmers/farmer-1.jpg',
-          farmerName: '张大叔',
-          title: '30年老果农的红心柚种植经验',
-          views: 1234,
-          date: '2024-03-05'
+      wx.request({
+        url: 'http://175.178.80.222:3000/api/farmer-stories',
+        method: 'GET',
+        success: (res) => {
+          const newStories = res.data.stories;
+          this.setData({
+            stories: [...this.data.stories, ...newStories],
+            page: this.data.page + 1,
+            noMore: newStories.length < this.data.pageSize
+          });
         },
-        {
-          id: 2,
-          image: '/images/farmers/farmer-2.jpg',
-          farmerName: '李阿姨',
-          title: '绿色有机蔬菜的种植之路',
-          views: 2345,
-          date: '2024-03-04'
+        fail: () => {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'none'
+          });
+        },
+        complete: () => {
+          this.setData({ loading: false });
         }
-      ];
-
-      this.setData({
-        stories: [...this.data.stories, ...newStories],
-        page: this.data.page + 1,
-        noMore: newStories.length < this.data.pageSize
       });
     } catch (error) {
       wx.showToast({
         title: '加载失败',
         icon: 'none'
       });
-    } finally {
-      this.setData({ loading: false });
     }
   },
 

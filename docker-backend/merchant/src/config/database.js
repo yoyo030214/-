@@ -4,24 +4,29 @@ const dotenv = require('dotenv');
 // 加载环境变量
 dotenv.config();
 
-// 使用环境变量或默认值
-const DB_HOST = process.env.DB_HOST || '127.0.0.1';
-const DB_PORT = process.env.DB_PORT || 3306;
-const DB_NAME = process.env.DB_NAME || 'merchant_db';
-const DB_USER = process.env.DB_USER || 'root';
-const DB_PASS = process.env.DB_PASS || 'password';
+// 从环境变量获取数据库连接信息，如果没有则使用默认值
+const dbHost = process.env.DB_HOST || 'localhost';
+const dbPort = process.env.DB_PORT || 3306;
+const dbUser = process.env.DB_USER || 'root';
+const dbPassword = process.env.DB_PASSWORD || 'lol110606YY.';
+const dbName = process.env.DB_NAME || 'merchant_db';
 
-const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
-    host: DB_HOST,
-    port: DB_PORT,
+// 创建Sequelize实例
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+    host: dbHost,
+    port: dbPort,
     dialect: 'mysql',
-    logging: process.env.NODE_ENV === 'development',
+    dialectOptions: {
+        timezone: '+08:00',
+        charset: 'utf8mb4'
+    },
     pool: {
-        max: 10,
+        max: 5,
         min: 0,
         acquire: 30000,
         idle: 10000
-    }
+    },
+    logging: process.env.NODE_ENV === 'development' ? console.log : false
 });
 
 // 测试数据库连接

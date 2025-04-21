@@ -16,6 +16,18 @@ Page({
         description: `这是商品${id}的描述`
       }
     });
+
+    wx.request({
+      url: `http://175.178.80.222:3000/api/products/${id}`,
+      method: 'GET',
+      success: (res) => {
+        // 处理API返回的数据
+        console.log(res.data);
+      },
+      fail: (err) => {
+        console.error('API请求失败', err);
+      }
+    });
   },
 
   addToCart() {

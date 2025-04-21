@@ -1,22 +1,85 @@
 Page({
   data: {
-    pageTitle: '农产品分类',
     categories: [
-      { id: 1, name: '蔬', icon: '/images/icons/vegetable.png', desc: '新鲜蔬菜' },
-      { id: 2, name: '果', icon: '/images/icons/fruit.png', desc: '时令水果' },
-      { id: 3, name: '生', icon: '/images/icons/grain.png', desc: '粮油杂粮' },
-      { id: 4, name: '鲜', icon: '/images/icons/seafood.png', desc: '水产海鲜' }
+      { id: 'vegetable', name: '蔬菜', icon: '/images/vegetable.png' },
+      { id: 'fruit', name: '水果', icon: '/images/fruit.png' },
+      { id: 'fresh', name: '生鲜', icon: '/images/fresh.png' },
+      { id: 'other', name: '其他', icon: '/images/other.png' }
     ],
-    isLoading: true
+    currentCategory: 'vegetable',
+    products: [],
+    loading: false,
+    page: 1,
+    hasMore: true
   },
 
-  onLoad() {
-    // 模拟加载数据
-    setTimeout(() => {
-      this.setData({
-        isLoading: false
+  onLoad: function() {
+    this.loadProducts();
+  },
+
+  // 切换分类
+  switchCategory: function(e) {
+    const category = e.currentTarget.dataset.category;
+    this.setData({
+      currentCategory: category,
+      products: [],
+      page: 1,
+      hasMore: true
+    });
+    this.loadProducts();
+  },
+
+  // 加载商品数据
+  loadProducts: async function() {
+    if (this.data.loading || !this.data.hasMore) return;
+    
+    this.setData({ loading: true });
+    
+    try {
+      const res = await wx.request({
+        url: 'http://175.178.80.222:3000/api/products',
+        method: 'GET',
+        data: {
+          category: this.data.currentCategory,
+          page: this.data.page,
+          limit: 10
+        }
       });
-    }, 500);
+      
+      if (res.data.success) {
+        const newProducts = res.data.data;
+        this.setData({
+          products: [...this.data.products, ...newProducts],
+          page: this.data.page + 1,
+          hasMore: newProducts.length === 10
+        });
+      }
+    } catch (error) {
+      console.error('加载商品失败:', error);
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+    } finally {
+      this.setData({ loading: false });
+    }
+  },
+
+  // 下拉刷新
+  onPullDownRefresh: function() {
+    this.setData({
+      products: [],
+      page: 1,
+      hasMore: true
+    });
+    this.loadProducts().then(() => {
+      wx.stopPullDownRefresh();
+    });
+  },
+
+  // 上拉加载更多
+  onReachBottom: function() {
+    this.loadProducts();
   },
 
   // 点击分类项

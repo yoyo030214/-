@@ -8,12 +8,11 @@ const Product = sequelize.define('Product', {
     autoIncrement: true
   },
   name: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING,
     allowNull: false
   },
   description: {
-    type: DataTypes.TEXT,
-    allowNull: true
+    type: DataTypes.TEXT
   },
   price: {
     type: DataTypes.DECIMAL(10, 2),
@@ -21,16 +20,29 @@ const Product = sequelize.define('Product', {
   },
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     defaultValue: 0
   },
   category: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.ENUM('vegetable', 'fruit', 'fresh', 'other'),
     allowNull: false
   },
   images: {
     type: DataTypes.JSON,
-    allowNull: true,
+    defaultValue: []
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive'),
+    defaultValue: 'active'
+  },
+  farmerId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  location: {
+    type: DataTypes.STRING
+  },
+  tags: {
+    type: DataTypes.JSON,
     defaultValue: []
   },
   origin: {
@@ -40,14 +52,6 @@ const Product = sequelize.define('Product', {
   harvestDate: {
     type: DataTypes.DATE,
     allowNull: true
-  },
-  farmerId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'users',
-      key: 'id'
-    }
   },
   featured: {
     type: DataTypes.BOOLEAN,
@@ -74,9 +78,10 @@ const Product = sequelize.define('Product', {
     },
     {
       name: 'idx_products_farmer',
-      fields: ['farmerId']
+      fields: ['farmer_id']
     }
-  ]
+  ],
+  timestamps: true
 });
 
 module.exports = Product; 

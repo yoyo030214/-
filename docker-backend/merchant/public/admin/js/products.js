@@ -363,6 +363,14 @@ async function handleProductSubmit(e) {
         formData.append('details', document.getElementById('productDetails').value);
         formData.append('status', document.getElementById('productStatus').checked ? 'on_sale' : 'off_sale');
         formData.append('is_featured', document.getElementById('productFeatured').checked);
+
+        // 处理文件上传
+        const imageInput = document.getElementById('productImage');
+        if (imageInput.files.length > 0) {
+            for (let i = 0; i < imageInput.files.length; i++) {
+                formData.append('images', imageInput.files[i]);
+            }
+        }
         
         const productId = document.getElementById('productId').value;
         const method = productId ? 'PUT' : 'POST';

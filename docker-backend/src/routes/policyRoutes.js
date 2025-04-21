@@ -3,31 +3,11 @@ const router = express.Router();
 const { Policy, PolicyFavorite, User, sequelize } = require('../models');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const { authenticateToken, checkRole } = require('../middleware/auth');
+const policyController = require('../controllers/policyController');
 
 // 私钥，实际应用中应该放在环境变量中
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
-
-// 验证JWT中间件
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ message: '未提供认证令牌' });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: '令牌已过期' });
-      }
-      return res.status(403).json({ message: '无效的令牌' });
-    }
-    
-    req.user = user;
-    next();
-  });
-};
 
 // 获取所有农业政策
 router.get('/', async (req, res) => {
@@ -283,5 +263,10 @@ router.get('/:id/favorite/status', authenticateToken, async (req, res) => {
     res.status(500).json({ message: '服务器错误' });
   }
 });
+
+// 政策路由
+router.post('/', authenticateToken, checkRole(['admin']), policyController.createPolicy);
+router.put('/:id', authenticateToken, checkRole(['admin']), policyController.updatePolicy);
+router.get('/latest', policyController.getLatestPolicies);
 
 module.exports = router; 

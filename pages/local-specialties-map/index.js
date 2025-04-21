@@ -66,7 +66,10 @@ Page({
     // 图片预加载相关
     preloadedImages: {}, // 记录已预加载的图片
     imageLoadQueue: [], // 图片加载队列
-    maxConcurrentLoads: 3 // 最大并发加载数
+    maxConcurrentLoads: 3, // 最大并发加载数
+    socketTask: null, // WebSocket连接
+    lastUpdateTime: 0, // 最后更新时间
+    updateInterval: 30000, // 更新间隔30秒
   },
 
   onLoad: function() {
@@ -105,6 +108,15 @@ Page({
       // 页面数据加载完成后，预加载非关键图片
       this.preloadNonCriticalImages();
     }, 1000);
+
+    // 初始化WebSocket连接
+    this.initWebSocket();
+    
+    // 获取当前位置
+    this.getCurrentLocation();
+    
+    // 加载地图数据
+    this.loadMapData();
   },
   
   // 预加载关键图片（首屏必须的图片）
@@ -1461,6 +1473,9 @@ Page({
   // 页面卸载时触发
   onUnload() {
     // 清理资源
+    if (this.data.socketTask) {
+      this.data.socketTask.close();
+    }
   },
   
   // 下拉刷新
@@ -1472,5 +1487,188 @@ Page({
     setTimeout(() => {
       wx.stopPullDownRefresh();
     }, 1000);
+  },
+
+  // 获取当前位置
+  getCurrentLocation() {
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        this.setData({
+          latitude: res.latitude,
+          longitude: res.longitude
+        });
+        // 更新地图中心点
+        this.mapCtx = wx.createMapContext('map');
+        this.mapCtx.moveToLocation();
+      },
+      fail: () => {
+        wx.showToast({
+          title: '获取位置失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  // 初始化WebSocket连接
+  initWebSocket() {
+    const socketTask = wx.connectSocket({
+      url: 'ws://175.178.80.222:3000/ws',
+      success: () => {
+        console.log('WebSocket连接成功');
+      }
+    });
+
+    socketTask.onOpen(() => {
+      console.log('WebSocket连接已打开');
+      // 发送身份验证信息
+      socketTask.send({
+        data: JSON.stringify({
+          type: 'auth',
+          token: wx.getStorageSync('token')
+        })
+      });
+    });
+
+    socketTask.onMessage((res) => {
+      const data = JSON.parse(res.data);
+      this.handleWebSocketMessage(data);
+    });
+
+    socketTask.onClose(() => {
+      console.log('WebSocket连接已关闭');
+      // 尝试重新连接
+      setTimeout(() => {
+        this.initWebSocket();
+      }, 5000);
+    });
+
+    this.setData({ socketTask });
+  },
+
+  // 处理WebSocket消息
+  handleWebSocketMessage(data) {
+    switch (data.type) {
+      case 'locationUpdate':
+        this.updateLocationData(data.data);
+        break;
+      case 'productUpdate':
+        this.updateProductData(data.data);
+        break;
+    }
+  },
+
+  // 更新位置数据
+  updateLocationData(locations) {
+    const markers = locations.map(location => ({
+      id: location.id,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      title: location.name,
+      iconPath: this.getMarkerIcon(location.type),
+      width: 32,
+      height: 32,
+      callout: {
+        content: location.name,
+        color: '#000000',
+        fontSize: 14,
+        borderRadius: 4,
+        padding: 5,
+        display: 'ALWAYS'
+      }
+    }));
+
+    this.setData({ markers });
+  },
+
+  // 更新产品数据
+  updateProductData(products) {
+    const markers = this.data.markers.map(marker => {
+      const product = products.find(p => p.id === marker.id);
+      if (product) {
+        return {
+          ...marker,
+          title: product.name,
+          callout: {
+            content: `${product.name}\n价格: ¥${product.price}\n库存: ${product.stock}`,
+            color: '#000000',
+            fontSize: 14,
+            borderRadius: 4,
+            padding: 5,
+            display: 'ALWAYS'
+          }
+        };
+      }
+      return marker;
+    });
+
+    this.setData({ markers });
+  },
+
+  // 加载地图数据
+  loadMapData() {
+    wx.request({
+      url: 'http://175.178.80.222:3000/api/map/locations',
+      method: 'GET',
+      success: (res) => {
+        if (res.data.code === '200') {
+          const markers = res.data.data.map(location => ({
+            id: location.id,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            title: location.name,
+            iconPath: this.getMarkerIcon(location.type),
+            width: 32,
+            height: 32,
+            callout: {
+              content: location.name,
+              color: '#000000',
+              fontSize: 14,
+              borderRadius: 4,
+              padding: 5,
+              display: 'ALWAYS'
+            }
+          }));
+
+          this.setData({ markers });
+        }
+      },
+      fail: (err) => {
+        console.error('加载地图数据失败:', err);
+        wx.showToast({
+          title: '加载地图数据失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  // 获取标记点图标
+  getMarkerIcon(type) {
+    const icons = {
+      local: '/images/map/local.png',
+      seasonal: '/images/map/seasonal.png',
+      farmer: '/images/map/farmer.png',
+      default: '/images/map/default.png'
+    };
+    return icons[type] || icons.default;
+  },
+
+  // 地图移动事件
+  onMapMove(e) {
+    // 可以在这里添加地图移动时的处理逻辑
+  },
+
+  // 地图缩放事件
+  onMapScale(e) {
+    this.setData({
+      scale: e.scale
+    });
+  },
+
+  // 返回当前位置
+  onBackToLocation() {
+    this.getCurrentLocation();
   },
 }); 

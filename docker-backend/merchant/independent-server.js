@@ -701,6 +701,62 @@ app.post('/api/merchant/products/upload', auth, upload.array('images', 5), async
     }
 });
 
+// 商品创建和更新接口
+app.post('/api/merchant/products', auth, upload.array('images', 5), async (req, res) => {
+    try {
+        const { name, category_id, price, stock, description, details, status, is_featured } = req.body;
+        
+        // 处理上传的图片
+        const imageUrls = req.files ? req.files.map(file => `/uploads/products/${file.filename}`) : [];
+        
+        // 创建商品记录
+        const [result] = await pool.execute(
+            'INSERT INTO products (name, category_id, price, stock, description, details, status, is_featured, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [name, category_id, price, stock, description, details, status, is_featured, JSON.stringify(imageUrls)]
+        );
+        
+        res.json({
+            success: true,
+            message: '商品创建成功',
+            data: {
+                id: result.insertId,
+                images: imageUrls
+            }
+        });
+    } catch (error) {
+        console.error('创建商品错误:', error);
+        res.status(500).json({ error: '创建商品失败' });
+    }
+});
+
+app.put('/api/merchant/products/:id', auth, upload.array('images', 5), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, category_id, price, stock, description, details, status, is_featured } = req.body;
+        
+        // 处理上传的图片
+        const imageUrls = req.files ? req.files.map(file => `/uploads/products/${file.filename}`) : [];
+        
+        // 更新商品记录
+        await pool.execute(
+            'UPDATE products SET name = ?, category_id = ?, price = ?, stock = ?, description = ?, details = ?, status = ?, is_featured = ?, images = ? WHERE id = ?',
+            [name, category_id, price, stock, description, details, status, is_featured, JSON.stringify(imageUrls), id]
+        );
+        
+        res.json({
+            success: true,
+            message: '商品更新成功',
+            data: {
+                id,
+                images: imageUrls
+            }
+        });
+    } catch (error) {
+        console.error('更新商品错误:', error);
+        res.status(500).json({ error: '更新商品失败' });
+    }
+});
+
 // 删除商品图片
 app.delete('/api/merchant/products/images/:filename', auth, async (req, res) => {
     try {
@@ -716,31 +772,6 @@ app.delete('/api/merchant/products/images/:filename', auth, async (req, res) => 
     } catch (error) {
         console.error('删除图片错误:', error);
         res.status(500).json({ error: '删除图片失败' });
-    }
-});
-
-// 添加商品
-app.post('/api/merchant/products', auth, async (req, res) => {
-    try {
-        const { name, category, price, stock, description, details, isOnSale, isRecommended } = req.body;
-        
-        // 插入商品信息
-        const [result] = await pool.execute(
-            'INSERT INTO products (merchant_id, category_id, name, price, stock, description, details, is_on_sale, is_recommended) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [req.merchant.id, category, name, price, stock, description, details, isOnSale, isRecommended]
-        );
-
-        res.json({
-            success: true,
-            message: '商品添加成功',
-            productId: result.insertId
-        });
-    } catch (error) {
-        console.error('添加商品错误:', error);
-        res.status(500).json({
-            success: false,
-            message: '添加商品失败'
-        });
     }
 });
 
@@ -807,44 +838,6 @@ app.get('/api/merchant/products', auth, async (req, res) => {
         res.status(500).json({
             success: false,
             message: '获取商品列表失败'
-        });
-    }
-});
-
-// 更新商品
-app.put('/api/merchant/products/:id', auth, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, category, price, stock, description, details, isOnSale, isRecommended } = req.body;
-
-        // 检查商品是否属于当前商家
-        const [products] = await pool.execute(
-            'SELECT id FROM products WHERE id = ? AND merchant_id = ?',
-            [id, req.merchant.id]
-        );
-
-        if (products.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: '商品不存在'
-            });
-        }
-
-        // 更新商品信息
-        await pool.execute(
-            'UPDATE products SET name = ?, category_id = ?, price = ?, stock = ?, description = ?, details = ?, is_on_sale = ?, is_recommended = ? WHERE id = ?',
-            [name, category, price, stock, description, details, isOnSale, isRecommended, id]
-        );
-
-        res.json({
-            success: true,
-            message: '商品更新成功'
-        });
-    } catch (error) {
-        console.error('更新商品错误:', error);
-        res.status(500).json({
-            success: false,
-            message: '更新商品失败'
         });
     }
 });

@@ -1,5 +1,16 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { Sequelize, DataTypes } = require('sequelize');
+const config = require('../../database/src/config/database');
+
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    host: config.host,
+    port: config.port,
+    dialect: config.dialect
+  }
+);
 
 const Policy = sequelize.define('Policy', {
   id: {
@@ -8,67 +19,51 @@ const Policy = sequelize.define('Policy', {
     autoIncrement: true
   },
   title: {
-    type: DataTypes.STRING(200),
+    type: DataTypes.STRING,
     allowNull: false
-  },
-  summary: {
-    type: DataTypes.TEXT,
-    allowNull: true
   },
   content: {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  category: {
-    type: DataTypes.STRING(50),
+  type: {
+    type: DataTypes.ENUM('merchant', 'user', 'platform', 'other'),
     allowNull: false
+  },
+  status: {
+    type: DataTypes.ENUM('draft', 'published', 'archived'),
+    defaultValue: 'draft'
   },
   publishDate: {
-    type: DataTypes.DATEONLY,
-    allowNull: false
-  },
-  source: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.DATE,
     allowNull: true
   },
-  contactPhone: {
-    type: DataTypes.STRING(20),
+  effectiveDate: {
+    type: DataTypes.DATE,
     allowNull: true
   },
-  applicationUrl: {
-    type: DataTypes.STRING(255),
+  expiryDate: {
+    type: DataTypes.DATE,
     allowNull: true
   },
-  attachments: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: []
+  version: {
+    type: DataTypes.STRING,
+    allowNull: true
   },
-  isActive: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true
-  },
-  viewCount: {
+  views: {
     type: DataTypes.INTEGER,
     defaultValue: 0
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'policies',
+  timestamps: true,
   indexes: [
     {
-      name: 'idx_policies_category',
-      fields: ['category']
+      fields: ['type']
     },
     {
-      name: 'idx_policies_publish_date',
+      fields: ['status']
+    },
+    {
       fields: ['publishDate']
     }
   ]

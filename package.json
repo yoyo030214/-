@@ -1,17 +1,10 @@
 {
-  "name": "mall-miniprogram",
+  "name": "temp-backend",
   "version": "1.0.0",
-  "description": "微信小程序商城项目",
-  "main": "app.js",
+  "description": "",
+  "main": "server.js",
   "scripts": {
-    "dev": "npm run build:dev",
-    "build:dev": "cross-env NODE_ENV=development webpack --config webpack.config.js",
-    "build:prod": "cross-env NODE_ENV=production webpack --config webpack.config.js",
-    "lint": "eslint --ext .js,.wxml,.wxss .",
-    "lint:fix": "eslint --ext .js,.wxml,.wxss . --fix",
-    "optimize-images": "node optimize-images.js",
-    "clean-unused": "node clean-unused.js",
-    "compress-images": "node image-compress.js"
+    "start": "node server.js"
   },
   "keywords": [
     "微信小程序",
@@ -21,8 +14,11 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "dayjs": "^1.11.7",
-    "lodash": "^4.17.21"
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.0",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "@babel/core": "^7.22.0",
@@ -49,4 +45,4 @@
     "node": ">=12.0.0",
     "npm": ">=6.0.0"
   }
-} 
+}

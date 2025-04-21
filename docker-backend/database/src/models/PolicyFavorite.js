@@ -13,7 +13,8 @@ const PolicyFavorite = sequelize.define('PolicyFavorite', {
     references: {
       model: 'users',
       key: 'id'
-    }
+    },
+    field: 'user_id'
   },
   policyId: {
     type: DataTypes.INTEGER,
@@ -21,32 +22,27 @@ const PolicyFavorite = sequelize.define('PolicyFavorite', {
     references: {
       model: 'policies',
       key: 'id'
-    }
+    },
+    field: 'policy_id'
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'created_at'
   },
   updatedAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'updated_at'
   }
 }, {
   tableName: 'policy_favorites',
+  timestamps: true,
+  underscored: true,
   indexes: [
     {
-      name: 'idx_policy_favorites_user',
-      fields: ['userId']
-    },
-    {
-      name: 'idx_policy_favorites_policy',
-      fields: ['policyId']
-    },
-    {
-      // 确保一个用户只能收藏一个政策一次
-      name: 'unique_user_policy',
       unique: true,
-      fields: ['userId', 'policyId']
+      fields: ['user_id', 'policy_id']
     }
   ]
 });

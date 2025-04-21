@@ -102,22 +102,22 @@ Page({
     try {
       wx.showLoading({ title: '加载中...' })
       
-      const res = getPolicies(
-        this.getLocalPolicyType(), 
-        this.data.page, 
-        10
-      )
+      wx.request({
+        url: 'http://175.178.80.222:3000/api/policies',
+        method: 'GET',
+        success: (res) => {
+          const policies = res.data.map(p => ({
+            ...p,
+            collected: false,
+            image: this.generatePolicyImage(p.type),
+            coverLoaded: false
+          }))
 
-      const policies = res.data.map(p => ({
-        ...p,
-        collected: false,
-        image: this.generatePolicyImage(p.type),
-        coverLoaded: false
-      }))
-
-      this.setData({
-        policies: this.data.page === 1 ? policies : [...this.data.policies, ...policies],
-        hasMore: (this.data.page * 10) < res.total
+          this.setData({
+            policies: this.data.page === 1 ? policies : [...this.data.policies, ...policies],
+            hasMore: (this.data.page * 10) < res.total
+          })
+        }
       })
 
     } catch (e) {

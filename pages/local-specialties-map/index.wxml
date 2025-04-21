@@ -71,18 +71,36 @@
   
   <!-- 地图区域 -->
   <view class="map-container">
-    <map 
-      id="productMap"
-      longitude="{{longitude}}"
+    <map
+      id="map"
+      class="map"
       latitude="{{latitude}}"
+      longitude="{{longitude}}"
       scale="{{scale}}"
       markers="{{markers}}"
-      polygons="{{polygons}}"
+      show-location="true"
       bindmarkertap="onMarkerTap"
-      bindtap="onMapTap"
-      show-location
-      class="product-map"
-    ></map>
+      bindregionchange="onMapMove"
+      bindscale="onMapScale"
+    >
+      <!-- 地图控件 -->
+      <cover-view class="map-controls">
+        <!-- 返回当前位置按钮 -->
+        <cover-view class="control-btn location-btn" bindtap="onBackToLocation">
+          <cover-image src="/images/map/location.png" mode="aspectFit"></cover-image>
+        </cover-view>
+        
+        <!-- 缩放控件 -->
+        <cover-view class="zoom-controls">
+          <cover-view class="zoom-btn" bindtap="zoomIn">
+            <cover-image src="/images/map/zoom-in.png" mode="aspectFit"></cover-image>
+          </cover-view>
+          <cover-view class="zoom-btn" bindtap="zoomOut">
+            <cover-image src="/images/map/zoom-out.png" mode="aspectFit"></cover-image>
+          </cover-view>
+        </cover-view>
+      </cover-view>
+    </map>
     
     <!-- 重置视图按钮 -->
     <view class="reset-view-btn" bindtap="resetView" wx:if="{{activeCounty}}">
@@ -296,6 +314,17 @@
           </view>
           <view class="geo-desc">{{item.description}}</view>
         </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部信息栏 -->
+  <view class="info-bar">
+    <view class="info-item" wx:for="{{markers}}" wx:key="id" bindtap="onMarkerTap" data-id="{{item.id}}">
+      <image src="{{item.iconPath}}" mode="aspectFit"></image>
+      <view class="info-content">
+        <text class="name">{{item.title}}</text>
+        <text class="desc">{{item.callout.content}}</text>
       </view>
     </view>
   </view>

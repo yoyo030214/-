@@ -28,55 +28,20 @@ const Product = sequelize.define('Product', {
     type: DataTypes.STRING(50),
     allowNull: false
   },
-  images: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: []
-  },
-  origin: {
-    type: DataTypes.STRING(100),
-    allowNull: true
-  },
-  harvestDate: {
-    type: DataTypes.DATE,
-    allowNull: true
+  status: {
+    type: DataTypes.ENUM('active', 'inactive'),
+    defaultValue: 'active'
   },
   farmerId: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
     references: {
       model: 'users',
       key: 'id'
     }
-  },
-  featured: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  isOrganic: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'products',
-  indexes: [
-    {
-      name: 'idx_products_category',
-      fields: ['category']
-    },
-    {
-      name: 'idx_products_farmer',
-      fields: ['farmerId']
-    }
-  ]
+  tableName: 'products'
 });
 
 module.exports = Product; 

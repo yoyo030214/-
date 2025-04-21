@@ -312,10 +312,10 @@ page {
 .farmer-item image {
   width: 120rpx;
   height: 120rpx;
-  border-radius: 60rpx; /* 圆形头像 */
+  border-radius: 60rpx;
   margin-right: 20rpx;
   object-fit: cover;
-  border: 2rpx solid #e0f2e9; /* 添加浅绿色边框 */
+  border: 2rpx solid #e0f2e9;
   box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
@@ -359,6 +359,69 @@ page {
   line-height: 1.4;
 }
 
+/* 新增样式 */
+.farmer-rating {
+  display: flex;
+  align-items: center;
+  margin: 8rpx 0;
+}
+
+.rating-stars {
+  color: #ffb800;
+  font-size: 24rpx;
+  margin-right: 8rpx;
+}
+
+.rating-score {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.farmer-certification {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin: 8rpx 0;
+}
+
+.certification-badge {
+  font-size: 22rpx;
+  color: #07c160;
+  background: #e0f2e9;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+}
+
+.farmer-stats {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.stat-item {
+  font-size: 24rpx;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.stat-item::before {
+  content: '📊';
+  margin-right: 4rpx;
+}
+
+.farmer-products-count {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  background: #07c160;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+}
+
 /* 农户故事 */
 .farmer-stories {
   background: #fff;
@@ -376,6 +439,7 @@ page {
   border-radius: 10rpx;
   overflow: hidden;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
 .story-item image {
@@ -406,6 +470,69 @@ page {
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.4;
+}
+
+/* 新增样式 */
+.story-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.story-interaction {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.interaction-btn {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #666;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  background: #f5f5f5;
+}
+
+.interaction-btn.active {
+  color: #07c160;
+  background: #e0f2e9;
+}
+
+.interaction-btn::before {
+  margin-right: 4rpx;
+}
+
+.like-btn::before {
+  content: '👍';
+}
+
+.comment-btn::before {
+  content: '💬';
+}
+
+.share-btn::before {
+  content: '📤';
+}
+
+.story-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-top: 12rpx;
+}
+
+.story-tag {
+  font-size: 22rpx;
+  color: #07c160;
+  background: #e0f2e9;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
 }
 
 /* 特色产品 */
@@ -742,22 +869,6 @@ page {
 .story-item:active {
   transform: scale(0.95);
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-}
-
-/* 农户产品数量标签 */
-.farmer-products-count {
-  position: absolute;
-  right: 20rpx;
-  top: 20rpx;
-  background-color: #07c160;
-  color: white;
-  font-size: 24rpx;
-  width: 40rpx;
-  height: 40rpx;
-  line-height: 40rpx;
-  text-align: center;
-  border-radius: 50%;
-  box-shadow: 0 2rpx 6rpx rgba(7, 193, 96, 0.3);
 }
 
 /* 农户标签 */

@@ -24,7 +24,13 @@ Page({
         farmerName: '李大叔',
         title: '崇阳脐橙：阳光果园的故事',
         views: 1234,
-        date: '2024-03-05'
+        date: '2024-03-05',
+        likes: 256,
+        comments: 45,
+        shares: 78,
+        category: 'planting',
+        tags: ['种植经验', '有机农业'],
+        isLiked: false
       },
       {
         id: 2,
@@ -32,7 +38,13 @@ Page({
         farmerName: '王阿姨',
         title: '通城有机蔬菜基地',
         views: 2345,
-        date: '2024-03-04'
+        date: '2024-03-04',
+        likes: 189,
+        comments: 32,
+        shares: 56,
+        category: 'planting',
+        tags: ['有机种植', '蔬菜'],
+        isLiked: false
       }
     ],
     // 本地特产
@@ -84,6 +96,9 @@ Page({
         location: '咸宁崇阳',
         desc: '崇阳脐橙种植能手',
         tags: ['有机认证', '源头直供'],
+        rating: 4.8,
+        certification: ['有机认证', '绿色食品'],
+        totalSales: 12345,
         products: [
           {
             id: 1,
@@ -92,7 +107,9 @@ Page({
             price: '39.9',
             unit: '5斤',
             desc: '精选优质脐橙，果肉饱满，汁多甜美',
-            sales: 2341
+            sales: 2341,
+            rating: 4.9,
+            reviews: 156
           },
           {
             id: 2,
@@ -101,7 +118,9 @@ Page({
             price: '49.9',
             unit: '5斤',
             desc: '蜜橙中的极品，入口即化',
-            sales: 1892
+            sales: 1892,
+            rating: 4.7,
+            reviews: 98
           }
         ]
       },
@@ -194,7 +213,10 @@ Page({
     loadError: false, // 添加错误状态
     preloadedImages: {}, // 记录已预加载的图片
     imageLoadQueue: [], // 图片加载队列
-    maxConcurrentLoads: 3 // 最大并发加载数
+    maxConcurrentLoads: 3, // 最大并发加载数
+    socketTask: null, // WebSocket连接
+    lastUpdateTime: 0, // 最后更新时间
+    updateInterval: 30000, // 更新间隔30秒
   },
 
   // 页面加载
@@ -219,6 +241,12 @@ Page({
       
       // 页面数据加载完成后，预加载非关键图片
       this.preloadNonCriticalImages();
+
+      // 初始化WebSocket连接
+      this.initWebSocket();
+      
+      // 设置定时更新
+      this.setIntervalUpdate();
     } catch (error) {
       console.error('页面加载失败:', error);
       this.setData({ 
@@ -437,7 +465,13 @@ Page({
           farmerName: '李大叔',
           title: '崇阳脐橙：阳光果园的故事',
           views: 1234,
-          date: '2024-03-05'
+          date: '2024-03-05',
+          likes: 256,
+          comments: 45,
+          shares: 78,
+          category: 'planting',
+          tags: ['种植经验', '有机农业'],
+          isLiked: false
         },
         {
           id: 2,
@@ -445,7 +479,13 @@ Page({
           farmerName: '王阿姨',
           title: '通城有机蔬菜基地',
           views: 2345,
-          date: '2024-03-04'
+          date: '2024-03-04',
+          likes: 189,
+          comments: 32,
+          shares: 56,
+          category: 'planting',
+          tags: ['有机种植', '蔬菜'],
+          isLiked: false
         },
         {
           id: 3,
@@ -572,6 +612,9 @@ Page({
           location: '咸宁崇阳',
           desc: '崇阳脐橙种植能手',
           tags: ['有机认证', '源头直供'],
+          rating: 4.8,
+          certification: ['有机认证', '绿色食品'],
+          totalSales: 12345,
           products: [
             {
               id: 1,
@@ -580,7 +623,9 @@ Page({
               price: '39.9',
               unit: '5斤',
               desc: '精选优质脐橙，果肉饱满，汁多甜美',
-              sales: 2341
+              sales: 2341,
+              rating: 4.9,
+              reviews: 156
             },
             {
               id: 2,
@@ -589,7 +634,9 @@ Page({
               price: '49.9',
               unit: '5斤',
               desc: '蜜橙中的极品，入口即化',
-              sales: 1892
+              sales: 1892,
+              rating: 4.7,
+              reviews: 98
             }
           ]
         },
@@ -694,11 +741,8 @@ Page({
     const location = `${longitude.toFixed(2)},${latitude.toFixed(2)}`;
     
     wx.request({
-      url: 'https://devapi.qweather.com/v7/weather/now',
-      data: {
-        key: key,
-        location: location
-      },
+      url: 'http://175.178.80.222:3000/api/home',
+      method: 'GET',
       success: (res) => {
         console.log('天气数据响应：', res.data);
         if (res.data.code === '200') {
@@ -1124,5 +1168,272 @@ Page({
     wx.navigateTo({
       url: '/pages/local-specialties-map/index'
     });
+  },
+
+  // 处理点赞
+  handleLike(e) {
+    const { id, index } = e.currentTarget.dataset;
+    const stories = this.data.farmerStories;
+    const story = stories[index];
+    
+    // 更新点赞状态
+    story.isLiked = !story.isLiked;
+    story.likes += story.isLiked ? 1 : -1;
+    
+    this.setData({
+      [`farmerStories[${index}]`]: story
+    });
+
+    // 调用后端API更新点赞数
+    wx.request({
+      url: 'http://175.178.80.222:3000/api/stories/like',
+      method: 'POST',
+      data: {
+        storyId: id,
+        isLiked: story.isLiked
+      },
+      success: (res) => {
+        if (res.data.success) {
+          wx.showToast({
+            title: story.isLiked ? '点赞成功' : '取消点赞',
+            icon: 'success'
+          });
+        }
+      }
+    });
+  },
+
+  // 处理评论
+  handleComment(e) {
+    const { id } = e.currentTarget.dataset;
+    wx.navigateTo({
+      url: `/pages/story/comments?id=${id}`
+    });
+  },
+
+  // 处理分享
+  handleShare(e) {
+    const { id } = e.currentTarget.dataset;
+    const story = this.data.farmerStories.find(s => s.id === id);
+    
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    });
+
+    // 更新分享数
+    wx.request({
+      url: 'http://175.178.80.222:3000/api/stories/share',
+      method: 'POST',
+      data: { storyId: id },
+      success: (res) => {
+        if (res.data.success) {
+          const index = this.data.farmerStories.findIndex(s => s.id === id);
+          if (index !== -1) {
+            this.setData({
+              [`farmerStories[${index}].shares`]: story.shares + 1
+            });
+          }
+        }
+      }
+    });
+  },
+
+  // 分享到好友
+  onShareAppMessage() {
+    return {
+      title: '农户故事',
+      path: '/pages/stories/stories',
+      imageUrl: '/images/share.jpg'
+    };
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '农户故事',
+      query: '',
+      imageUrl: '/images/share.jpg'
+    };
+  },
+
+  // 初始化WebSocket连接
+  initWebSocket() {
+    const socketTask = wx.connectSocket({
+      url: 'ws://175.178.80.222:3000/ws',
+      success: () => {
+        console.log('WebSocket连接成功');
+      }
+    });
+
+    socketTask.onOpen(() => {
+      console.log('WebSocket连接已打开');
+      // 发送身份验证信息
+      socketTask.send({
+        data: JSON.stringify({
+          type: 'auth',
+          token: wx.getStorageSync('token')
+        })
+      });
+    });
+
+    socketTask.onMessage((res) => {
+      const data = JSON.parse(res.data);
+      this.handleWebSocketMessage(data);
+    });
+
+    socketTask.onClose(() => {
+      console.log('WebSocket连接已关闭');
+      // 尝试重新连接
+      setTimeout(() => {
+        this.initWebSocket();
+      }, 5000);
+    });
+
+    this.setData({ socketTask });
+  },
+
+  // 处理WebSocket消息
+  handleWebSocketMessage(data) {
+    switch (data.type) {
+      case 'productUpdate':
+        this.updateProductData(data.data);
+        break;
+      case 'farmerUpdate':
+        this.updateFarmerData(data.data);
+        break;
+      case 'storyUpdate':
+        this.updateStoryData(data.data);
+        break;
+      case 'priceUpdate':
+        this.updatePriceData(data.data);
+        break;
+    }
+  },
+
+  // 更新产品数据
+  updateProductData(products) {
+    const { localProducts, seasonalProducts } = this.data;
+    
+    products.forEach(product => {
+      // 更新本地特产
+      const localIndex = localProducts.findIndex(p => p.id === product.id);
+      if (localIndex !== -1) {
+        this.setData({
+          [`localProducts[${localIndex}]`]: {
+            ...localProducts[localIndex],
+            ...product
+          }
+        });
+      }
+      
+      // 更新当季时令
+      const seasonalIndex = seasonalProducts.findIndex(p => p.id === product.id);
+      if (seasonalIndex !== -1) {
+        this.setData({
+          [`seasonalProducts[${seasonalIndex}]`]: {
+            ...seasonalProducts[seasonalIndex],
+            ...product
+          }
+        });
+      }
+    });
+  },
+
+  // 更新农户数据
+  updateFarmerData(farmers) {
+    const { farmerProducts } = this.data;
+    
+    farmers.forEach(farmer => {
+      const index = farmerProducts.findIndex(f => f.id === farmer.id);
+      if (index !== -1) {
+        this.setData({
+          [`farmerProducts[${index}]`]: {
+            ...farmerProducts[index],
+            ...farmer
+          }
+        });
+      }
+    });
+  },
+
+  // 更新故事数据
+  updateStoryData(stories) {
+    const { farmerStories } = this.data;
+    
+    stories.forEach(story => {
+      const index = farmerStories.findIndex(s => s.id === story.id);
+      if (index !== -1) {
+        this.setData({
+          [`farmerStories[${index}]`]: {
+            ...farmerStories[index],
+            ...story
+          }
+        });
+      }
+    });
+  },
+
+  // 更新价格数据
+  updatePriceData(prices) {
+    const { localProducts, seasonalProducts, farmerProducts } = this.data;
+    
+    prices.forEach(price => {
+      // 更新本地特产价格
+      const localIndex = localProducts.findIndex(p => p.id === price.productId);
+      if (localIndex !== -1) {
+        this.setData({
+          [`localProducts[${localIndex}].price`]: price.newPrice
+        });
+      }
+      
+      // 更新当季时令价格
+      const seasonalIndex = seasonalProducts.findIndex(p => p.id === price.productId);
+      if (seasonalIndex !== -1) {
+        this.setData({
+          [`seasonalProducts[${seasonalIndex}].price`]: price.newPrice
+        });
+      }
+      
+      // 更新农户产品价格
+      farmerProducts.forEach((farmer, farmerIndex) => {
+        const productIndex = farmer.products.findIndex(p => p.id === price.productId);
+        if (productIndex !== -1) {
+          this.setData({
+            [`farmerProducts[${farmerIndex}].products[${productIndex}].price`]: price.newPrice
+          });
+        }
+      });
+    });
+  },
+
+  // 设置定时更新
+  setIntervalUpdate() {
+    setInterval(() => {
+      const now = Date.now();
+      if (now - this.data.lastUpdateTime >= this.data.updateInterval) {
+        this.refreshData();
+        this.setData({ lastUpdateTime: now });
+      }
+    }, 5000); // 每5秒检查一次
+  },
+
+  // 刷新数据
+  refreshData() {
+    Promise.all([
+      this.loadLocalProducts(),
+      this.loadSeasonalProducts(),
+      this.loadFarmerProducts(),
+      this.loadFarmerStories()
+    ]).catch(error => {
+      console.error('数据刷新失败:', error);
+    });
+  },
+
+  onUnload() {
+    // 关闭WebSocket连接
+    if (this.data.socketTask) {
+      this.data.socketTask.close();
+    }
   },
 });

@@ -1,31 +1,31 @@
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
-// 从环境变量获取数据库连接信息
-const dbHost = process.env.DB_HOST;
-const dbPort = process.env.DB_PORT;
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
-const dbName = process.env.DB_NAME;
-
-// 创建Sequelize实例
-const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
-  host: dbHost,
-  port: dbPort,
-  dialect: 'mariadb',
-  dialectOptions: {
-    timezone: 'Asia/Shanghai',
-  },
-  pool: {
-    max: 10,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
-  },
-  logging: console.log
-});
+// 使用环境变量连接到云数据库
+const sequelize = new Sequelize(
+  process.env.MYSQL_DATABASE,
+  process.env.MYSQL_USER,
+  process.env.MYSQL_PASSWORD,
+  {
+    host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
+    dialect: 'mysql',
+    logging: console.log,
+    define: {
+      timestamps: true,
+      underscored: true
+    },
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  }
+);
 
 // 测试数据库连接
 const testConnection = async () => {
@@ -40,4 +40,5 @@ const testConnection = async () => {
 // 尝试连接
 testConnection();
 
+// 只导出 sequelize 实例
 module.exports = sequelize; 

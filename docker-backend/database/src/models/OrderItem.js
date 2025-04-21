@@ -7,22 +7,6 @@ const OrderItem = sequelize.define('OrderItem', {
     primaryKey: true,
     autoIncrement: true
   },
-  orderId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'orders',
-      key: 'id'
-    }
-  },
-  productId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'products',
-      key: 'id'
-    }
-  },
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -32,28 +16,46 @@ const OrderItem = sequelize.define('OrderItem', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
   },
-  subtotal: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+  orderId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'orders',
+      key: 'id'
+    },
+    field: 'order_id'
+  },
+  productId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'products',
+      key: 'id'
+    },
+    field: 'product_id'
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'created_at'
   },
   updatedAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'updated_at'
   }
 }, {
   tableName: 'order_items',
+  timestamps: true,
+  underscored: true,
   indexes: [
     {
       name: 'idx_order_items_order',
-      fields: ['orderId']
+      fields: ['order_id']
     },
     {
       name: 'idx_order_items_product',
-      fields: ['productId']
+      fields: ['product_id']
     }
   ]
 });

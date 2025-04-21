@@ -2,6 +2,9 @@
 let token = localStorage.getItem('merchantToken');
 let tokenExpireTime = localStorage.getItem('tokenExpireTime');
 
+// API基础URL配置
+const BASE_URL = 'http://175.178.80.222:3000';
+
 // 检查登录状态
 function checkAuth() {
     return new Promise((resolve, reject) => {
@@ -101,7 +104,10 @@ async function apiRequest(url, method = 'GET', data = null) {
             options.body = JSON.stringify(data);
         }
         
-        const response = await fetch(url, options);
+        // 添加基础URL
+        const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
+        
+        const response = await fetch(fullUrl, options);
         console.log(`收到响应状态: ${response.status}`);
         
         // 处理token过期

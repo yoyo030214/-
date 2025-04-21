@@ -5,6 +5,34 @@ const config = {
   weatherBaseUrl: 'https://devapi.qweather.com/v7'   // 天气查询API地址
 };
 
+// 请求缓存
+const requestCache = {
+  data: {},
+  timeout: 2 * 1000, // 改为2秒缓存
+  set(key, value) {
+    this.data[key] = {
+      value,
+      timestamp: Date.now()
+    };
+  },
+  get(key) {
+    const item = this.data[key];
+    if (!item) return null;
+    
+    // 检查是否过期
+    if (Date.now() - item.timestamp > this.timeout) {
+      delete this.data[key];
+      return null;
+    }
+    
+    return item.value;
+  },
+  clear() {
+    this.data = {};
+    console.log('天气服务缓存已清除');
+  }
+};
+
 // 统一请求方法
 const request = (url, data = {}, useGeoApi = false) => {
   return new Promise((resolve, reject) => {
@@ -15,11 +43,27 @@ const request = (url, data = {}, useGeoApi = false) => {
       key: config.key
     };
 
+    // 生成缓存键
+    const cacheKey = `${requestUrl}_${JSON.stringify(requestData)}`;
+    
+    // 尝试从缓存获取
+    const cachedResponse = requestCache.get(cacheKey);
+    if (cachedResponse) {
+      console.log('使用缓存响应:', cacheKey);
+      return resolve(cachedResponse);
+    }
+
     console.log('发起请求:', {
       url: requestUrl,
       data: requestData,
       method: 'GET'
     });
+
+    // 设置请求超时
+    const timeout = setTimeout(() => {
+      console.error('请求超时:', requestUrl);
+      reject(new Error('请求超时'));
+    }, 10000); // 10秒超时
 
     wx.request({
       url: requestUrl,
@@ -29,6 +73,7 @@ const request = (url, data = {}, useGeoApi = false) => {
         'content-type': 'application/json'
       },
       success: (res) => {
+        clearTimeout(timeout);
         console.log('请求响应:', {
           url: url,
           statusCode: res.statusCode,
@@ -37,6 +82,8 @@ const request = (url, data = {}, useGeoApi = false) => {
 
         if (res.statusCode === 200) {
           if (res.data && res.data.code === '200') {
+            // 缓存响应
+            requestCache.set(cacheKey, res.data);
             resolve(res.data);
           } else {
             const error = new Error('API请求失败');
@@ -54,6 +101,7 @@ const request = (url, data = {}, useGeoApi = false) => {
         }
       },
       fail: (err) => {
+        clearTimeout(timeout);
         console.error('请求失败:', {
           url: url,
           error: err
@@ -83,6 +131,10 @@ module.exports = {
   searchCity: async (keyword) => {
     console.log('搜索城市:', keyword);
     try {
+      // 清除城市搜索缓存，确保获取最新数据
+      const cacheKey = `/city/lookup_${JSON.stringify({ location: keyword, key: config.key })}`;
+      delete requestCache.data[cacheKey];
+      
       const res = await request('/city/lookup', { location: keyword }, true);
       console.log('城市搜索结果:', res);
       return res;
@@ -96,6 +148,10 @@ module.exports = {
   getNowWeather: async (cityId) => {
     console.log('获取实时天气:', cityId);
     try {
+      // 清除实时天气缓存，确保获取最新数据
+      const cacheKey = `/weather/now_${JSON.stringify({ location: cityId, key: config.key })}`;
+      delete requestCache.data[cacheKey];
+      
       const res = await request('/weather/now', { location: cityId });
       console.log('实时天气数据:', res);
       return {
@@ -203,5 +259,11 @@ module.exports = {
   },
 
   // 导出API检查方法
-  checkWeatherAPI
+  checkWeatherAPI,
+  
+  // 清除缓存
+  clearCache: () => {
+    requestCache.clear();
+    console.log('天气服务缓存已清除');
+  }
 }; 

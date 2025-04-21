@@ -18,9 +18,31 @@ const initializeSeeds = async () => {
     // 创建默认管理员用户
     await User.create({
       username: 'admin',
-      password: 'admin123',
+      password: '123456',
       role: 'admin',
-      name: '系统管理员'
+      name: '系统管理员',
+      email: 'admin@example.com',
+      isActive: true
+    });
+
+    // 创建默认农户用户
+    await User.create({
+      username: 'zhangsan',
+      password: '123456',
+      role: 'farmer',
+      name: '张三',
+      email: 'zhangsan@example.com',
+      isActive: true
+    });
+
+    // 创建默认客户用户
+    await User.create({
+      username: 'lisi',
+      password: '123456',
+      role: 'user',
+      name: '李四',
+      email: 'lisi@example.com',
+      isActive: true
     });
 
     console.log('种子数据初始化成功');

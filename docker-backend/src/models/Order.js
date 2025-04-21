@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../../database/src/config/database');
 
 const Order = sequelize.define('Order', {
   id: {
@@ -7,7 +7,7 @@ const Order = sequelize.define('Order', {
     primaryKey: true,
     autoIncrement: true
   },
-  userId: {
+  user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -15,12 +15,12 @@ const Order = sequelize.define('Order', {
       key: 'id'
     }
   },
-  orderNumber: {
+  order_number: {
     type: DataTypes.STRING(30),
     allowNull: false,
     unique: true
   },
-  totalAmount: {
+  total_amount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
   },
@@ -28,23 +28,23 @@ const Order = sequelize.define('Order', {
     type: DataTypes.ENUM('pending', 'paid', 'shipped', 'delivered', 'cancelled'),
     defaultValue: 'pending'
   },
-  paymentMethod: {
+  payment_method: {
     type: DataTypes.STRING(50),
     allowNull: true
   },
-  paymentStatus: {
+  payment_status: {
     type: DataTypes.ENUM('pending', 'completed', 'failed', 'refunded'),
     defaultValue: 'pending'
   },
-  shippingAddress: {
+  shipping_address: {
     type: DataTypes.JSON,
     allowNull: false
   },
-  shippingMethod: {
+  shipping_method: {
     type: DataTypes.STRING(50),
     allowNull: true
   },
-  shippingFee: {
+  shipping_fee: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: 0
@@ -58,11 +58,11 @@ const Order = sequelize.define('Order', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  createdAt: {
+  created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   },
-  updatedAt: {
+  updated_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   }
@@ -71,7 +71,7 @@ const Order = sequelize.define('Order', {
   indexes: [
     {
       name: 'idx_orders_user',
-      fields: ['userId']
+      fields: ['user_id']
     },
     {
       name: 'idx_orders_status',
@@ -79,7 +79,7 @@ const Order = sequelize.define('Order', {
     },
     {
       name: 'idx_orders_created_at',
-      fields: ['createdAt']
+      fields: ['created_at']
     }
   ]
 });

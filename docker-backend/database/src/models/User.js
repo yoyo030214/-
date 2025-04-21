@@ -39,22 +39,28 @@ const User = sequelize.define('User', {
   },
   isActive: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
+    defaultValue: true,
+    field: 'is_active'
   },
   lastLogin: {
     type: DataTypes.DATE,
-    allowNull: true
+    allowNull: true,
+    field: 'last_login'
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'created_at'
   },
   updatedAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'updated_at'
   }
 }, {
   tableName: 'users',
+  timestamps: true,
+  underscored: true,
   hooks: {
     beforeCreate: async (user) => {
       if (user.password) {

@@ -52,11 +52,12 @@
     <view class="forecast-section">
       <view class="section-title">24小时预报</view>
       <view class="hourly-list">
-        <text>00:00 18° 多云</text>
-        <text>03:00 17° 多云</text>
-        <text>06:00 16° 阴</text>
-        <text>09:00 19° 多云</text>
-        <text>12:00 22° 晴</text>
+        <block wx:if="{{hourlyForecast.length > 0}}">
+          <text wx:for="{{hourlyForecast}}" wx:key="time">{{item.time}} {{item.temp}}° {{item.text}}</text>
+        </block>
+        <block wx:else>
+          <text>暂无数据</text>
+        </block>
       </view>
     </view>
 
@@ -64,11 +65,12 @@
     <view class="forecast-section">
       <view class="section-title">7天预报</view>
       <view class="daily-list">
-        <text>今天 18°/12° 多云</text>
-        <text>明天 20°/13° 晴</text>
-        <text>后天 19°/14° 多云</text>
-        <text>周五 17°/12° 小雨</text>
-        <text>周六 16°/11° 阴</text>
+        <block wx:if="{{forecast.length > 0}}">
+          <text wx:for="{{forecast}}" wx:key="date">{{item.date}} {{item.maxTemp}}°/{{item.minTemp}}° {{item.textDay}}</text>
+        </block>
+        <block wx:else>
+          <text>暂无数据</text>
+        </block>
       </view>
     </view>
 
@@ -76,10 +78,12 @@
     <view class="forecast-section">
       <view class="section-title">生活指数</view>
       <view class="indices-list">
-        <text>穿衣 较舒适</text>
-        <text>运动 适宜</text>
-        <text>感冒 易发</text>
-        <text>空气 良好</text>
+        <block wx:if="{{lifeIndices.length > 0}}">
+          <text wx:for="{{lifeIndices}}" wx:key="name">{{item.name}} {{item.value}}</text>
+        </block>
+        <block wx:else>
+          <text>暂无数据</text>
+        </block>
       </view>
     </view>
 
@@ -87,7 +91,7 @@
     <view class="forecast-section">
       <view class="section-title">农业气象</view>
       <view class="agro-list">
-        <text>今日气温适宜，建议农户适时进行春耕备耕工作</text>
+        <text>{{farmingTips || '暂无农事建议'}}</text>
       </view>
     </view>
   </view>
@@ -99,10 +103,10 @@
   </view>
 
   <!-- 网络错误提示 -->
-  <view class="error-mask" wx:if="{{error}}">
+  <view class="error-mask" wx:if="{{networkError}}">
     <image src="/images/temp/panda.webp" mode="aspectFit"></image>
-    <text class="error-title">{{error.title}}</text>
-    <text class="error-desc">{{error.message}}</text>
+    <text class="error-title">网络连接失败</text>
+    <text class="error-desc">请检查网络连接后重试</text>
     <button class="retry-btn" bindtap="refreshWeather">重试</button>
   </view>
 

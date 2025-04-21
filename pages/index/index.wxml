@@ -66,16 +66,14 @@
       <text class="more" bindtap="navigateToCategory" data-type="local">更多 ></text>
     </view>
     <scroll-view class="product-scroll" scroll-x>
-      <view class="product-item" wx:for="{{localProducts}}" wx:key="id" bindtap="viewLocalProduct" data-id="{{item.id}}">
-        <smart-image 
+      <view class="product-item" wx:for="{{localProducts}}" wx:key="id" bindtap="viewLocalProduct" data-id="{{item.id}}" data-type="local">
+        <image 
           src="{{item.image}}" 
-          defaultSrc="/images/default_product.webp"
           mode="aspectFill" 
-          height="280rpx"
-          radius="10rpx 10rpx 0 0"
-          bind:error="handleImageLoadError"
+          lazy-load="true"
+          binderror="handleImageLoadError"
           data-src="{{item.image}}"
-        ></smart-image>
+        ></image>
         <view class="product-info">
           <text class="product-name">{{item.name}}</text>
           <view class="product-meta">
@@ -98,7 +96,7 @@
       <text class="more" bindtap="navigateToCategory" data-type="seasonal">更多 ></text>
     </view>
     <view class="product-grid">
-      <view class="product-item" wx:for="{{seasonalProducts}}" wx:key="id" bindtap="viewSeasonalProduct" data-id="{{item.id}}">
+      <view class="product-item" wx:for="{{seasonalProducts}}" wx:key="id" bindtap="viewSeasonalProduct" data-id="{{item.id}}" data-type="seasonal">
         <image 
           src="{{item.image}}" 
           mode="aspectFill" 
@@ -128,7 +126,7 @@
       <text class="more" bindtap="navigateToCategory" data-type="farmer">更多 ></text>
     </view>
     <view class="farmer-list">
-      <view class="farmer-item" wx:for="{{farmerProducts}}" wx:key="id" bindtap="viewFarmerProduct" data-id="{{item.id}}">
+      <view class="farmer-item" wx:for="{{farmerProducts}}" wx:key="id" bindtap="viewFarmerProduct" data-id="{{item.id}}" data-type="farmer">
         <image 
           src="{{item.farmerAvatar}}" 
           mode="aspectFill"
@@ -142,13 +140,26 @@
         <view class="farmer-info">
           <text class="farmer-name">{{item.farmerName}}</text>
           <text class="farmer-location">{{item.location}}</text>
-          <view class="farmer-tags" wx:if="{{item.tags && item.tags.length}}">
-            <text class="farmer-tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+          <view class="farmer-rating">
+            <view class="rating-stars">
+              <text wx:for="{{5}}" wx:key="*this" wx:for-item="star">
+                <text wx:if="{{star <= item.rating}}">★</text>
+                <text wx:else>☆</text>
+              </text>
+            </view>
+            <text class="rating-score">{{item.rating}}</text>
+          </view>
+          <view class="farmer-certification">
+            <text class="certification-badge" wx:for="{{item.certification}}" wx:key="*this" wx:for-item="cert">{{cert}}</text>
+          </view>
+          <view class="farmer-stats">
+            <text class="stat-item">总销量 {{item.totalSales}}</text>
+            <text class="stat-item">在售 {{item.products.length}} 件</text>
           </view>
           <text class="farmer-desc">{{item.desc}}</text>
         </view>
-        <view class="farmer-products-count" wx:if="{{item.products && item.products.length}}">
-          {{item.products.length}}
+        <view class="farmer-products-count">
+          {{item.products.length}}件
         </view>
       </view>
     </view>
@@ -161,11 +172,36 @@
       <text class="more" bindtap="navigateToMore" data-type="stories">更多 ></text>
     </view>
     <view class="story-list">
-      <view class="story-item" wx:for="{{farmerStories}}" wx:key="id" wx:if="{{index < 2}}" bindtap="viewStory" data-id="{{item.id}}">
+      <view class="story-item" wx:for="{{farmerStories}}" wx:key="id" wx:if="{{index < 2}}" bindtap="viewStory" data-id="{{item.id}}" data-type="story">
         <image src="{{item.image || '/images/temp/panda.png'}}" mode="aspectFill"></image>
         <view class="story-info">
           <text class="farmer-name">{{item.farmerName}}</text>
           <text class="story-title">{{item.title}}</text>
+          <view class="story-meta">
+            <text>{{item.views}}次浏览</text>
+            <text>{{item.date}}</text>
+          </view>
+          <view class="story-tags">
+            <text class="story-tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+          </view>
+          <view class="story-interaction">
+            <view class="interaction-btn like-btn {{item.isLiked ? 'active' : ''}}" 
+                  catchtap="handleLike" 
+                  data-id="{{item.id}}"
+                  data-index="{{index}}">
+              {{item.likes}}
+            </view>
+            <view class="interaction-btn comment-btn" 
+                  catchtap="handleComment" 
+                  data-id="{{item.id}}">
+              {{item.comments}}
+            </view>
+            <view class="interaction-btn share-btn" 
+                  catchtap="handleShare" 
+                  data-id="{{item.id}}">
+              {{item.shares}}
+            </view>
+          </view>
         </view>
       </view>
     </view>

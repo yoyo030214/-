@@ -193,6 +193,37 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">商品分类</label>
+                            <select class="form-select" id="productCategory" required>
+                                <option value="">请选择分类</option>
+                                <option value="vegetable">蔬菜</option>
+                                <option value="fruit">水果</option>
+                                <option value="fresh">生鲜</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">商品标签</label>
+                            <div class="tag-container">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" value="organic" id="tagOrganic">
+                                    <label class="form-check-label" for="tagOrganic">有机认证</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" value="local" id="tagLocal">
+                                    <label class="form-check-label" for="tagLocal">本地特产</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" value="seasonal" id="tagSeasonal">
+                                    <label class="form-check-label" for="tagSeasonal">时令产品</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">商品位置</label>
+                            <input type="text" class="form-control" id="productLocation" placeholder="请输入商品产地">
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -498,6 +529,28 @@
                 fetchProducts(1);
             });
             document.getElementById('save-product-btn').addEventListener('click', saveProduct);
+        });
+
+        // 商品上传处理
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const category = document.getElementById('productCategory').value;
+            const location = document.getElementById('productLocation').value;
+            
+            // 获取选中的标签
+            const tags = [];
+            document.querySelectorAll('.tag-container input[type="checkbox"]:checked').forEach(checkbox => {
+                tags.push(checkbox.value);
+            });
+            
+            // 添加其他表单数据
+            formData.append('category', category);
+            formData.append('location', location);
+            formData.append('tags', JSON.stringify(tags));
+            
+            // ... existing code ...
         });
     </script>
 </body>

@@ -1,4 +1,4 @@
-FROM ccr.ccs.tencentyun.com/library/node:16
+FROM node:16
 
 WORKDIR /app
 

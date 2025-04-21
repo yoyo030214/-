@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
+// 验证token中间件
 const authenticateToken = async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -20,9 +21,29 @@ const authenticateToken = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error('认证失败:', error);
-    return res.status(403).json({ message: '无效的认证令牌' });
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: '令牌已过期' });
+    }
+    return res.status(401).json({ message: '无效的认证令牌' });
   }
 };
 
-module.exports = authenticateToken; 
+// 检查用户角色中间件
+const checkRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: '未认证' });
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: '权限不足' });
+    }
+
+    next();
+  };
+};
+
+module.exports = {
+  authenticateToken,
+  checkRole
+}; 

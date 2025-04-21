@@ -2,7 +2,7 @@
 module.exports = {
   // API配置
   api: {
-    baseUrl: 'http://localhost:9000',
+    baseUrl: 'http://175.178.80.222:3000',
     timeout: 10000,
     version: 'v1'
   },
@@ -66,7 +66,7 @@ module.exports = {
     }
   },
 
-  baseUrl: 'http://localhost:9000', // 本地开发环境API地址
+  baseUrl: 'http://175.178.80.222:3000',
   version: '1.0.0',
   debug: true
 }; 

@@ -1,47 +1,46 @@
 <view class="container">
-  <!-- 标题栏 -->
-  <view class="header">
-    <view class="page-title">{{pageTitle}}</view>
-    <view class="home-btn" bindtap="goToHome">首页</view>
+  <!-- 分类导航 -->
+  <view class="category-nav">
+    <view 
+      wx:for="{{categories}}" 
+      wx:key="id"
+      class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+      bindtap="switchCategory"
+      data-category="{{item.id}}"
+    >
+      <image class="category-icon" src="{{item.icon}}" mode="aspectFit"></image>
+      <text class="category-name">{{item.name}}</text>
+    </view>
   </view>
-  
-  <!-- 加载状态 -->
-  <view class="loading-container" wx:if="{{isLoading}}">
-    <view class="loading"></view>
-    <view class="loading-text">加载中...</view>
-  </view>
-  
-  <!-- 查看全部按钮 -->
-  <view class="view-all-btn" bindtap="viewAllProducts">
-    查看全部农产品
-  </view>
-  
-  <!-- 分类列表 -->
-  <view class="category-list" wx:if="{{!isLoading}}">
-    <block wx:for="{{categories}}" wx:key="id">
-      <view 
-        class="category-item" 
-        bindtap="onCategoryTap" 
-        data-category="{{item.name}}"
-      >
-        <image 
-          class="category-icon" 
-          src="{{item.icon}}" 
-          mode="aspectFit"
-          binderror="handleIconError"
-          data-index="{{index}}"
-        ></image>
-        <view class="category-content">
-          <view class="category-name">{{item.name}}</view>
-          <view class="category-desc">{{item.desc}}</view>
+
+  <!-- 商品列表 -->
+  <view class="product-list">
+    <view 
+      wx:for="{{products}}" 
+      wx:key="id"
+      class="product-item"
+      bindtap="navigateToDetail"
+      data-id="{{item.id}}"
+    >
+      <image class="product-image" src="{{item.image}}" mode="aspectFill"></image>
+      <view class="product-info">
+        <text class="product-name">{{item.name}}</text>
+        <text class="product-price">¥{{item.price}}</text>
+        <view class="product-tags">
+          <text wx:if="{{item.tags.includes('organic')}}" class="tag organic">有机</text>
+          <text wx:if="{{item.tags.includes('local')}}" class="tag local">本地</text>
+          <text wx:if="{{item.tags.includes('seasonal')}}" class="tag seasonal">时令</text>
         </view>
-        <view class="category-arrow">></view>
+        <text class="product-location">{{item.location}}</text>
       </view>
-    </block>
+    </view>
   </view>
-  
-  <!-- 底部提示 -->
-  <view class="footer-tip">
-    点击分类查看咸宁本地农产品
+
+  <!-- 加载更多 -->
+  <view class="loading-more" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  <view class="no-more" wx:if="{{!hasMore && !loading}}">
+    <text>没有更多了</text>
   </view>
 </view> 

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家管理系统 - 商品管理</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 220px;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 20px;
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #495057;
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 5px;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 10px 20px;
+            color: #ced4da;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background-color: #495057;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification {
+            position: relative;
+            margin-right: 20px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #4c84ff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a6fd8;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .products-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .product-image {
+            height: 180px;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-info h3 {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .price {
+            color: #dc3545;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .description {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px 15px;
+        }
+        
+        .empty-list {
+            text-align: center;
+            padding: 50px 0;
+            color: #6c757d;
+        }
+        
+        .notifications-container {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .notification-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .notification-item.unread {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-content {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .notification-time {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .no-products {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>商家管理系统</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">商品管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">订单管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">统计分析</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">账户设置</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>商品管理</h2>
+                <div class="user-info">
+                    <div class="notification">
+                        <span id="notification-icon">🔔</span>
+                        <span id="notifications-badge" class="notification-badge">0</span>
+                        <div id="notifications" class="notifications-container"></div>
+                    </div>
+                    <span id="username">admin</span>
+                    <button id="logout-btn" class="btn btn-danger" style="margin-left: 15px;">登出</button>
+                </div>
+            </div>
+            
+            <div id="alert" class="alert" style="display: none;"></div>
+            
+            <div class="card">
+                <div class="products-header">
+                    <h3>我的商品</h3>
+                    <a href="add_product_template.html" class="btn btn-primary">添加商品</a>
+                </div>
+                
+                <div id="products-list" class="products-list">
+                    <!-- 产品列表将通过JavaScript动态加载 -->
+                    <div class="empty-list">加载中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入API连接器 -->
+    <script src="merchant_api_connector.js"></script>
+    
+    <script>
+        // 获取DOM元素
+        const productsList = document.getElementById('products-list');
+        const alertBox = document.getElementById('alert');
+        const usernameElement = document.getElementById('username');
+        const logoutBtn = document.getElementById('logout-btn');
+        const notificationIcon = document.getElementById('notification-icon');
+        const notificationsContainer = document.getElementById('notifications');
+        const notificationsBadge = document.getElementById('notifications-badge');
+        
+        // 显示消息函数
+        function showMessage(message, type = 'success') {
+            alertBox.className = 'alert alert-' + type;
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 格式化日期函数
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+        
+        // 加载商品列表
+        async function loadProducts() {
+            try {
+                await merchantApi.getProducts();
+            } catch (error) {
+                showMessage('加载商品列表失败: ' + error.message, 'danger');
+            }
+        }
+        
+        // 删除商品
+        async function deleteProduct(productId) {
+            if (confirm('确定要删除此商品吗？')) {
+                try {
+                    await merchantApi.deleteProduct(productId);
+                    showMessage('商品已成功删除');
+                    loadProducts(); // 重新加载商品列表
+                } catch (error) {
+                    showMessage('删除商品失败: ' + error.message, 'danger');
+                }
+            }
+        }
+        
+        // 显示用户信息
+        function showUserInfo() {
+            if (merchantApi.user) {
+                usernameElement.textContent = merchantApi.user.username;
+            }
+        }
+        
+        // 切换通知显示
+        notificationIcon.addEventListener('click', () => {
+            if (notificationsContainer.style.display === 'none' || !notificationsContainer.style.display) {
+                notificationsContainer.style.display = 'block';
+                merchantApi.getNotifications(); // 加载通知
+            } else {
+                notificationsContainer.style.display = 'none';
+            }
+        });
+        
+        // 监听商品列表更新事件
+        document.addEventListener('products-updated', (event) => {
+            const products = event.detail.data;
+            
+            // 清空当前列表
+            productsList.innerHTML = '';
+            
+            // 没有商品时显示提示
+            if (products.length === 0) {
+                productsList.innerHTML = '<div class="no-products">暂无商品，点击"添加商品"按钮创建您的第一个商品</div>';
+                return;
+            }
+            
+            // 遍历商品并创建列表项
+            products.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item';
+                productItem.dataset.id = product.id;
+                
+                productItem.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p class="price">¥${product.price.toFixed(2)}</p>
+                        <p class="description">${product.description || '暂无描述'}</p>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-primary edit-btn" data-id="${product.id}">编辑</button>
+                        <button class="btn btn-danger delete-btn" data-id="${product.id}">删除</button>
+                    </div>
+                `;
+                
+                productsList.appendChild(productItem);
+            });
+            
+            // 添加编辑按钮点击事件
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const productId = btn.dataset.id;
+                    window.location.href = `edit_product_template.html?id=${productId}`;
+                });
+            });
+            
+            // 添加删除按钮点击事件
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const productId = btn.dataset.id;
+                    deleteProduct(productId);
+                });
+            });
+        });
+        
+        // 监听通知更新事件
+        document.addEventListener('notifications-updated', (event) => {
+            const notificationsData = event.detail.data;
+            const notifications = notificationsData.data;
+            
+            // 更新通知角标数量
+            const unreadCount = notifications.filter(n => !n.read).length;
+            if (unreadCount > 0) {
+                notificationsBadge.textContent = unreadCount;
+                notificationsBadge.style.display = 'block';
+            } else {
+                notificationsBadge.style.display = 'none';
+            }
+            
+            // 如果通知列表可见，则显示通知
+            if (notificationsContainer.style.display === 'block') {
+                // 清空当前列表
+                notificationsContainer.innerHTML = '';
+                
+                // 遍历通知并创建列表项
+                notifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = 'notification-item';
+                    if (!notification.read) {
+                        notificationItem.classList.add('unread');
+                    }
+                    
+                    notificationItem.innerHTML = `
+                        <div class="notification-content">${notification.message}</div>
+                        <div class="notification-time">${formatDate(notification.created_at)}</div>
+                    `;
+                    
+                    notificationsContainer.appendChild(notificationItem);
+                });
+            }
+        });
+        
+        // 添加注销事件监听器
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await merchantApi.logout();
+                window.location.href = 'login_template.html';
+            } catch (error) {
+                showMessage('注销失败: ' + error.message, 'danger');
+            }
+        });
+        
+        // 在页面加载时执行
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 检查登录状态
+                const isLoggedIn = await merchantApi.checkLoginStatus();
+                if (!isLoggedIn) {
+                    window.location.href = 'login_template.html';
+                    return;
+                }
+                
+                // 显示用户信息
+                showUserInfo();
+                
+                // 加载商品列表
+                loadProducts();
+                
+                // 开始通知轮询
+                merchantApi.startNotificationPolling();
+            } catch (error) {
+                console.error('初始化失败:', error);
+                showMessage('初始化失败: ' + error.message, 'danger');
+            }
+        });
+        
+        // 点击页面其他区域关闭通知列表
+        document.addEventListener('click', (event) => {
+            if (notificationsContainer.style.display === 'block' && 
+                !notificationsContainer.contains(event.target) && 
+                event.target !== notificationIcon) {
+                notificationsContainer.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

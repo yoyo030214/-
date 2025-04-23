@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家管理系统 - 登录</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4c84ff;
+            box-shadow: 0 0 0 2px rgba(76, 132, 255, 0.2);
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #4c84ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3a6fd8;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .footer a {
+            color: #4c84ff;
+            text-decoration: none;
+        }
+        
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>商家管理系统</h1>
+            <p>请登录您的账户</p>
+        </div>
+        
+        <div id="alert" class="alert"></div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="请输入用户名" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码" required>
+            </div>
+            
+            <button type="submit" class="btn">登录</button>
+        </form>
+        
+        <div class="footer">
+            <p>还没有账户？<a href="register_template.html">立即注册</a></p>
+        </div>
+    </div>
+    
+    <!-- 引入API连接器 -->
+    <script src="merchant_api_connector.js"></script>
+    
+    <script>
+        // 获取登录表单元素
+        const loginForm = document.getElementById('login-form');
+        const alertBox = document.getElementById('alert');
+        
+        // 显示错误消息函数
+        function showError(message) {
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 添加提交事件监听器
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                // 调用API连接器的登录方法
+                await merchantApi.login(username, password);
+                
+                // 登录成功后跳转到商品管理页面
+                window.location.href = 'products_template.html';
+            } catch (error) {
+                // 显示错误消息
+                showError('登录失败: ' + error.message);
+            }
+        });
+        
+        // 监听登录成功事件
+        document.addEventListener('login-success', (event) => {
+            console.log('登录成功:', event.detail.data);
+        });
+        
+        // 监听已登录状态事件
+        document.addEventListener('already-logged-in', (event) => {
+            // 如果用户已登录，直接跳转到商品管理页面
+            window.location.href = 'products_template.html';
+        });
+        
+        // 在页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 检查登录状态
+                const isLoggedIn = await merchantApi.checkLoginStatus();
+                if (isLoggedIn) {
+                    // 如果已登录，跳转到商品管理页面
+                    window.location.href = 'products_template.html';
+                }
+            } catch (error) {
+                console.error('检查登录状态失败:', error);
+            }
+        });
+    </script>
+</body>
+</html> 

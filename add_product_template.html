@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家管理系统 - 添加商品</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 220px;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 20px;
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #495057;
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 5px;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 10px 20px;
+            color: #ced4da;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background-color: #495057;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #4c84ff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a6fd8;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #212529;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4c84ff;
+            box-shadow: 0 0 0 2px rgba(76, 132, 255, 0.25);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 1px dashed #ced4da;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        
+        .upload-hint {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>商家管理系统</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="products_template.html" class="nav-link active">商品管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">订单管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">统计分析</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">账户设置</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>添加商品</h2>
+                <div class="user-info">
+                    <span id="username">admin</span>
+                    <button id="logout-btn" class="btn btn-danger" style="margin-left: 15px;">登出</button>
+                </div>
+            </div>
+            
+            <div id="alert" class="alert" style="display: none;"></div>
+            
+            <div class="card">
+                <form id="add-product-form">
+                    <div class="form-group">
+                        <label for="product-name">商品名称</label>
+                        <input type="text" id="product-name" class="form-control" placeholder="请输入商品名称" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-price">商品价格 (元)</label>
+                        <input type="number" id="product-price" class="form-control" placeholder="请输入商品价格" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description">商品描述</label>
+                        <textarea id="product-description" class="form-control" placeholder="请输入商品描述"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-image">商品图片</label>
+                        <div class="image-preview">
+                            <img id="image-preview" src="#" alt="商品图片预览">
+                            <span id="upload-hint" class="upload-hint">点击下方按钮上传图片</span>
+                        </div>
+                        <input type="file" id="product-image" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="products_template.html" class="btn btn-secondary">取消</a>
+                        <button type="submit" class="btn btn-primary">保存商品</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入API连接器 -->
+    <script src="merchant_api_connector.js"></script>
+    
+    <script>
+        // 获取DOM元素
+        const addProductForm = document.getElementById('add-product-form');
+        const alertBox = document.getElementById('alert');
+        const usernameElement = document.getElementById('username');
+        const logoutBtn = document.getElementById('logout-btn');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadHint = document.getElementById('upload-hint');
+        const productImageInput = document.getElementById('product-image');
+        
+        // 显示消息函数
+        function showMessage(message, type = 'success') {
+            alertBox.className = 'alert alert-' + type;
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 图片预览功能
+        productImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    uploadHint.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.src = '#';
+                imagePreview.style.display = 'none';
+                uploadHint.style.display = 'block';
+            }
+        });
+        
+        // 显示用户信息
+        function showUserInfo() {
+            if (merchantApi.user) {
+                usernameElement.textContent = merchantApi.user.username;
+            }
+        }
+        
+        // 添加商品表单提交事件
+        addProductForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const name = document.getElementById('product-name').value;
+            const price = document.getElementById('product-price').value;
+            const description = document.getElementById('product-description').value;
+            const imageFile = document.getElementById('product-image').files[0];
+            
+            if (!name || !price || !imageFile) {
+                showMessage('请填写商品名称、价格并上传图片', 'danger');
+                return;
+            }
+            
+            try {
+                // 构建商品数据
+                const productData = {
+                    name,
+                    price,
+                    description
+                };
+                
+                // 调用API添加商品
+                await merchantApi.addProduct(productData, imageFile);
+                
+                // 添加成功后提示用户
+                showMessage('商品添加成功');
+                
+                // 清空表单
+                addProductForm.reset();
+                imagePreview.style.display = 'none';
+                uploadHint.style.display = 'block';
+                
+                // 2秒后跳转到商品列表页面
+                setTimeout(() => {
+                    window.location.href = 'products_template.html';
+                }, 2000);
+            } catch (error) {
+                showMessage('添加商品失败: ' + error.message, 'danger');
+            }
+        });
+        
+        // 添加注销事件监听器
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await merchantApi.logout();
+                window.location.href = 'login_template.html';
+            } catch (error) {
+                showMessage('注销失败: ' + error.message, 'danger');
+            }
+        });
+        
+        // 在页面加载时执行
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 检查登录状态
+                const isLoggedIn = await merchantApi.checkLoginStatus();
+                if (!isLoggedIn) {
+                    window.location.href = 'login_template.html';
+                    return;
+                }
+                
+                // 显示用户信息
+                showUserInfo();
+            } catch (error) {
+                console.error('初始化失败:', error);
+                showMessage('初始化失败: ' + error.message, 'danger');
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../database/src/config/database');
 const bcrypt = require('bcryptjs');
+const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
   id: {
@@ -9,16 +9,16 @@ const User = sequelize.define('User', {
     autoIncrement: true
   },
   username: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true
   },
   password: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING,
     allowNull: false
   },
   email: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
     validate: {
@@ -34,16 +34,21 @@ const User = sequelize.define('User', {
     allowNull: true
   },
   role: {
-    type: DataTypes.ENUM('user', 'admin', 'farmer'),
+    type: DataTypes.ENUM('admin', 'merchant', 'user'),
+    allowNull: false,
     defaultValue: 'user'
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive', 'suspended'),
+    allowNull: false,
+    defaultValue: 'active'
   },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   },
   lastLogin: {
-    type: DataTypes.DATE,
-    allowNull: true
+    type: DataTypes.DATE
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -54,26 +59,24 @@ const User = sequelize.define('User', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'users',
+  timestamps: true,
   hooks: {
     beforeCreate: async (user) => {
       if (user.password) {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
+        user.password = await bcrypt.hash(user.password, 10);
       }
     },
     beforeUpdate: async (user) => {
       if (user.changed('password')) {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
+        user.password = await bcrypt.hash(user.password, 10);
       }
     }
   }
 });
 
-// 实例方法：比较密码是否匹配
-User.prototype.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+// 实例方法
+User.prototype.validatePassword = async function(password) {
+  return bcrypt.compare(password, this.password);
 };
 
 module.exports = User; 

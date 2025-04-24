@@ -1,4 +1,6 @@
 {
-  "navigationBarTitleText": "在线客服",
-  "usingComponents": {}
+  "navigationBarTitleText": "智能服务",
+  "usingComponents": {},
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }

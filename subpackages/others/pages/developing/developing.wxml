@@ -1,2 +1,17 @@
 <!--subpackages/others/pages/developing/developing.wxml-->
-<text>subpackages/others/pages/developing/developing.wxml</text>
+<view class="chat-container">
+  <view class="chat-messages">
+    <view wx:for="{{messages}}" wx:key="index" class="message {{item.role === 'user' ? 'user-message' : 'ai-message'}}">
+      <view class="message-content">{{item.content}}</view>
+    </view>
+  </view>
+  
+  <view class="input-container">
+    <input class="chat-input" value="{{inputMessage}}" bindinput="onInputChange" placeholder="请输入您的问题..." confirm-type="send" bindconfirm="sendMessage" />
+    <button class="send-button" bindtap="sendMessage" disabled="{{!inputMessage}}">发送</button>
+  </view>
+  
+  <view class="loading-indicator" wx:if="{{loading}}">
+    <text>正在思考...</text>
+  </view>
+</view>

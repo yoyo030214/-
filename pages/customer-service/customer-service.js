@@ -1,9 +1,14 @@
 const aiService = require('../../services/ai-service');
+const localAI = require('../../services/local-ai');
 const { getAIResponse, getLocalReply, DEFAULT_RESPONSES } = aiService;
 
-// 简化客服页面，不依赖外部AI服务
+// 智能客服与AI助手集成
 Page({
   data: {
+    // 通用数据
+    activeTab: 'service', // 当前激活的选项卡：service - 客服, ai - AI助手
+    
+    // 客服页面数据
     inputValue: '',
     messages: [],
     faqs: [
@@ -16,17 +21,25 @@ Page({
     errorMessage: '',
     showError: false,
     useAI: true, // 默认使用AI模式
-    freeMode: true // 默认使用自由对话模式
+    freeMode: true, // 默认使用自由对话模式
+    
+    // AI助手页面数据
+    aiInputMessage: '',
+    aiMessages: [
+      {
+        role: 'ai',
+        content: '您好，我是楚农电商智能助手，有什么可以帮您？'
+      }
+    ],
+    aiLoading: false
   },
 
   onLoad() {
-    console.log('客服页面加载...');
-    console.log('AI服务:', aiService ? '已加载' : '未加载');
+    console.log('智能客服页面加载...');
     
     try {
       // 显示欢迎消息
       this.addMessage('assistant', DEFAULT_RESPONSES.greeting);
-      console.log('欢迎消息已添加');
       
       // 尝试加载历史消息
       // this.loadMessagesFromStorage();
@@ -44,8 +57,23 @@ Page({
       });
     }
   },
+  
+  // 切换选项卡
+  switchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({ activeTab: tab });
+    
+    // 切换后滚动到底部
+    setTimeout(() => {
+      if (tab === 'service') {
+        this.scrollToBottom('message-list');
+      } else {
+        this.scrollToBottom('ai-message-list');
+      }
+    }, 300);
+  },
 
-  // 添加消息到列表
+  // 添加消息到客服列表
   addMessage(type, content) {
     try {
       console.log(`添加消息: ${type} - ${content?.substring(0, 20)}...`);
@@ -63,7 +91,7 @@ Page({
       this.saveMessagesToStorage(messages);
       
       // 滚动到底部
-      this.scrollToBottom();
+      this.scrollToBottom('message-list');
     } catch (error) {
       console.error('添加消息错误:', error);
     }
@@ -85,14 +113,14 @@ Page({
       console.log('加载历史消息:', messages.length);
       if (messages.length > 0) {
         this.setData({ messages });
-        this.scrollToBottom();
+        this.scrollToBottom('message-list');
       }
     } catch (e) {
       console.error('加载聊天历史失败:', e);
     }
   },
 
-  // 发送消息
+  // 发送消息到客服
   async sendMessage() {
     try {
       const { inputValue, useAI, freeMode } = this.data;
@@ -105,81 +133,91 @@ Page({
       this.setData({ inputValue: '', isLoading: true, showError: false });
       this.addMessage('user', inputValue);
   
+      // 检查调试命令
+      if (inputValue.startsWith('/debug')) {
+        const debugCommand = inputValue.split(' ')[1];
+        if (debugCommand === 'api') {
+          // 显示API信息
+          const apiInfo = `DeepSeek API配置:
+URL: ${require('../../config/api').deepseek.baseUrl}
+模型: ${require('../../config/api').deepseek.model}
+API密钥: ${require('../../config/api').deepseek.apiKey.substring(0, 8)}...
+备用模型: ${JSON.stringify(require('../../config/api').deepseek.fallbackModels || [])}`;
+          
+          this.addMessage('system', apiInfo);
+          this.setData({ isLoading: false });
+          return;
+        } else if (debugCommand === 'test') {
+          // 发送简单测试
+          this.addMessage('system', '发送API测试请求...');
+          const testResponse = await getAIResponse('你好，这是一个测试', { freeMode: true });
+          this.addMessage('system', `API测试响应: ${testResponse}`);
+          this.setData({ isLoading: false });
+          return;
+        } else if (debugCommand === 'help') {
+          const helpText = `调试命令:
+/debug api - 显示API配置信息
+/debug test - 发送测试请求
+/debug local - 切换到本地模式
+/debug ai - 切换到AI模式
+/debug free - 切换自由模式
+/debug help - 显示此帮助`;
+          
+          this.addMessage('system', helpText);
+          this.setData({ isLoading: false });
+          return;
+        } else if (debugCommand === 'local') {
+          this.setData({ useAI: false });
+          this.addMessage('system', '已切换到本地模式');
+          this.setData({ isLoading: false });
+          return;
+        } else if (debugCommand === 'ai') {
+          this.setData({ useAI: true });
+          this.addMessage('system', '已切换到AI模式');
+          this.setData({ isLoading: false });
+          return;
+        } else if (debugCommand === 'free') {
+          if (this.data.useAI) {
+            this.setData({ freeMode: !this.data.freeMode });
+            this.addMessage('system', `已${this.data.freeMode ? '开启' : '关闭'}自由模式`);
+          } else {
+            this.addMessage('system', '请先切换到AI模式');
+          }
+          this.setData({ isLoading: false });
+          return;
+        }
+      }
+  
       let reply;
   
       if (useAI) {
         try {
-          // 尝试获取AI回复
-          console.log('请求AI回复...');
+          // 尝试使用AI服务
+          console.log('通过AI服务获取回复...');
           
-          // 直接使用OpenAI格式调用DeepSeek API
-          const messages = freeMode ? 
-            [{ role: 'user', content: inputValue }] : 
-            [
-              { role: 'system', content: '你是楚农智能助手，一个专业的农产品电商顾问。' },
-              { role: 'user', content: inputValue }
-            ];
-          
-          const url = 'https://api.deepseek.com/v1/chat/completions';
-          console.log('发送请求到URL:', url);
-          
-          // 显示请求数据
-          const requestData = {
-            model: "deepseek-chat",
-            messages: messages,
+          // 设置完整的参数
+          const options = {
+            freeMode: freeMode,
+            context: this.data.messages.slice(-6).map(msg => ({ 
+              type: msg.type, 
+              content: msg.content 
+            })),
             temperature: 0.7,
-            max_tokens: 800
+            max_tokens: 1000
           };
-          console.log('请求数据:', JSON.stringify(requestData));
           
-          // 直接使用wx.request进行API调用
-          const response = await new Promise((resolve, reject) => {
-            wx.request({
-              url: url,
-              method: 'POST',
-              header: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer sk-027edfd83447463b8ce69ce1c11759bd'
-              },
-              data: requestData,
-              success: res => {
-                console.log('API请求结果状态:', res.statusCode);
-                console.log('API响应数据:', JSON.stringify(res.data).substring(0, 100) + '...');
-                
-                if (res.statusCode === 200) {
-                  resolve(res.data);
-                } else {
-                  console.error('API错误响应:', res.data);
-                  reject({
-                    statusCode: res.statusCode,
-                    errMsg: `请求失败，状态码: ${res.statusCode}`,
-                    data: res.data
-                  });
-                }
-              },
-              fail: err => {
-                console.error('请求失败:', err);
-                reject(err);
-              }
-            });
-          });
-          
-          console.log('完整响应:', JSON.stringify(response));
-          
-          if (response.choices && response.choices.length > 0 && response.choices[0].message) {
-            reply = response.choices[0].message.content;
-            console.log('获取到回复:', reply.substring(0, 50) + '...');
-          } else {
-            throw new Error('无效的API响应格式');
-          }
+          // 调用AI服务
+          console.log('准备调用getAIResponse...');
+          reply = await getAIResponse(inputValue, options);
+          console.log('AI回复结果:', reply ? reply.substring(0, 30) + '...' : 'undefined');
           
         } catch (apiError) {
-          console.error('AI调用失败:', apiError);
+          console.error('AI服务调用失败:', apiError);
           
-          // 显示错误详情
+          // 显示详细错误信息
           let errorMessage = '获取AI回复失败';
           if (apiError.statusCode) {
-            errorMessage += `(状态码: ${apiError.statusCode})`;
+            errorMessage += ` (状态码: ${apiError.statusCode})`;
           }
           if (apiError.errMsg) {
             errorMessage += `: ${apiError.errMsg}`;
@@ -191,8 +229,8 @@ Page({
           });
           
           // 降级到本地模式
+          console.log('降级使用本地回复');
           reply = getLocalReply(inputValue);
-          console.log('使用本地回复:', reply);
         }
       } else {
         // 使用本地回复
@@ -201,9 +239,15 @@ Page({
       }
   
       // 添加回复消息
+      if (!reply) {
+        console.error('没有获取到有效回复');
+        reply = '很抱歉，我暂时无法回答这个问题。';
+      }
+      
       this.addMessage('assistant', reply);
+      
     } catch (error) {
-      console.error('获取回复失败:', error);
+      console.error('发送消息失败:', error);
       
       // 显示错误信息
       this.setData({
@@ -213,7 +257,7 @@ Page({
       
       // 使用本地回复作为备选
       try {
-        const localReply = getLocalReply(inputValue);
+        const localReply = getLocalReply(this.data.inputValue || '帮助');
         this.addMessage('assistant', localReply);
       } catch (e) {
         console.error('本地回复也失败了:', e);
@@ -234,25 +278,25 @@ Page({
       const lastUserMessage = [...this.data.messages]
         .reverse()
         .find(msg => msg.type === 'user');
-        
-      if (lastUserMessage) {
-        console.log('找到上一条用户消息:', lastUserMessage.content);
-        // 移除上一条错误消息
-        const messages = this.data.messages.slice(0, -1);
-        this.setData({ messages, useAI: true });
-        
-        // 重新发送消息
-        this.setData({ inputValue: lastUserMessage.content });
-        this.sendMessage();
-      } else {
-        console.log('未找到可重试的消息');
+      
+      if (!lastUserMessage) {
+        console.warn('未找到最近的用户消息');
+        return;
       }
+      
+      console.log('找到最近的用户消息:', lastUserMessage.content);
+      this.setData({ inputValue: lastUserMessage.content });
+      this.sendMessage();
     } catch (error) {
-      console.error('重试消息失败:', error);
+      console.error('重试失败:', error);
+      wx.showToast({
+        title: '重试失败',
+        icon: 'none'
+      });
     }
   },
 
-  // 输入框内容变化
+  // 客服输入框内容变化
   onInput(e) {
     this.setData({
       inputValue: e.detail.value
@@ -260,148 +304,175 @@ Page({
   },
 
   // 滚动到底部
-  scrollToBottom() {
+  scrollToBottom(selector) {
     setTimeout(() => {
-      try {
-        wx.createSelectorQuery()
-          .select('#message-list')
-          .boundingClientRect(rect => {
-            if (rect) {
-              wx.pageScrollTo({
-                scrollTop: rect.bottom,
-                duration: 300
-              });
-            }
-          })
-          .exec();
-      } catch (error) {
-        console.error('滚动到底部失败:', error);
-      }
+      wx.createSelectorQuery()
+        .select(`#${selector}`)
+        .boundingClientRect(rect => {
+          if (rect) {
+            wx.pageScrollTo({
+              scrollTop: rect.height,
+              duration: 300
+            });
+          }
+        })
+        .exec();
     }, 100);
   },
 
-  // 选择常见问题并提问
+  // 选择常见问题
   selectFAQ(e) {
-    try {
-      const id = parseInt(e.currentTarget.dataset.id);
-      console.log('选择FAQ:', id);
-      const faq = this.data.faqs.find(faq => faq.id === id);
+    const faqId = e.currentTarget.dataset.id;
+    const faq = this.data.faqs.find(item => item.id === faqId);
+    
+    if (faq) {
+      // 添加用户问题
+      this.addMessage('user', faq.question);
       
-      if (faq) {
-        // 直接显示问题和回答
-        this.addMessage('user', faq.question);
-        
-        // 添加短暂延迟，提升用户体验
-        this.setData({ isLoading: true });
-        setTimeout(() => {
-          this.addMessage('assistant', faq.answer);
-          this.setData({ isLoading: false });
-        }, 500);
-      }
-    } catch (error) {
-      console.error('选择FAQ失败:', error);
+      // 直接添加预设答案
+      setTimeout(() => {
+        this.addMessage('assistant', faq.answer);
+      }, 500);
     }
   },
 
-  // 切换AI/本地模式
+  // 切换AI模式
   toggleAIMode() {
-    try {
-      const currentMode = this.data.useAI;
-      const newMode = !currentMode;
-      
-      console.log(`切换模式: ${currentMode ? 'AI' : '本地'} -> ${newMode ? 'AI' : '本地'}`);
-      
-      // 如果切换到本地模式，自动关闭自由模式
-      const freeMode = newMode ? this.data.freeMode : false;
-      
-      this.setData({ 
-        useAI: newMode,
-        freeMode: freeMode
-      });
-      
-      const message = newMode ? 
-        '已切换到AI模式，回答更智能' : 
-        '已切换到本地模式，回答更快速';
-        
-      wx.showToast({
-        title: message,
-        icon: 'none',
-        duration: 2000
-      });
-    } catch (error) {
-      console.error('切换模式失败:', error);
-    }
+    this.setData({ 
+      useAI: !this.data.useAI 
+    }, () => {
+      // 添加模式切换提示
+      if (this.data.useAI) {
+        this.addMessage('system', '已切换到AI模式，可以获得更智能的回复。');
+      } else {
+        this.addMessage('system', '已切换到本地模式，回复速度更快但功能有限。');
+      }
+    });
   },
-  
+
   // 切换自由对话模式
   toggleFreeMode() {
-    try {
-      // 只有在AI模式下才能切换自由模式
-      if (!this.data.useAI) {
-        wx.showToast({
-          title: '请先开启AI模式',
-          icon: 'none'
-        });
-        return;
+    // 只有在AI模式下才能切换自由对话模式
+    if (!this.data.useAI) return;
+    
+    this.setData({ 
+      freeMode: !this.data.freeMode 
+    }, () => {
+      // 添加模式切换提示
+      if (this.data.freeMode) {
+        this.addMessage('system', '已开启自由对话模式，可以询问任何问题。');
+      } else {
+        this.addMessage('system', '已关闭自由对话模式，回复将更专注于楚农电商相关问题。');
       }
-      
-      const currentFreeMode = this.data.freeMode;
-      const newFreeMode = !currentFreeMode;
-      
-      console.log(`切换自由模式: ${currentFreeMode ? '开启' : '关闭'} -> ${newFreeMode ? '开启' : '关闭'}`);
-      
-      this.setData({ freeMode: newFreeMode });
-      
-      const message = newFreeMode ? 
-        '已开启自由对话模式，AI将不受限制回答' : 
-        '已关闭自由对话模式';
-        
-      wx.showToast({
-        title: message,
-        icon: 'none',
-        duration: 2000
-      });
-      
-      // 如果开启自由模式，添加提示消息
-      if (newFreeMode) {
-        this.addMessage('system', '您已开启自由对话模式，AI将不受限制地回答您的问题。请注意，在此模式下AI可能会生成与楚农电商无关的内容。');
-      }
-    } catch (error) {
-      console.error('切换自由模式失败:', error);
-    }
+    });
   },
 
   // 打开在线客服
   openOnlineService() {
     wx.showToast({
-      title: '人工客服即将上线',
-      icon: 'none'
+      title: '正在连接人工客服...',
+      icon: 'loading',
+      duration: 2000
     });
+    
+    // 这里应该连接到真实的在线客服系统
+    // 微信小程序提供了 button open-type="contact" 可直接使用微信客服
+    // 这里仅做演示
+    setTimeout(() => {
+      wx.showToast({
+        title: '暂无在线客服',
+        icon: 'none'
+      });
+    }, 2000);
   },
 
-  // 拨打电话
+  // 拨打客服电话
   makePhoneCall() {
     wx.makePhoneCall({
-      phoneNumber: '400-123-4567',
+      phoneNumber: '400-123-4567', // 替换为实际客服电话
       fail(err) {
         wx.showToast({
-          title: '拨打电话失败',
+          title: '拨打失败',
           icon: 'none'
         });
+        console.error('拨打电话失败:', err);
       }
     });
   },
-
-  // 查看常见问题
-  viewFAQ(e) {
-    this.selectFAQ(e);
+  
+  // ===== AI助手功能 =====
+  
+  // AI助手输入框内容变化
+  onAIInputChange(e) {
+    this.setData({
+      aiInputMessage: e.detail.value
+    });
   },
   
-  // 页面分享
-  onShareAppMessage() {
-    return {
-      title: '楚农智能客服',
-      path: '/pages/index/index'
+  // 发送消息到AI助手
+  async sendAIMessage() {
+    const { aiInputMessage, aiMessages } = this.data;
+    
+    // 检查消息是否为空
+    if (!aiInputMessage.trim()) {
+      return;
+    }
+    
+    // 添加用户消息到对话列表
+    const userMessage = {
+      role: 'user',
+      content: aiInputMessage
     };
-  }
+    
+    this.setData({
+      aiMessages: [...aiMessages, userMessage],
+      aiInputMessage: '',
+      aiLoading: true
+    });
+    
+    try {
+      // 调用AI服务获取回复
+      const aiResponse = await localAI.getLocalAIResponse(aiInputMessage);
+      
+      // 添加AI回复到对话列表
+      const aiMessage = {
+        role: 'ai',
+        content: aiResponse
+      };
+      
+      this.setData({
+        aiMessages: [...this.data.aiMessages, aiMessage],
+        aiLoading: false
+      });
+      
+      // 滚动到底部
+      this.scrollToBottom('ai-message-list');
+    } catch (error) {
+      console.error('获取AI回复失败:', error);
+      
+      // 使用备用回答
+      const fallbackResponse = localAI.getFallbackAnswer(aiInputMessage);
+      const fallbackMessage = {
+        role: 'ai',
+        content: '抱歉，我遇到了一些问题。' + fallbackResponse
+      };
+      
+      this.setData({
+        aiMessages: [...this.data.aiMessages, fallbackMessage],
+        aiLoading: false
+      });
+      
+      // 滚动到底部
+      this.scrollToBottom('ai-message-list');
+    }
+  },
+
+  // 其他生命周期函数
+  onReady() {},
+  onShow() {},
+  onHide() {},
+  onUnload() {},
+  onPullDownRefresh() {},
+  onReachBottom() {},
+  onShareAppMessage() {}
 }); 

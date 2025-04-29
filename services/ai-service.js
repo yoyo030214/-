@@ -109,6 +109,9 @@ async function getAIResponse(query, options = {}) {
       throw new Error('无效的提问内容');
     }
 
+    console.log('准备请求DeepSeek API...');
+    console.log('查询内容:', query.substring(0, 50) + (query.length > 50 ? '...' : ''));
+
     // 准备模型参数 - 支持自由模式
     const freeMode = options.freeMode === true;
     
@@ -117,59 +120,142 @@ async function getAIResponse(query, options = {}) {
       ? buildFreeMessages(query, options.context || [])
       : buildMessages(query, options.context || [], freeMode);
       
-    const modelParams = {
-      model: options.model || "gpt-3.5-turbo",
-      messages: messages,
-      temperature: options.temperature || (freeMode ? 0.8 : 0.7),
-      max_tokens: options.max_tokens || (freeMode ? 1000 : 500)
-    };
+    // 如果消息数组为空，添加一个简单的用户消息
+    if (messages.length === 0) {
+      messages.push({ role: 'user', content: query });
+    }
+    
+    console.log('消息数组:', JSON.stringify(messages));
     
     // 从配置获取API信息
     const apiConfig = config.deepseek;
     const url = `${apiConfig.baseUrl}${apiConfig.endpoints.chat}`;
+    console.log('请求URL:', url);
     
-    try {
-      // 发送API请求
-      const response = await new Promise((resolve, reject) => {
-        wx.request({
-          url: url,
-          method: 'POST',
-          header: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiConfig.apiKey}`
-          },
-          data: modelParams,
-          success: res => {
-            if (res.statusCode === 200) {
-              resolve(res.data);
-            } else {
-              reject({
-                statusCode: res.statusCode,
-                errMsg: `请求失败，状态码: ${res.statusCode}`,
-                data: res.data
-              });
+    // 尝试使用主模型和备用模型列表
+    const modelsTotry = [
+      apiConfig.model || "deepseek-chat", 
+      ...(apiConfig.fallbackModels || [])
+    ];
+    
+    console.log('将尝试的模型列表:', modelsTotry);
+    
+    // 最后的错误信息
+    let lastError = null;
+    
+    // 依次尝试不同的模型
+    for (const currentModel of modelsTotry) {
+      try {
+        console.log(`尝试使用模型: ${currentModel}`);
+        
+        const modelParams = {
+          model: currentModel,
+          messages: messages,
+          temperature: options.temperature || (freeMode ? 0.8 : 0.7),
+          max_tokens: options.max_tokens || (freeMode ? 1000 : 500)
+        };
+        
+        // 打印请求参数
+        console.log('请求参数:', JSON.stringify(modelParams, null, 2));
+        
+        // 发送API请求
+        console.log('开始发送请求...');
+        const response = await new Promise((resolve, reject) => {
+          wx.request({
+            url: url,
+            method: 'POST',
+            header: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiConfig.apiKey}`
+            },
+            data: modelParams,
+            success: res => {
+              console.log('API响应状态码:', res.statusCode);
+              if (res.data && typeof res.data === 'object') {
+                console.log('API响应数据预览:', JSON.stringify(res.data).substring(0, 200) + '...');
+              } else {
+                console.log('API响应数据类型:', typeof res.data);
+              }
+              
+              if (res.statusCode === 200) {
+                resolve(res.data);
+              } else {
+                console.error('API请求失败:', res.statusCode);
+                if (res.data) {
+                  console.error('错误详情:', JSON.stringify(res.data));
+                }
+                reject({
+                  statusCode: res.statusCode,
+                  errMsg: `请求失败，状态码: ${res.statusCode}`,
+                  data: res.data
+                });
+              }
+            },
+            fail: err => {
+              console.error('请求发送失败:', err);
+              reject(err);
             }
-          },
-          fail: err => {
-            reject(err);
-          }
+          });
         });
-      });
-      
-      // 验证响应
-      if (!response || !response.choices || !response.choices.length || !response.choices[0].message) {
-        console.warn('无效的API响应格式');
-        return getLocalReply(query);
+        
+        // 验证响应 - 尝试适应不同的API响应格式
+        if (response) {
+          // 标准格式: { choices: [{ message: { content: "回复内容" } }] }
+          if (response.choices && response.choices.length && response.choices[0].message) {
+            console.log('成功获取AI回复(标准格式)');
+            return response.choices[0].message.content;
+          }
+          
+          // 备用格式1: { text: "回复内容" }
+          if (response.text) {
+            console.log('成功获取AI回复(备用格式1)');
+            return response.text;
+          }
+          
+          // 备用格式2: { content: "回复内容" }
+          if (response.content) {
+            console.log('成功获取AI回复(备用格式2)');
+            return response.content;
+          }
+          
+          // 备用格式3: { response: "回复内容" }
+          if (response.response) {
+            console.log('成功获取AI回复(备用格式3)');
+            return response.response;
+          }
+          
+          // 备用格式4: { generated_text: "回复内容" }
+          if (response.generated_text) {
+            console.log('成功获取AI回复(备用格式4)');
+            return response.generated_text;
+          }
+          
+          // 如果以上格式都不匹配，尝试使用整个响应作为字符串
+          if (typeof response === 'string') {
+            console.log('成功获取AI回复(字符串格式)');
+            return response;
+          }
+          
+          console.warn('未知的API响应格式，完整响应:', JSON.stringify(response));
+          lastError = { errMsg: '未知的API响应格式' };
+        } else {
+          lastError = { errMsg: '空响应' };
+        }
+      } catch (modelError) {
+        console.error(`使用模型 ${currentModel} 请求失败:`, modelError);
+        lastError = modelError;
+        // 继续尝试下一个模型
+        continue;
       }
-      
-      return response.choices[0].message.content;
-      
-    } catch (apiError) {
-      console.error('AI API请求失败:', apiError);
-      
-      // 网络错误或API错误时使用本地回复
-      return getLocalReply(query);
     }
+    
+    // 如果所有模型都失败，使用本地回复
+    console.error('所有模型都请求失败，使用本地回复');
+    if (lastError) {
+      console.error('最后的错误:', lastError);
+    }
+    return getLocalReply(query);
+    
   } catch (error) {
     console.error('AI服务错误:', error);
     return getLocalReply(query);

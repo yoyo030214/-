@@ -297,6 +297,19 @@ const util = {
   // 检查文件大小
   checkFileSize(file, maxSize) {
     return file.size <= maxSize;
+  },
+
+  // 显示信息提示
+  showToast(title = '提示', icon = 'none', duration = 2000) {
+    if (typeof title === 'object') {
+      wx.showToast(title);
+    } else {
+      wx.showToast({
+        title,
+        icon,
+        duration
+      });
+    }
   }
 };
 

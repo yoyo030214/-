@@ -25,17 +25,9 @@ Page({
 
   onLoad: async function() {
     console.log('页面加载开始');
+    this.setData({ loading: true });
     try {
-      // 检查API是否可用
-      const isApiAvailable = await weatherService.checkWeatherAPI();
-      console.log('API可用性检查结果:', isApiAvailable);
-
-      if (isApiAvailable) {
-        await this.loadLastCity();
-      } else {
-        console.error('天气API不可用');
-        this.handleNetworkError();
-      }
+      await this.loadLastCity();
     } catch (error) {
       console.error('页面初始化失败:', error);
       this.handleNetworkError();
@@ -48,7 +40,7 @@ Page({
   loadLastCity() {
     const lastCity = wx.getStorageSync('lastCity') || '武汉市';
     this.setData({ city: lastCity });
-    this.searchCity(lastCity);
+    return this.searchCity(lastCity);
   },
 
   // 显示城市选择器
@@ -79,25 +71,17 @@ Page({
       isOffline: false
     });
     
+    // 保存选择的城市
     wx.setStorageSync('lastCity', city);
     
     try {
-      // 清除当前城市的缓存数据，强制重新加载
-      wx.removeStorageSync(`weatherData_${city}`);
-      wx.removeStorageSync(`weatherDataTime_${city}`);
-      
-      // 清除天气服务缓存
-      weatherService.clearCache();
-      
-      // 强制设置最后更新时间为0，确保立即更新
-      this.setData({ lastUpdateTime: 0 });
-      
       await this.searchCity(city);
     } catch (error) {
       console.error('切换城市失败:', error);
       this.handleNetworkError();
     } finally {
       this.setData({ loading: false });
+      this.hideCityPicker();
     }
   },
 
@@ -106,15 +90,6 @@ Page({
     try {
       this.setData({ loading: true });
       
-      // 先尝试从缓存获取城市代码
-      const cachedCityCode = wx.getStorageSync(`cityCode_${keyword}`);
-      if (cachedCityCode) {
-        console.log('使用缓存的城市代码:', cachedCityCode);
-        this.setData({ cityCode: cachedCityCode });
-        await this.loadWeatherData(cachedCityCode);
-        return;
-      }
-
       console.log('搜索城市:', keyword);
       const res = await weatherService.searchCity(keyword);
       console.log('城市搜索结果:', res);
@@ -127,7 +102,7 @@ Page({
         await this.loadWeatherData(cityCode);
       } else {
         console.error('未找到城市信息');
-        this.handleNetworkError();
+        throw new Error('未找到城市信息');
       }
     } catch (error) {
       console.error('搜索城市失败:', error);
@@ -138,16 +113,6 @@ Page({
     }
   },
 
-  // 检查是否需要更新天气数据
-  checkNeedUpdate() {
-    const now = Date.now();
-    const lastUpdate = this.data.lastUpdateTime;
-    const updateInterval = 2 * 1000; // 改为2秒更新一次
-    
-    // 如果没有最后更新时间，或者距离上次更新超过2秒，则需要更新
-    return !lastUpdate || (now - lastUpdate > updateInterval);
-  },
-
   // 加载天气数据
   async loadWeatherData(cityCode) {
     if (!cityCode) {
@@ -156,30 +121,9 @@ Page({
       return;
     }
 
-    // 检查是否需要更新
-    if (!this.checkNeedUpdate() && !this.data.isOffline) {
-      console.log('数据仍在有效期内，无需更新');
-      return;
-    }
-
     this.setData({ loading: true, networkError: false });
     
     try {
-      // 尝试从缓存获取天气数据
-      const cachedData = wx.getStorageSync(`weatherData_${this.data.city}`);
-      const cacheTime = wx.getStorageSync(`weatherDataTime_${this.data.city}`);
-      const now = Date.now();
-      
-      // 如果缓存存在且未过期（2秒）
-      if (cachedData && cacheTime && (now - cacheTime < 2 * 1000)) {
-        console.log('使用缓存的天气数据');
-        this.setData({
-          ...cachedData,
-          loading: false
-        });
-        return;
-      }
-
       console.log('开始加载天气数据, cityCode:', cityCode);
       
       // 使用Promise.allSettled代替Promise.all，确保即使某个请求失败也能继续
@@ -215,7 +159,7 @@ Page({
         pressure: nowRes ? nowRes.now.pressure : '--',
         visibility: nowRes ? nowRes.now.vis : '--',
         updateTime: this.formatTime(new Date()),
-        lastUpdateTime: now,
+        lastUpdateTime: Date.now(),
         isOffline: false,
         weatherIcon: nowRes ? (nowRes.now.icon || '100') : '100'
       };
@@ -250,9 +194,9 @@ Page({
       // 处理农业气象
       weatherData.farmingTips = agroRes ? agroRes.tips : '暂无农事建议';
 
-      // 保存数据到缓存
+      // 保存数据到缓存（作为备用，仅在网络故障时使用）
       wx.setStorageSync(`weatherData_${this.data.city}`, weatherData);
-      wx.setStorageSync(`weatherDataTime_${this.data.city}`, now);
+      wx.setStorageSync(`weatherDataTime_${this.data.city}`, Date.now());
       
       // 更新页面数据
       this.setData({
@@ -334,13 +278,6 @@ Page({
       networkError: false,
       isOffline: false
     });
-    
-    // 清除当前城市的缓存数据，强制重新加载
-    wx.removeStorageSync(`weatherData_${this.data.city}`);
-    wx.removeStorageSync(`weatherDataTime_${this.data.city}`);
-    
-    // 清除天气服务缓存
-    weatherService.clearCache();
     
     if (this.data.cityCode) {
       this.loadWeatherData(this.data.cityCode);

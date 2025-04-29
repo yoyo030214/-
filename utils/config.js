@@ -9,8 +9,9 @@ module.exports = {
 
   // 天气API配置
   weather: {
-    apiKey: 'your_weather_api_key',
-    baseUrl: 'https://api.weatherapi.com/v1'
+    apiKey: 'd5c7919055c54058a2f91af29530572a',
+    baseUrl: 'https://devapi.qweather.com/v7',
+    geoBaseUrl: 'https://geoapi.qweather.com/v2'
   },
 
   // 高德地图配置

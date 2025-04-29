@@ -1,170 +1,22 @@
-<wxs module="icons">
-// 这里定义内联SVG图标，避免使用外部资源
-module.exports = {
-  // AI助手图标
-  ai: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzA3YzE2MCI+PHBhdGggZD0iTTEyIDJhMTAgMTAgMCAxIDAgMCAyMCAxMCAxMCAwIDAgMCAwLTIwem0zIDE1LjVhMSAxIDAgMCAxLTEuNCAxLjRsLTQuMS00LjFhMS4xIDEuMSAwIDAgMS0uNS0uOVYxLjRBMS4yIDEuMiAwIDAgMSAxMC4yIDhIMTRhMSAxIDAgMCAxIDEgMWMwIC41LS40IDEtMSAxaC0ydjMuMWwzIDN6Ii8+PC9zdmc+',
-  
-  // 用户图标
-  user: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzQyODVmNCI+PHBhdGggZD0iTTEyIDJhNSA1IDAgMSAwIDAgMTAgNSA1IDAgMCAwIDAtMTB6bTAgMTBjLTUuMzMgMC04IDIuNjctOCA4aDJjMC00IDIuNjctNiA2LTZzNiAyIDYgNmgyYzAtNS4zMy0yLjY3LTgtOC04eiIvPjwvc3ZnPg==',
-  
-  // 客服图标
-  service: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzMzMyI+PHBhdGggZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yek0xNCA3aDRWNWgtNHYyem0wIDJoNFY3aC00djJ6TTggMTVoMTB2LTJIOHYyem0tMiA0aDEwYzEuMSAwIDItLjkgMi0ySDRjMCAxLjEuOSAyIDIgMnoiLz48L3N2Zz4=',
-  
-  // 电话图标
-  phone: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzMzMyI+PHBhdGggZD0iTTYuNjIgMTAuNzljLjM1Ljg1LjggMS42NCAxLjQ1IDIuMjlsLjM1LjM1Yy42NS42NCAxLjQ0IDEuMS0yLjI5IDEuNDVsMSAxYTExLjY0IDExLjY0IDAgMCAwIDMuODkgMS40NmMuNS4wOSAxIC4xNCAxLjU0LjE0LTMuNTcgMy41Ny0xMC40Mi0yLjI5LTE0LjI0LTYuMDhDLTUuNSA2LjYgMS4xLS4xMiA1LjgxIDIuNDlhMTEuNjQgMTEuNjQgMCAwIDAgMS40NiAzLjkzbC45OSAxYy4zNS0uODYuOC0xLjY1IDEuNDUtMi4zMWwuMzUtLjM1YTExLjY0IDExLjY0IDAgMCAwLTIuNDktMS40NmMtLjgzLS4zNi0xLjY2LS41OS0yLjQxLS43MUMxLjI3IDMuMzQuNzYgNy41MSAyLjY2IDYuNjZaIi8+PC9zdmc+',
-  
-  // 农业智能助手图标
-  agriAI: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzg4YzA1NyI+PHBhdGggZD0iTTEyIDNhOSA5IDAgMSAwIDAgMTggOSA5IDAgMCAwIDAtMTh6TTEwIDdoNHYyaC00VjdtMCA0aDR2NmgtNHYtNnoiLz48L3N2Zz4='
-};
-</wxs>
-
-<view class="customer-service">
-  <!-- 头部选项卡 -->
-  <view class="tab-container">
-    <view class="tab {{activeTab === 'service' ? 'active' : ''}}" bindtap="switchTab" data-tab="service">
-      <image class="tab-icon" src="{{icons.service}}" mode="aspectFit" />
-      <text>在线客服</text>
-    </view>
-    <view class="tab {{activeTab === 'ai' ? 'active' : ''}}" bindtap="switchTab" data-tab="ai">
-      <image class="tab-icon" src="{{icons.agriAI}}" mode="aspectFit" />
-      <text>楚农智能助手</text>
-    </view>
+<!-- 语言设置按钮 -->
+<view class="language-settings">
+  <view class="language-current" bindtap="toggleLanguageSelector">
+    <text class="language-label">语言:</text>
+    <text class="language-value">{{currentLanguageName}}</text>
+    <text class="language-arrow {{showLanguageSelector ? 'up' : 'down'}}">▼</text>
   </view>
   
-  <!-- 在线客服面板 -->
-  <view class="panel service-panel" hidden="{{activeTab !== 'service'}}">
-    <!-- 头部工具栏 -->
-    <view class="toolbar">
-      <view class="title">智能客服</view>
-      <view class="mode-controls">
-        <!-- AI/本地模式切换 -->
-        <view class="mode-switch" bindtap="toggleAIMode">
-          <text class="{{useAI ? 'active' : ''}}">AI模式</text>
-          <view class="switch-track">
-            <view class="switch-thumb {{useAI ? 'on' : 'off'}}"></view>
-          </view>
-          <text class="{{!useAI ? 'active' : ''}}">本地模式</text>
-        </view>
-        
-        <!-- 自由对话模式切换 (仅在AI模式下显示) -->
-        <view class="free-mode-switch {{!useAI ? 'disabled' : ''}}" bindtap="toggleFreeMode" wx:if="{{useAI}}">
-          <text class="{{freeMode ? 'active' : ''}}">自由对话</text>
-          <view class="switch-track">
-            <view class="switch-thumb {{freeMode ? 'on' : 'off'}}"></view>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 消息列表 -->
-    <scroll-view 
-      class="message-list" 
-      scroll-y="true" 
-      id="message-list"
-      enhanced="true"
-      show-scrollbar="false"
+  <!-- 语言选择器弹出框 -->
+  <view class="language-selector {{showLanguageSelector ? 'show' : ''}}" wx:if="{{showLanguageSelector}}">
+    <view 
+      class="language-item {{item.code === currentLanguage ? 'active' : ''}}" 
+      wx:for="{{supportedLanguages}}" 
+      wx:key="code" 
+      bindtap="selectLanguage"
+      data-lang-code="{{item.code}}"
     >
-      <block wx:for="{{messages}}" wx:key="time">
-        <view class="message {{item.type}}">
-          <!-- 使用内联SVG图标 -->
-          <view class="avatar-with-icon">
-            <image 
-              class="avatar-icon" 
-              src="{{item.type === 'assistant' ? icons.ai : icons.user}}" 
-              mode="aspectFit"
-            />
-          </view>
-          <view class="content">
-            <text>{{item.content}}</text>
-            <text class="time">{{item.time}}</text>
-          </view>
-        </view>
-      </block>
-      
-      <!-- 加载状态 -->
-      <view class="loading" wx:if="{{isLoading}}">
-        <view class="dot-flashing"></view>
-      </view>
-      
-      <!-- 自由模式提示 -->
-      <view class="mode-indicator" wx:if="{{useAI && freeMode}}">
-        <text>自由对话模式已开启</text>
-      </view>
-    </scroll-view>
-
-    <!-- 错误提示 -->
-    <view class="error-message" wx:if="{{showError}}">
-      <text>{{errorMessage}}</text>
-      <button class="retry-btn" bindtap="retryLastMessage">重试</button>
-    </view>
-
-    <!-- 输入区域 -->
-    <view class="input-area">
-      <input 
-        class="message-input"
-        value="{{inputValue}}"
-        placeholder="{{useAI && freeMode ? '自由对话模式：可提问任何问题' : '请输入您的问题'}}"
-        bindinput="onInput"
-        bindconfirm="sendMessage"
-        confirm-type="send"
-        disabled="{{isLoading}}"
-      />
-      <button 
-        class="send-btn {{inputValue ? 'active' : ''}}"
-        bindtap="sendMessage"
-        disabled="{{!inputValue || isLoading}}"
-      >发送</button>
-    </view>
-
-    <!-- 分割线 -->
-    <view class="divider">
-      <text>其他帮助方式</text>
-    </view>
-
-    <!-- 常见问题 -->
-    <view class="faq-list">
-      <view 
-        class="faq-item"
-        wx:for="{{faqs}}"
-        wx:key="id"
-        bindtap="selectFAQ"
-        data-id="{{item.id}}"
-      >
-        <text>{{item.question}}</text>
-        <text class="arrow">发送</text>
-      </view>
-    </view>
-
-    <!-- 人工服务 -->
-    <view class="manual-service">
-      <button class="service-btn" bindtap="openOnlineService">
-        <image src="{{icons.service}}" mode="aspectFit" class="btn-icon" />
-        在线客服
-      </button>
-      <button class="service-btn" bindtap="makePhoneCall">
-        <image src="{{icons.phone}}" mode="aspectFit" class="btn-icon" />
-        电话客服
-      </button>
-    </view>
-  </view>
-  
-  <!-- 楚农智能助手面板 -->
-  <view class="panel ai-panel" hidden="{{activeTab !== 'ai'}}">
-    <view class="chat-container">
-      <view class="chat-messages" id="ai-message-list">
-        <view wx:for="{{aiMessages}}" wx:key="index" class="message {{item.role === 'user' ? 'user-message' : 'ai-message'}}">
-          <view class="message-content">{{item.content}}</view>
-        </view>
-      </view>
-      
-      <view class="input-container">
-        <input class="chat-input" value="{{aiInputMessage}}" bindinput="onAIInputChange" placeholder="请输入您的问题..." confirm-type="send" bindconfirm="sendAIMessage" />
-        <button class="send-button" bindtap="sendAIMessage" disabled="{{!aiInputMessage}}">发送</button>
-      </view>
-      
-      <view class="loading-indicator" wx:if="{{aiLoading}}">
-        <text>正在思考...</text>
-      </view>
+      <text>{{item.name}}</text>
+      <text class="icon-check" wx:if="{{item.code === currentLanguage}}">✓</text>
     </view>
   </view>
 </view> 

@@ -837,7 +837,7 @@ Page({
   // 搜索相关
   onSearchTap() {
     wx.navigateTo({
-      url: '/pages/search/search'
+      url: '/pages/search/index'
     });
   },
 

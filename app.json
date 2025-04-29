@@ -16,12 +16,13 @@
     "pages/customer-service/customer-service",
     "pages/more/more",
     "pages/local-specialties-map/index",
-    "pages/elder-mode/elder-mode"
+    "pages/elder-mode/elder-mode",
+    "pages/search/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "楚农电商",
+    "navigationBarTitleText": "楚农乡链",
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": true
   },

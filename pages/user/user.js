@@ -212,7 +212,7 @@ Page({
   // 跳转到地址管理
   navigateToAddress() {
     wx.navigateTo({
-      url: '/pages/address/list'
+      url: '/pages/address/address'
     });
   },
 

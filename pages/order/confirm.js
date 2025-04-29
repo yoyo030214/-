@@ -4,16 +4,20 @@ const config = require('../../utils/config');
 
 Page({
   data: {
+    // 地址信息
     address: null,
-    addressList: [],
-    products: [],
+    
+    // 商品信息
+    cartList: [],
+    totalPrice: 0,
+    shippingFee: 0,
+    
+    // 订单信息
     remark: '',
-    paymentMethod: 'wxpay',
-    totalAmount: 0,
-    freightAmount: 0,
-    discountAmount: 0,
-    actualAmount: 0,
-    loading: false
+    
+    // 状态控制
+    loading: false,
+    submitting: false
   },
 
   onLoad(options) {
@@ -23,6 +27,22 @@ Page({
     }
     this.loadAddressList();
     this.calculateAmount();
+    this.loadOrderData();
+  },
+
+  onShow() {
+    const pages = getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    const prevPage = pages[pages.length - 2];
+    
+    if (prevPage && prevPage.route === 'pages/address/address') {
+      const { selectedAddress } = prevPage.data;
+      if (selectedAddress) {
+        this.setData({
+          address: selectedAddress
+        });
+      }
+    }
   },
 
   // 加载地址列表
@@ -58,7 +78,22 @@ Page({
   // 选择收货地址
   onSelectAddress() {
     wx.navigateTo({
-      url: '/pages/address/select?from=order'
+      url: '/pages/address/address?from=order'
+    });
+  },
+
+  // 添加新地址
+  addAddress() {
+    wx.navigateTo({
+      url: '/pages/address/address'
+    });
+  },
+
+  // 编辑地址
+  editAddress() {
+    if (!this.data.address) return;
+    wx.navigateTo({
+      url: `/pages/address/address?id=${this.data.address.id}`
     });
   },
 
@@ -143,5 +178,141 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  // 加载订单数据
+  async loadOrderData() {
+    try {
+      this.setData({ loading: true })
+      
+      // 获取购物车数据
+      const cartRes = await wx.cloud.callFunction({
+        name: 'cart',
+        data: {
+          action: 'list'
+        }
+      })
+      
+      if (!cartRes.result || !cartRes.result.success) {
+        throw new Error(cartRes.result?.message || '获取购物车数据失败')
+      }
+      
+      // 计算商品总价
+      const totalPrice = cartRes.result.data.reduce((sum, item) => {
+        return sum + (item.price * item.quantity)
+      }, 0)
+      
+      // 获取默认地址
+      const addressRes = await wx.cloud.callFunction({
+        name: 'address',
+        data: {
+          action: 'getDefault'
+        }
+      })
+      
+      this.setData({
+        loading: false,
+        cartList: cartRes.result.data,
+        totalPrice,
+        address: addressRes.result?.data || null
+      })
+    } catch (error) {
+      console.error('加载订单数据失败:', error)
+      this.setData({ loading: false })
+      wx.showToast({
+        title: error.message || '加载订单数据失败',
+        icon: 'none'
+      })
+    }
+  },
+
+  // 选择地址
+  selectAddress() {
+    wx.navigateTo({
+      url: '/pages/address/address?from=order'
+    })
+  },
+
+  // 提交订单
+  async submitOrder() {
+    try {
+      // 表单验证
+      if (!this.validateForm()) {
+        return
+      }
+      
+      this.setData({ submitting: true })
+      
+      const { cartList, address, remark } = this.data
+      
+      // 创建订单
+      const res = await wx.cloud.callFunction({
+        name: 'order',
+        data: {
+          action: 'create',
+          data: {
+            items: cartList,
+            address: address,
+            remark: remark,
+            totalPrice: this.data.totalPrice
+          }
+        }
+      })
+      
+      if (res.result && res.result.success) {
+        // 清空购物车
+        await wx.cloud.callFunction({
+          name: 'cart',
+          data: {
+            action: 'clear'
+          }
+        })
+        
+        // 跳转到支付页面
+        wx.navigateTo({
+          url: `/pages/order/payment?id=${res.result.data._id}`
+        })
+      } else {
+        throw new Error(res.result?.message || '创建订单失败')
+      }
+    } catch (error) {
+      console.error('提交订单失败:', error)
+      wx.showToast({
+        title: error.message || '提交订单失败',
+        icon: 'none'
+      })
+    } finally {
+      this.setData({ submitting: false })
+    }
+  },
+
+  // 表单验证
+  validateForm() {
+    const { address, cartList } = this.data
+    
+    if (!address) {
+      wx.showToast({
+        title: '请选择收货地址',
+        icon: 'none'
+      })
+      return false
+    }
+    
+    if (!cartList || cartList.length === 0) {
+      wx.showToast({
+        title: '购物车为空',
+        icon: 'none'
+      })
+      return false
+    }
+    
+    return true
+  },
+
+  // 输入备注
+  handleRemarkInput(e) {
+    this.setData({
+      remark: e.detail.value
+    })
   }
 }); 

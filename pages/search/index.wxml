@@ -1,0 +1,97 @@
+<view class="search-container">
+  <!-- 搜索头部 -->
+  <view class="search-header">
+    <view class="search-input-wrap">
+      <icon type="search" size="18" color="#666"></icon>
+      <input 
+        class="search-input" 
+        placeholder="{{searchPlaceholder}}" 
+        value="{{keyword}}" 
+        bindinput="onInputChange"
+        confirm-type="search"
+        bindconfirm="handleSearch"
+        focus
+      />
+      <view class="clear-icon" catchtap="clearInput" wx:if="{{keyword}}">
+        <icon type="clear" size="16" color="#999"></icon>
+      </view>
+    </view>
+    <view class="search-btn" bindtap="handleSearch">搜索</view>
+  </view>
+  
+  <!-- 搜索结果为空时的提示 -->
+  <view class="empty-result" wx:if="{{emptyResult}}">
+    <image src="/images/icons/empty-search.svg" mode="aspectFit"></image>
+    <text>未找到相关商品，换个关键词试试吧</text>
+  </view>
+  
+  <!-- 搜索历史和热门搜索 -->
+  <view class="search-content" wx:if="{{!searching}}">
+    <!-- 搜索历史 -->
+    <view class="history-section" wx:if="{{historyKeywords.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">搜索历史</text>
+        <view class="clear-btn" bindtap="clearSearchHistory">清空</view>
+      </view>
+      <view class="tag-list">
+        <view class="tag-item" 
+          wx:for="{{historyKeywords}}" 
+          wx:key="*this" 
+          bindtap="onTagTap"
+          data-keyword="{{item}}">
+          {{item}}
+        </view>
+      </view>
+    </view>
+    
+    <!-- 热门搜索 -->
+    <view class="hot-section">
+      <view class="section-header">
+        <text class="section-title">热门搜索</text>
+      </view>
+      <view class="tag-list">
+        <view class="tag-item hot" 
+          wx:for="{{hotKeywords}}" 
+          wx:key="*this" 
+          bindtap="onTagTap"
+          data-keyword="{{item}}">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 搜索结果列表 -->
+  <view class="search-result" wx:if="{{searching && products.length > 0}}">
+    <view class="product-item" 
+      wx:for="{{products}}" 
+      wx:key="id" 
+      bindtap="viewProduct"
+      data-id="{{item.id}}">
+      <image class="product-image" src="{{item.image}}" mode="aspectFill"></image>
+      <view class="product-info">
+        <text class="product-name">{{item.name}}</text>
+        <view class="product-meta">
+          <text class="product-origin">{{item.origin || '未知产地'}}</text>
+          <text class="product-category">{{item.category}}</text>
+        </view>
+        <view class="product-price-wrap">
+          <text class="product-price">¥{{item.price}}</text>
+          <text class="product-unit">/{{item.unit}}</text>
+          <text class="product-sales">已售{{item.sales || 0}}份</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载更多提示 -->
+    <view class="loading-more" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+    
+    <!-- 无更多数据提示 -->
+    <view class="no-more" wx:if="{{!hasMore && !loading && products.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+  </view>
+</view> 
